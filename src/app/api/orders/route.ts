@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
-import Order from '@/models/order'; // Itt hivatkozunk a kisbetűs fájlra!
+import Order from '@/models/Order'; // <--- ITT A LÉNYEG: Nagy "O"-val írtuk!
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -18,7 +18,7 @@ export async function GET() {
   try {
     await connectToDb();
     
-    // Lekérjük az összes rendelést, a legújabbal kezdve (sort: -1)
+    // Lekérjük az összes rendelést
     const orders = await Order.find().sort({ createdAt: -1 });
     
     return NextResponse.json(orders);
