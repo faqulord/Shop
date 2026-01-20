@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 
-// --- 1. ADATBÁZIS KAPCSOLÓDÁS ---
 const MONGODB_URI = process.env.MONGODB_URI;
 
 async function connectToDb() {
@@ -10,9 +9,7 @@ async function connectToDb() {
   return await mongoose.connect(MONGODB_URI);
 }
 
-// --- 2. MODELL DEFINIÁLÁSA ITT HELYBEN (Hogy ne legyen "Module not found" hiba) ---
-// Ez biztosítja, hogy a kód mindig megtalálja a sémát, importálás nélkül!
-
+// MODELL DEFINIÁLÁSA HELYBEN (Biztos ami biztos alapon)
 const OrderSchema = new mongoose.Schema({
   customerName: String,
   email: String,
@@ -26,24 +23,34 @@ const OrderSchema = new mongoose.Schema({
     quantity: Number
   }],
   totalAmount: Number,
-  status: { type: String, default: 'Feldolgozás alatt' }
+  status: { type: String, default: 'Feldolgozás alatt' } // Alap státusz
 }, { timestamps: true });
 
-// Fontos: Itt 'Order'-t használunk, hogy lássa a korábban feltöltött adatokat!
-// (A 'models.Order' ellenőrzi, hogy létezik-e már a modell, így nem akad össze)
-const Order = mongoose.models.Order || mongoose.model('Order', OrderSchema);
+// Fontos: Itt a 'ShopOrder' nevet használjuk, amit múltkor tisztáztunk!
+const Order = mongoose.models.ShopOrder || mongoose.model('ShopOrder', OrderSchema);
 
-
-// --- 3. A LEKÉRDEZÉS (API) ---
+// 1. LEKÉRÉS (GET) - Az Adminnak
 export async function GET() {
   try {
     await connectToDb();
-    
-    // Lekérjük az összes rendelést, a legújabbal kezdve
     const orders = await Order.find().sort({ createdAt: -1 });
-    
     return NextResponse.json(orders);
   } catch (error: any) {
     return NextResponse.json({ error: "Hiba: " + error.message }, { status: 500 });
+  }
+}
+
+// 2. ÚJ RENDELÉS MENTÉSE (POST) - A Főoldalnak
+export async function POST(req: Request) {
+  try {
+    await connectToDb();
+    const body = await req.json(); // Megkapjuk az adatokat a főoldalról
+
+    // Létrehozzuk az új rendelést az adatbázisban
+    const newOrder = await Order.create(body);
+    
+    return NextResponse.json(newOrder, { status: 201 });
+  } catch (error: any) {
+    return NextResponse.json({ error: "Hiba a mentéskor: " + error.message }, { status: 500 });
   }
 }
