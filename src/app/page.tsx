@@ -1,11 +1,29 @@
 "use client";
 import { useState, useEffect } from 'react';
-// Minden ikont innen importálunk
-import { Star, Check, Shield, ArrowRight, Heart, CreditCard, Banknote, ThumbsUp, AlertTriangle, Zap, Clock, CheckCircle } from 'lucide-react';
+// Ikonok importálása
+import { Star, Check, Shield, ArrowRight, Heart, CreditCard, Banknote, ThumbsUp, AlertTriangle, Zap, Clock, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function Home() {
   
-  // --- 1. VÁLTOZÓK ---
+  // --- 1. KÉPGALÉRIA BEÁLLÍTÁSA (ITT CSERÉLD A LINKEKET!) ---
+  // Fontos: Ide másold be a saját képeid linkjét a macskakörmök közé!
+  const productImages = [
+    "https://cc-west-usa.oss-accelerate.aliyuncs.com/20240314/2301130391666.jpg", // 1. Fő kép (A gép szemből)
+    "https://cc-west-usa.oss-accelerate.aliyuncs.com/20240314/6682054625292.jpg", // 2. Kép (Használat közben / Doboz)
+    "https://cc-west-usa.oss-accelerate.aliyuncs.com/20240314/1580231904712.jpg"  // 3. Kép (Részletek)
+  ];
+
+  const [currentImg, setCurrentImg] = useState(0);
+
+  const nextImage = () => {
+    setCurrentImg((prev) => (prev === productImages.length - 1 ? 0 : prev + 1));
+  };
+
+  const prevImage = () => {
+    setCurrentImg((prev) => (prev === 0 ? productImages.length - 1 : prev - 1));
+  };
+
+  // --- 2. VÁLTOZÓK ---
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState({ h: 3, m: 12, s: 45 });
@@ -14,7 +32,7 @@ export default function Home() {
   
   const PAYPAL_EMAIL = "stylefaqu@gmail.com"; 
 
-  // --- 2. IDŐZÍTŐ ---
+  // --- 3. IDŐZÍTŐ ---
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft(prev => {
@@ -27,7 +45,7 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  // --- 3. TERMÉK BETÖLTÉSE ---
+  // --- 4. ADATLEKÉRÉS ---
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -40,7 +58,7 @@ export default function Home() {
     fetchData();
   }, []);
 
-  // --- 4. KOMMENTEK ---
+  // --- 5. KOMMENTEK ---
   const staticReviews = [
     {
       author: "Varga Niki",
@@ -68,7 +86,7 @@ export default function Home() {
     }
   ];
 
-  // --- 5. NAVIGÁCIÓ ---
+  // --- 6. NAVIGÁCIÓ ---
   const scrollToOrder = () => {
     document.getElementById('order-section')?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -78,7 +96,7 @@ export default function Home() {
     return product.price;
   };
 
-  // --- 6. RENDELÉS LEADÁSA ---
+  // --- 7. RENDELÉS LEADÁSA ---
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setOrderStatus('loading');
@@ -118,12 +136,12 @@ export default function Home() {
     }
   };
 
-  // --- 7. BIZTONSÁGI LOADING ---
+  // --- 8. BETÖLTÉS ---
   if (loading || !product) {
     return <div className="min-h-screen flex items-center justify-center text-gray-500 font-medium">Betöltés...</div>;
   }
 
-  // --- 8. A FŐOLDAL MEGJELENÍTÉSE ---
+  // --- 9. FŐOLDAL HTML ---
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
       
@@ -142,17 +160,42 @@ export default function Home() {
         <section className="max-w-5xl mx-auto px-4 py-8 lg:py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             
-            {/* KÉP + -50% DOBOZ */}
-            <div className="relative">
-               <div className="absolute top-4 right-4 bg-red-600 text-white w-16 h-16 flex items-center justify-center rounded-full shadow-xl z-10 border-2 border-white animate-pulse">
-                 <p className="text-xl font-black">-50%</p>
+            {/* --- KÉPGALÉRIA (SLIDER) --- */}
+            <div className="relative group">
+               {/* -50% DOBOZ */}
+               <div className="absolute top-4 right-4 bg-red-600 text-white w-14 h-14 flex items-center justify-center rounded-full shadow-xl z-20 border-2 border-white animate-pulse">
+                 <p className="text-lg font-black">-50%</p>
                </div>
                
-               <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 border-4 border-white">
-                 <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" onError={(e) => { (e.target as any).src = "https://images.unsplash.com/photo-1629198688000-71f23e745b6e?w=800"; }} />
+               {/* A KÉP */}
+               <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 border-4 border-white relative">
+                 <img 
+                    src={productImages[currentImg]} 
+                    alt="Product" 
+                    className="w-full h-full object-cover transition-all duration-500 ease-in-out"
+                    onError={(e) => { (e.target as any).src = "https://images.unsplash.com/photo-1629198688000-71f23e745b6e?w=800"; }} 
+                 />
+                 
+                 {/* BALRA NYÍL */}
+                 <button onClick={prevImage} className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-md backdrop-blur-sm transition">
+                    <ChevronLeft size={24} />
+                 </button>
+
+                 {/* JOBBRA NYÍL */}
+                 <button onClick={nextImage} className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-md backdrop-blur-sm transition">
+                    <ChevronRight size={24} />
+                 </button>
+
+                 {/* PÖTTYÖK ALUL */}
+                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                    {productImages.map((_, idx) => (
+                        <div key={idx} className={`w-2 h-2 rounded-full transition-all ${currentImg === idx ? 'bg-pink-600 w-4' : 'bg-white/60'}`} />
+                    ))}
+                 </div>
                </div>
             </div>
 
+            {/* TERMÉK INFÓK */}
             <div className="space-y-6">
               <div>
                 <div className="flex items-center gap-2 mb-2">
@@ -163,16 +206,14 @@ export default function Home() {
                   <span className="text-gray-400 text-xs">(395 vélemény)</span>
                 </div>
                 
-                {/* CÍM */}
                 <h1 className="text-3xl md:text-5xl font-black text-gray-900 leading-tight mb-4">{product.name}</h1>
                 
-                {/* LEÍRÁS */}
                 <div className="text-lg font-medium text-black leading-relaxed" 
                      dangerouslySetInnerHTML={{ __html: product.description ? product.description.replace(/\n/g, '<br/>') : '' }}>
                 </div>
               </div>
 
-              {/* VISSZASZÁMLÁLÓ + ÁR */}
+              {/* VISSZASZÁMLÁLÓ */}
               <div className="bg-red-50 border border-red-100 p-4 rounded-xl flex items-center justify-between">
                   <div>
                       <p className="text-xs text-red-500 font-bold uppercase flex items-center gap-1">
@@ -188,7 +229,7 @@ export default function Home() {
                   </div>
               </div>
 
-              {/* --- ELŐNYÖK (FRISSÍTVE A TERMÉSZETES ANYAGOKKAL!) --- */}
+              {/* ELŐNYÖK */}
               <div className="bg-gray-50 p-5 rounded-xl border border-gray-200 shadow-sm">
                 <h3 className="font-bold text-gray-900 flex items-center gap-2 text-sm mb-3"><Zap className="text-pink-500 fill-pink-500" size={18} /> Miért imádják a nők?</h3>
                 <ul className="space-y-2 text-base">
@@ -205,7 +246,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* --- KOMMENTEK --- */}
+        {/* KOMMENTEK SZEKCIÓ */}
         <section className="bg-white py-10 border-t border-gray-100">
           <div className="max-w-xl mx-auto px-4">
             <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
@@ -240,13 +281,7 @@ export default function Home() {
 
                         <p className="text-[14px] text-gray-800 leading-snug mt-0.5">{review.text}</p>
                         
-                        {review.imageUrl && review.hasPhoto && (
-                            <div className="mt-2 rounded-lg overflow-hidden max-w-[200px] border border-gray-200">
-                                <img src={review.imageUrl} alt="Review attachment" className="w-full object-cover"/>
-                            </div>
-                        )}
-                        
-                         <div className="absolute -bottom-2 -right-1 bg-white rounded-full shadow-md border border-gray-100 flex items-center gap-1 px-1 py-0.5 cursor-pointer">
+                        <div className="absolute -bottom-2 -right-1 bg-white rounded-full shadow-md border border-gray-100 flex items-center gap-1 px-1 py-0.5 cursor-pointer">
                             <div className="bg-blue-500 rounded-full p-[2px]"><ThumbsUp size={8} fill="white" className="text-white"/></div>
                             <span className="text-[10px] text-gray-500 font-bold">{Math.floor(Math.random() * 30) + 5}</span>
                         </div>
@@ -271,10 +306,11 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ŰRLAP + PIROS FIGYELMEZTETÉS */}
+        {/* ŰRLAP SZEKCIÓ */}
         <div id="order-section" className="py-12 bg-gray-50">
           <div className="max-w-xl mx-auto px-4">
             
+            {/* PIROS FIGYELMEZTETÉS */}
             <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 flex items-start gap-3 shadow-sm animate-pulse">
                 <AlertTriangle className="text-red-600 shrink-0" size={24} />
                 <div>
@@ -334,29 +370,4 @@ export default function Home() {
                            <div><label className="text-[10px] font-bold text-gray-500 uppercase ml-1">Email</label><input required type="email" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 outline-none" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="email@cim.hu" /></div>
                            <div><label className="text-[10px] font-bold text-gray-500 uppercase ml-1">Telefon</label><input required type="tel" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 outline-none" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="06 30..." /></div>
                        </div>
-                       <div><label className="text-[10px] font-bold text-gray-500 uppercase ml-1">Cím</label><input required type="text" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 outline-none" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} placeholder="Város, Utca, Házszám" /></div>
-                    </div>
-
-                    <div className="pt-4 border-t border-gray-200">
-                      <div className="flex justify-between items-center mb-4">
-                          <span className="text-sm text-gray-500 font-medium">Fizetendő:</span>
-                          <span className="text-2xl font-black text-pink-600">{calculateTotal().toLocaleString()} Ft</span>
-                      </div>
-                      <button disabled={orderStatus === 'loading'} className="w-full bg-black text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-gray-800 transition transform active:scale-95">
-                        {orderStatus === 'loading' ? 'Feldolgozás...' : 'Tovább a Fizetéshez (PayPal)'}
-                      </button>
-                      <p className="text-center text-[10px] text-gray-400 mt-3 flex justify-center items-center gap-1">
-                        <Shield size={10}/> SSL Titkosított Fizetés
-                      </p>
-                    </div>
-                  </form>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-      <footer className="bg-white border-t border-gray-200 py-8 mt-8 text-center"><p className="text-gray-400 text-xs">© 2024 Lipses Shop.</p></footer>
-    </div>
-  );
-}
+                       <div><label className="text-[10px] font-bold text-gray-500 uppercase ml-1">Cím</label><input required type="text" className="w-full p-3 bg-gray-50 border border-gray-200 ro
