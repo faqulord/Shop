@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
-// Minden ikont innen importálunk, nincs kézi kódolás, ami hibát okozhat
+// Minden ikont innen importálunk
 import { Star, Check, Shield, ArrowRight, Heart, CreditCard, Banknote, ThumbsUp, AlertTriangle, Zap, Clock, CheckCircle } from 'lucide-react';
 
 export default function Home() {
@@ -40,7 +40,7 @@ export default function Home() {
     fetchData();
   }, []);
 
-  // --- 4. KOMMENTEK (Kép kivéve az elsőből!) ---
+  // --- 4. KOMMENTEK ---
   const staticReviews = [
     {
       author: "Varga Niki",
@@ -118,7 +118,7 @@ export default function Home() {
     }
   };
 
-  // --- 7. BIZTONSÁGI LOADING (Itt lépünk ki, ha még tölt) ---
+  // --- 7. BIZTONSÁGI LOADING ---
   if (loading || !product) {
     return <div className="min-h-screen flex items-center justify-center text-gray-500 font-medium">Betöltés...</div>;
   }
@@ -163,16 +163,16 @@ export default function Home() {
                   <span className="text-gray-400 text-xs">(395 vélemény)</span>
                 </div>
                 
-                {/* --- NAGY, FEKETE CÍM --- */}
+                {/* CÍM */}
                 <h1 className="text-3xl md:text-5xl font-black text-gray-900 leading-tight mb-4">{product.name}</h1>
                 
-                {/* --- VASTAG FEKETE LEÍRÁS --- */}
+                {/* LEÍRÁS */}
                 <div className="text-lg font-medium text-black leading-relaxed" 
                      dangerouslySetInnerHTML={{ __html: product.description ? product.description.replace(/\n/g, '<br/>') : '' }}>
                 </div>
               </div>
 
-              {/* --- VISSZASZÁMLÁLÓ + ÁR --- */}
+              {/* VISSZASZÁMLÁLÓ + ÁR */}
               <div className="bg-red-50 border border-red-100 p-4 rounded-xl flex items-center justify-between">
                   <div>
                       <p className="text-xs text-red-500 font-bold uppercase flex items-center gap-1">
@@ -188,12 +188,13 @@ export default function Home() {
                   </div>
               </div>
 
+              {/* --- ELŐNYÖK (FRISSÍTVE A TERMÉSZETES ANYAGOKKAL!) --- */}
               <div className="bg-gray-50 p-5 rounded-xl border border-gray-200 shadow-sm">
                 <h3 className="font-bold text-gray-900 flex items-center gap-2 text-sm mb-3"><Zap className="text-pink-500 fill-pink-500" size={18} /> Miért imádják a nők?</h3>
                 <ul className="space-y-2 text-base">
                   <li className="flex items-center gap-2 text-black font-bold"><Check size={18} className="text-green-600"/> Tűmentes "Russian Lips" hatás</li>
-                  <li className="flex items-center gap-2 text-black font-bold"><Check size={18} className="text-green-600"/> Azonnali dúsítás fájdalom nélkül</li>
-                  <li className="flex items-center gap-2 text-black font-bold"><Check size={18} className="text-green-600"/> Tartós eredmény (akár 12 óra)</li>
+                  <li className="flex items-center gap-2 text-black font-bold"><Check size={18} className="text-green-600"/> Természetes kollagén-aktiválás (Vegyszermentes)</li>
+                  <li className="flex items-center gap-2 text-black font-bold"><Check size={18} className="text-green-600"/> Hialuronnal & növényi olajokkal is használható!</li>
                 </ul>
               </div>
 
