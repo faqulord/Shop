@@ -7,7 +7,7 @@ export default function Home() {
   // =========================================================================
   // 1. A TERMÉK KÉP LINKJE (IDE MÁSOLD BE A LEGJOBB KÉPEDET!)
   // =========================================================================
-  const MAIN_IMAGE_URL = "https://cc-west-usa.oss-accelerate.aliyuncs.com/20240314/2301130391666.jpg";
+  const MAIN_IMAGE_URL = "https://imgur.com/a/gipJ587";
 
   // --- ÁLLAPOTOK ---
   const [product, setProduct] = useState<any>(null);
