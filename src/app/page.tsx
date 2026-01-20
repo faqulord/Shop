@@ -1,40 +1,15 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { Star, Check, Shield, ArrowRight, Heart, CreditCard, Banknote, ThumbsUp, AlertTriangle, Zap, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
-
-// --- Ikon komponens (kívül definiálva a biztonságért) ---
-function CheckCircle({ size, fill, className }: any) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill || "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-      <polyline points="22 4 12 14.01 9 11.01"></polyline>
-    </svg>
-  );
-}
+import { Star, Check, Shield, ArrowRight, Heart, CreditCard, Banknote, ThumbsUp, AlertTriangle, Zap, Clock, CheckCircle } from 'lucide-react';
 
 export default function Home() {
   
-  // --- 1. GALÉRIA KÉPEK (IDE MÁSOLD A LINKEKET!) ---
-  const productImages = [
-    // Fő kép
-    "https://cc-west-usa.oss-accelerate.aliyuncs.com/20240314/2301130391666.jpg", 
-    // Második kép
-    "https://cc-west-usa.oss-accelerate.aliyuncs.com/20240314/6682054625292.jpg", 
-    // Harmadik kép
-    "https://cc-west-usa.oss-accelerate.aliyuncs.com/20240314/1580231904712.jpg"
-  ];
+  // =========================================================================
+  // 1. A TERMÉK KÉP LINKJE (IDE MÁSOLD BE A LEGJOBB KÉPEDET!)
+  // =========================================================================
+  const MAIN_IMAGE_URL = "https://cc-west-usa.oss-accelerate.aliyuncs.com/20240314/2301130391666.jpg";
 
-  const [currentImg, setCurrentImg] = useState(0);
-
-  const nextImage = () => {
-    setCurrentImg((prev) => (prev === productImages.length - 1 ? 0 : prev + 1));
-  };
-
-  const prevImage = () => {
-    setCurrentImg((prev) => (prev === 0 ? productImages.length - 1 : prev - 1));
-  };
-
-  // --- 2. EGYÉB VÁLTOZÓK ---
+  // --- ÁLLAPOTOK ---
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState({ h: 3, m: 12, s: 45 });
@@ -43,7 +18,7 @@ export default function Home() {
   
   const PAYPAL_EMAIL = "stylefaqu@gmail.com"; 
 
-  // --- 3. IDŐZÍTŐ ---
+  // --- IDŐZÍTŐ ---
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft(prev => {
@@ -56,7 +31,7 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  // --- 4. ADATLEKÉRÉS ---
+  // --- ADATLEKÉRÉS ---
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -69,7 +44,34 @@ export default function Home() {
     fetchData();
   }, []);
 
-  // --- 5. NAVIGÁCIÓ ---
+  // --- KOMMENTEK ---
+  const staticReviews = [
+    {
+      author: "Varga Niki",
+      text: "Lányok, ez valami kegyetlen! 😱 Azt hittem kamu, de 2 perc alatt olyat csinált a számmal, mintha töltettem volna. Kicsit bizserget, de megéri!",
+      rating: 5,
+      date: "2 órája",
+      verified: true,
+      hasPhoto: false
+    },
+    {
+      author: "Kovács Petra",
+      text: "Nagyon gyorsan megjött! A gép kicsit hangosabb, mint gondoltam, ezért csak 4 csillag, de az eredmény tényleg brutál. Randi előtt kötelező.",
+      rating: 4,
+      date: "5 órája",
+      verified: true,
+      hasPhoto: false
+    },
+    {
+      author: "Tóth Eszter",
+      text: "Már a barátnőmnek is rendeltem egyet. Imádom, hogy nem kell tűszúrás. Az Apple formájút használom, nagyon kényelmes.",
+      rating: 5,
+      date: "Tegnap",
+      verified: true,
+      hasPhoto: false
+    }
+  ];
+
   const scrollToOrder = () => {
     document.getElementById('order-section')?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -82,6 +84,7 @@ export default function Home() {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setOrderStatus('loading');
+    
     const totalAmount = calculateTotal();
 
     try {
@@ -117,12 +120,12 @@ export default function Home() {
     }
   };
 
-  // --- 6. BETÖLTŐ KÉPERNYŐ ---
+  // --- BETÖLTÉS ---
   if (loading || !product) {
     return <div className="min-h-screen flex items-center justify-center text-gray-500 font-medium">Betöltés...</div>;
   }
 
-  // --- 7. FŐOLDAL MEGJELENÍTÉSE ---
+  // --- MEGJELENÍTÉS ---
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
       
@@ -137,42 +140,26 @@ export default function Home() {
       </nav>
 
       <main>
-        {/* HERO SZEKCIÓ */}
+        {/* HERO */}
         <section className="max-w-5xl mx-auto px-4 py-8 lg:py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             
-            {/* --- GALÉRIA --- */}
-            <div className="relative group select-none">
-               <div className="absolute top-4 right-4 bg-red-600 text-white w-14 h-14 flex items-center justify-center rounded-full shadow-xl z-20 border-2 border-white animate-pulse">
-                 <p className="text-lg font-black">-50%</p>
+            {/* KÉP (FIX EGY DARAB KÉP) */}
+            <div className="relative">
+               <div className="absolute top-4 right-4 bg-red-600 text-white w-16 h-16 flex items-center justify-center rounded-full shadow-xl z-10 border-2 border-white animate-pulse">
+                 <p className="text-xl font-black">-50%</p>
                </div>
                
-               <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 border-4 border-white relative">
+               <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 border-4 border-white">
                  <img 
-                    src={productImages[currentImg]} 
-                    alt="Product" 
-                    className="w-full h-full object-cover transition-all duration-300"
-                    onError={(e) => { (e.target as any).src = "https://images.unsplash.com/photo-1629198688000-71f23e745b6e?w=800"; }} 
+                    src={MAIN_IMAGE_URL} 
+                    alt={product.name} 
+                    className="w-full h-full object-cover" 
                  />
-                 
-                 {/* Nyilak */}
-                 <button onClick={prevImage} className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-md backdrop-blur-sm transition z-10">
-                    <ChevronLeft size={24} />
-                 </button>
-                 <button onClick={nextImage} className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-md backdrop-blur-sm transition z-10">
-                    <ChevronRight size={24} />
-                 </button>
-
-                 {/* Pöttyök */}
-                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-                    {productImages.map((_, idx) => (
-                        <div key={idx} className={`w-2 h-2 rounded-full transition-all ${currentImg === idx ? 'bg-pink-600 w-4' : 'bg-white/60'}`} />
-                    ))}
-                 </div>
                </div>
             </div>
 
-            {/* TERMÉK INFÓK */}
+            {/* SZÖVEG */}
             <div className="space-y-6">
               <div>
                 <div className="flex items-center gap-2 mb-2">
@@ -206,6 +193,7 @@ export default function Home() {
                   </div>
               </div>
 
+              {/* ELŐNYÖK */}
               <div className="bg-gray-50 p-5 rounded-xl border border-gray-200 shadow-sm">
                 <h3 className="font-bold text-gray-900 flex items-center gap-2 text-sm mb-3"><Zap className="text-pink-500 fill-pink-500" size={18} /> Miért imádják a nők?</h3>
                 <ul className="space-y-2 text-base">
@@ -222,28 +210,30 @@ export default function Home() {
           </div>
         </section>
 
-        {/* KOMMENTEK (FIX) */}
+        {/* KOMMENTEK */}
         <section className="bg-white py-10 border-t border-gray-100">
           <div className="max-w-xl mx-auto px-4">
             <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
                 Vásárlói vélemények <span className="text-gray-500 font-normal text-sm">(395)</span>
             </h2>
             <div className="space-y-4">
-                {/* 1. Komment */}
-                <div className="flex gap-2 items-start animate-fade-in-up">
+              {staticReviews.map((review, i) => (
+                <div key={i} className="flex gap-2 items-start animate-fade-in-up">
                   <div className="flex-shrink-0">
-                     <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-sm bg-blue-600">V</div>
+                     <div className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-sm ${i===1 ? 'bg-purple-600' : 'bg-blue-600'}`}>
+                        {review.author?.charAt(0) || "V"}
+                     </div>
                   </div>
                   <div className="flex-1">
                     <div className="bg-[#f0f2f5] px-3 py-2 rounded-[18px] inline-block relative min-w-[180px]">
                         <div className="flex items-center gap-1">
-                            <h4 className="font-bold text-[13px] text-gray-900 cursor-pointer hover:underline">Varga Niki</h4>
+                            <h4 className="font-bold text-[13px] text-gray-900 cursor-pointer hover:underline">{review.author}</h4>
                             <CheckCircle size={12} className="text-blue-500 fill-blue-500 text-white" />
                         </div>
                         <div className="flex text-yellow-500 text-[10px] mb-1">
-                            {[...Array(5)].map((_, i) => <Star key={i} fill="currentColor" size={8}/>)}
+                            {[...Array(review.rating)].map((_, i) => <Star key={i} fill="currentColor" size={8}/>)}
                         </div>
-                        <p className="text-[14px] text-gray-800 leading-snug mt-0.5">Lányok, ez valami kegyetlen! 😱 Azt hittem kamu, de 2 perc alatt olyat csinált a számmal, mintha töltettem volna. Kicsit bizserget, de megéri!</p>
+                        <p className="text-[14px] text-gray-800 leading-snug mt-0.5">{review.text}</p>
                         <div className="absolute -bottom-2 -right-1 bg-white rounded-full shadow-md border border-gray-100 flex items-center gap-1 px-1 py-0.5 cursor-pointer">
                             <div className="bg-blue-500 rounded-full p-[2px]"><ThumbsUp size={8} fill="white" className="text-white"/></div>
                             <span className="text-[10px] text-gray-500 font-bold">24</span>
@@ -252,38 +242,11 @@ export default function Home() {
                     <div className="flex gap-3 mt-1 ml-3 text-[11px] font-bold text-gray-500">
                         <span className="cursor-pointer hover:underline text-gray-600">Tetszik</span>
                         <span className="cursor-pointer hover:underline text-gray-600">Válasz</span>
-                        <span className="font-normal text-gray-400">2 órája</span>
+                        <span className="font-normal text-gray-400">{review.date}</span>
                     </div>
                   </div>
                 </div>
-
-                {/* 2. Komment */}
-                <div className="flex gap-2 items-start animate-fade-in-up">
-                  <div className="flex-shrink-0">
-                     <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-sm bg-purple-600">K</div>
-                  </div>
-                  <div className="flex-1">
-                    <div className="bg-[#f0f2f5] px-3 py-2 rounded-[18px] inline-block relative min-w-[180px]">
-                        <div className="flex items-center gap-1">
-                            <h4 className="font-bold text-[13px] text-gray-900 cursor-pointer hover:underline">Kovács Petra</h4>
-                            <CheckCircle size={12} className="text-blue-500 fill-blue-500 text-white" />
-                        </div>
-                        <div className="flex text-yellow-500 text-[10px] mb-1">
-                            {[...Array(4)].map((_, i) => <Star key={i} fill="currentColor" size={8}/>)}
-                        </div>
-                        <p className="text-[14px] text-gray-800 leading-snug mt-0.5">Nagyon gyorsan megjött! A gép kicsit hangosabb, mint gondoltam, ezért csak 4 csillag, de az eredmény tényleg brutál. Randi előtt kötelező.</p>
-                        <div className="absolute -bottom-2 -right-1 bg-white rounded-full shadow-md border border-gray-100 flex items-center gap-1 px-1 py-0.5 cursor-pointer">
-                            <div className="bg-blue-500 rounded-full p-[2px]"><ThumbsUp size={8} fill="white" className="text-white"/></div>
-                            <span className="text-[10px] text-gray-500 font-bold">18</span>
-                        </div>
-                    </div>
-                    <div className="flex gap-3 mt-1 ml-3 text-[11px] font-bold text-gray-500">
-                        <span className="cursor-pointer hover:underline text-gray-600">Tetszik</span>
-                        <span className="cursor-pointer hover:underline text-gray-600">Válasz</span>
-                        <span className="font-normal text-gray-400">5 órája</span>
-                    </div>
-                  </div>
-                </div>
+              ))}
             </div>
             <div className="mt-8 text-center pt-4">
                 <p className="text-gray-400 text-xs font-bold cursor-pointer hover:text-gray-600 transition">Előző 392 hozzászólás betöltése...</p>
@@ -310,6 +273,7 @@ export default function Home() {
                 <h3 className="text-2xl font-bold mb-1">Rendelés Leadása 📦</h3>
                 <p className="text-gray-400 text-xs uppercase tracking-wide">Biztonságos SSL Kapcsolat</p>
               </div>
+              
               <div className="p-6 md:p-8">
                 {orderStatus === 'success' ? (
                   <div className="text-center py-10">
@@ -329,6 +293,7 @@ export default function Home() {
                                 <span className="text-[10px] text-green-700 font-bold mt-1 bg-green-200 px-2 py-0.5 rounded">INGYEN SZÁLLÍTÁS</span>
                             </div>
                         </div>
+
                         <div className="relative p-3 rounded-lg border-2 border-gray-200 bg-gray-100 opacity-60 cursor-not-allowed grayscale">
                              <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-lg z-10 text-center px-1">
                                 <div className="bg-white px-2 py-1 rounded border border-gray-300 shadow-sm transform -rotate-2">
@@ -343,7 +308,36 @@ export default function Home() {
                             </div>
                         </div>
                     </div>
+
                     <div className="space-y-3">
                        <div><label className="text-[10px] font-bold text-gray-500 uppercase ml-1">Név</label><input required type="text" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 outline-none" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Pl. Minta Éva" /></div>
                        <div className="grid grid-cols-2 gap-3">
-                           <div><label className="text-[10px] font-bold text-gray-500 uppercase ml-1">Email</label><input required type="email" className="w-full p-3 bg-
+                           <div><label className="text-[10px] font-bold text-gray-500 uppercase ml-1">Email</label><input required type="email" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 outline-none" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="email@cim.hu" /></div>
+                           <div><label className="text-[10px] font-bold text-gray-500 uppercase ml-1">Telefon</label><input required type="tel" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 outline-none" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="06 30..." /></div>
+                       </div>
+                       <div><label className="text-[10px] font-bold text-gray-500 uppercase ml-1">Cím</label><input required type="text" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 outline-none" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} placeholder="Város, Utca, Házszám" /></div>
+                    </div>
+
+                    <div className="pt-4 border-t border-gray-200">
+                      <div className="flex justify-between items-center mb-4">
+                          <span className="text-sm text-gray-500 font-medium">Fizetendő:</span>
+                          <span className="text-2xl font-black text-pink-600">{calculateTotal().toLocaleString()} Ft</span>
+                      </div>
+                      <button disabled={orderStatus === 'loading'} className="w-full bg-black text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-gray-800 transition transform active:scale-95">
+                        {orderStatus === 'loading' ? 'Feldolgozás...' : 'Tovább a Fizetéshez (PayPal)'}
+                      </button>
+                      <p className="text-center text-[10px] text-gray-400 mt-3 flex justify-center items-center gap-1">
+                        <Shield size={10}/> SSL Titkosított Fizetés
+                      </p>
+                    </div>
+                  </form>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <footer className="bg-white border-t border-gray-200 py-8 mt-8 text-center"><p className="text-gray-400 text-xs">© 2024 Lipses Shop.</p></footer>
+    </div>
+  );
+}
