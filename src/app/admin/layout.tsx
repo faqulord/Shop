@@ -9,7 +9,7 @@ export default function AdminLayout({
   return (
     <div className="flex min-h-screen bg-gray-50 text-gray-900 font-sans">
       
-      {/* --- ASZTALI SIDEBAR (Csak gépen látszik: md:flex) --- */}
+      {/* ASZTALI SIDEBAR */}
       <aside className="hidden md:flex w-64 bg-white border-r border-gray-200 flex-col fixed h-full z-20">
         <div className="h-16 flex items-center px-6 border-b border-gray-100">
           <div className="font-bold text-xl tracking-tight flex items-center gap-2">
@@ -28,40 +28,35 @@ export default function AdminLayout({
           </Link>
 
           <p className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 mt-6">Kezelés</p>
-          <Link href="/admin/products" className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition">
-            <Package size={20} /> Termékek
-          </Link>
           <Link href="/admin/reviews" className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition">
             <MessageSquare size={20} /> Vélemények
+          </Link>
+          <Link href="/admin/settings" className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition">
+            <Settings size={20} /> Beállítások
           </Link>
         </nav>
       </aside>
 
-      {/* --- TARTALOM (Mobilon teljes szélesség, Gépen margóval) --- */}
+      {/* TARTALOM */}
       <main className="flex-1 ml-0 md:ml-64 p-4 md:p-8 pb-24 md:pb-8 overflow-y-auto">
         {children}
       </main>
 
-      {/* --- MOBIL ALSÓ MENÜ (Csak mobilon látszik: md:hidden) --- */}
+      {/* MOBIL MENÜ */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around p-3 z-50 shadow-lg">
         <Link href="/admin" className="flex flex-col items-center gap-1 text-gray-600 hover:text-blue-600">
-          <LayoutDashboard size={24} />
-          <span className="text-[10px] font-medium">Home</span>
+          <LayoutDashboard size={24} /> <span className="text-[10px] font-medium">Home</span>
         </Link>
         <Link href="/admin/reviews" className="flex flex-col items-center gap-1 text-gray-600 hover:text-blue-600">
-          <MessageSquare size={24} />
-          <span className="text-[10px] font-medium">Komment</span>
+          <MessageSquare size={24} /> <span className="text-[10px] font-medium">Komment</span>
         </Link>
         <Link href="/admin/orders" className="flex flex-col items-center gap-1 text-gray-600 hover:text-blue-600">
-          <ShoppingBag size={24} />
-          <span className="text-[10px] font-medium">Rendelés</span>
+          <ShoppingBag size={24} /> <span className="text-[10px] font-medium">Rendelés</span>
         </Link>
-        <Link href="/settings" className="flex flex-col items-center gap-1 text-gray-600 hover:text-blue-600">
-          <Settings size={24} />
-          <span className="text-[10px] font-medium">Beállítás</span>
+        <Link href="/admin/settings" className="flex flex-col items-center gap-1 text-gray-600 hover:text-blue-600">
+          <Settings size={24} /> <span className="text-[10px] font-medium">Beállítás</span>
         </Link>
       </div>
-
     </div>
   );
 }
