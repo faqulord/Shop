@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Star, Check, Shield, ArrowRight, Heart, CreditCard, Banknote, ThumbsUp, AlertTriangle, Zap, Clock } from 'lucide-react';
 
-// Segéd komponens a CheckCircle ikonhoz, hogy ne legyen import hiba
+// --- SEGÉD KOMPONENS (Hogy biztosan ne legyen hiba) ---
 function CheckCircle({ size, fill, className }: any) {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill || "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -33,7 +33,7 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  // --- FIX KOMMENTEK (Facebook Stílus) ---
+  // --- KOMMENTEK ---
   const staticReviews = [
     {
       author: "Varga Niki",
@@ -127,8 +127,13 @@ export default function Home() {
     }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-gray-500 font-medium">Betöltés...</div>;
-  if (!product) return <div className="min-h-screen flex items-center justify-center">Termék betöltése...</div>;
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center text-gray-500 font-medium">Betöltés...</div>;
+  }
+  
+  if (!product) {
+    return <div className="min-h-screen flex items-center justify-center">Termék betöltése...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
@@ -148,7 +153,6 @@ export default function Home() {
         <section className="max-w-5xl mx-auto px-4 py-8 lg:py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             
-            {/* KÉP + -50% DOBOZ */}
             <div className="relative">
                <div className="absolute top-4 right-4 bg-red-600 text-white w-16 h-16 flex items-center justify-center rounded-full shadow-xl z-10 border-2 border-white animate-pulse">
                  <p className="text-xl font-black">-50%</p>
@@ -169,16 +173,13 @@ export default function Home() {
                   <span className="text-gray-400 text-xs">(395 vélemény)</span>
                 </div>
                 
-                {/* --- NAGY, FEKETE CÍM --- */}
                 <h1 className="text-3xl md:text-5xl font-black text-gray-900 leading-tight mb-4">{product.name}</h1>
                 
-                {/* --- RÖVID LEÍRÁS (HTML Render) --- */}
                 <div className="text-lg font-medium text-black leading-relaxed" 
                      dangerouslySetInnerHTML={{ __html: product.description ? product.description.replace(/\n/g, '<br/>') : '' }}>
                 </div>
               </div>
 
-              {/* --- VISSZASZÁMLÁLÓ + ÁR --- */}
               <div className="bg-red-50 border border-red-100 p-4 rounded-xl flex items-center justify-between">
                   <div>
                       <p className="text-xs text-red-500 font-bold uppercase flex items-center gap-1">
@@ -210,7 +211,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* --- FACEBOOK STÍLUSÚ KOMMENTEK --- */}
+        {/* --- KOMMENTEK --- */}
         <section className="bg-white py-10 border-t border-gray-100">
           <div className="max-w-xl mx-auto px-4">
             <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
@@ -276,7 +277,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ŰRLAP + PIROS FIGYELMEZTETÉS */}
+        {/* ŰRLAP */}
         <div id="order-section" className="py-12 bg-gray-50">
           <div className="max-w-xl mx-auto px-4">
             
@@ -351,4 +352,14 @@ export default function Home() {
                         {orderStatus === 'loading' ? 'Feldolgozás...' : 'Tovább a Fizetéshez (PayPal)'}
                       </button>
                       <p className="text-center text-[10px] text-gray-400 mt-3 flex justify-center items-center gap-1">
-             
+                        <Shield size={10}/> SSL Titkosított Fizetés
+                      </p>
+                    </div>
+                  </form>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+     
