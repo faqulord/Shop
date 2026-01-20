@@ -1,43 +1,27 @@
-import { ShoppingBag } from 'lucide-react';
-
-export default function Home() {
-  return (
-    <main style={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      alignItems: 'center', 
-      justifyContent: 'center', 
-      minHeight: '100vh',
-      fontFamily: 'sans-serif',
-      padding: '20px'
-    }}>
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        gap: '15px', 
-        marginBottom: '20px' 
-      }}>
-        <ShoppingBag size={48} color="#333" />
-        <h1 style={{ fontSize: '2.5rem', margin: 0 }}>Super Dropship Store</h1>
-      </div>
-      
-      <p style={{ fontSize: '1.2rem', color: '#666', textAlign: 'center' }}>
-        Az oldal sikeresen elindult! 🚀<br />
-        A termékek feltöltése folyamatban...
-      </p>
-      
-      <button style={{
-        marginTop: '30px',
-        padding: '12px 24px',
-        fontSize: '1rem',
-        backgroundColor: '#000',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer'
-      }}>
-        Vásárlás megkezdése
-      </button>
-    </main>
-  );
+{
+  "name": "shop",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "react": "^18",
+    "react-dom": "^18",
+    "next": "14.1.0",
+    "lucide-react": "^0.562.0",
+    "mongoose": "^8.1.1"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.0.1",
+    "postcss": "^8",
+    "tailwindcss": "^3.3.0"
+  }
 }
