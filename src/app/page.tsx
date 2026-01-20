@@ -1,30 +1,39 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { Star, Check, Truck, Shield, ArrowRight, Heart, CreditCard, Banknote, Lock, ThumbsUp, AlertTriangle, Zap, Clock } from 'lucide-react';
+import { Star, Check, Shield, ArrowRight, Heart, CreditCard, Banknote, ThumbsUp, AlertTriangle, Zap, Clock } from 'lucide-react';
+
+// Segéd komponens a CheckCircle ikonhoz, hogy ne legyen import hiba
+function CheckCircle({ size, fill, className }: any) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill || "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+    );
+}
 
 export default function Home() {
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   
-  // A SAJÁT PAYPAL CÍMED
+  // PAYPAL EMAIL
   const PAYPAL_EMAIL = "stylefaqu@gmail.com"; 
 
-  // --- VISSZASZÁMLÁLÓ LOGIKA ---
-  const [timeLeft, setTimeLeft] = useState({ h: 4, m: 12, s: 45 });
+  // --- VISSZASZÁMLÁLÓ ---
+  const [timeLeft, setTimeLeft] = useState({ h: 3, m: 12, s: 45 });
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         if (prev.s > 0) return { ...prev, s: prev.s - 1 };
         if (prev.m > 0) return { ...prev, m: prev.m - 1, s: 59 };
         if (prev.h > 0) return { ...prev, h: prev.h - 1, m: 59, s: 59 };
-        return { h: 4, m: 59, s: 59 }; // Ha lejár, újraindul
+        return { h: 3, m: 59, s: 59 };
       });
     }, 1000);
     return () => clearInterval(timer);
   }, []);
 
-  // --- FIX KOMMENTEK (Hogy azonnal tökéletes legyen) ---
-  // Ezek jelennek meg, nem az adatbázisból tölt, így elkerüljük a hibás képeket.
+  // --- FIX KOMMENTEK (Facebook Stílus) ---
   const staticReviews = [
     {
       author: "Varga Niki",
@@ -33,12 +42,12 @@ export default function Home() {
       date: "2 órája",
       verified: true,
       hasPhoto: true,
-      imageUrl: "https://images.unsplash.com/photo-1596462502278-27bfdd403cc2?w=500&auto=format&fit=crop&q=60" // Szép rúzsozott száj kép
+      imageUrl: "https://images.unsplash.com/photo-1596462502278-27bfdd403cc2?w=500&auto=format&fit=crop&q=60"
     },
     {
       author: "Kovács Petra",
-      text: "Nagyon gyorsan megjött! A gép kicsit hangosabb, mint gondoltam (zúg a vákuum), ezért csak 4 csillag, de az eredmény tényleg brutál. Randi előtt kötelező.",
-      rating: 4, // A "REÁLIS" KOMMENT
+      text: "Nagyon gyorsan megjött! A gép kicsit hangosabb, mint gondoltam, ezért csak 4 csillag, de az eredmény tényleg brutál. Randi előtt kötelező.",
+      rating: 4,
       date: "5 órája",
       verified: true,
       hasPhoto: false
@@ -119,7 +128,7 @@ export default function Home() {
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-gray-500 font-medium">Betöltés...</div>;
-  if (!product) return <div className="min-h-screen flex items-center justify-center">Hiba történt.</div>;
+  if (!product) return <div className="min-h-screen flex items-center justify-center">Termék betöltése...</div>;
 
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
@@ -127,7 +136,6 @@ export default function Home() {
       {/* FEJLÉC */}
       <nav className="bg-white/95 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 shadow-sm py-3">
         <div className="max-w-5xl mx-auto px-4 flex justify-between items-center">
-          {/* Logo Frissítve - Kicsit modernebb */}
           <span className="text-2xl font-black text-pink-600 tracking-tighter">LIPSES.</span>
           <button onClick={scrollToOrder} className="bg-black text-white px-5 py-2 rounded-full font-bold text-xs hover:scale-105 transition shadow-lg flex items-center gap-2">
             Megrendelem <ArrowRight size={14} />
@@ -142,8 +150,7 @@ export default function Home() {
             
             {/* KÉP + -50% DOBOZ */}
             <div className="relative">
-               {/* --- ITT AZ ÚJ -50% DOBOZ --- */}
-               <div className="absolute top-4 right-4 bg-red-600 text-white p-3 rounded-full shadow-xl z-10 border-2 border-white animate-pulse">
+               <div className="absolute top-4 right-4 bg-red-600 text-white w-16 h-16 flex items-center justify-center rounded-full shadow-xl z-10 border-2 border-white animate-pulse">
                  <p className="text-xl font-black">-50%</p>
                </div>
                
@@ -159,15 +166,15 @@ export default function Home() {
                   <div className="flex text-yellow-400">
                     {[1,2,3,4,5].map(i => <Star key={i} fill="currentColor" size={14}/>)}
                   </div>
-                  <span className="text-gray-400 text-xs">(390+ vélemény)</span>
+                  <span className="text-gray-400 text-xs">(395 vélemény)</span>
                 </div>
                 
                 {/* --- NAGY, FEKETE CÍM --- */}
                 <h1 className="text-3xl md:text-5xl font-black text-gray-900 leading-tight mb-4">{product.name}</h1>
                 
-                {/* --- RÖVID LEÍRÁS --- */}
+                {/* --- RÖVID LEÍRÁS (HTML Render) --- */}
                 <div className="text-lg font-medium text-black leading-relaxed" 
-                     dangerouslySetInnerHTML={{ __html: product.description.replace(/\n/g, '<br/>') }}>
+                     dangerouslySetInnerHTML={{ __html: product.description ? product.description.replace(/\n/g, '<br/>') : '' }}>
                 </div>
               </div>
 
@@ -203,7 +210,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* --- FACEBOOK STÍLUSÚ KOMMENTEK (FIX ADATOKKAL) --- */}
+        {/* --- FACEBOOK STÍLUSÚ KOMMENTEK --- */}
         <section className="bg-white py-10 border-t border-gray-100">
           <div className="max-w-xl mx-auto px-4">
             <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
@@ -229,7 +236,7 @@ export default function Home() {
                             <h4 className="font-bold text-[13px] text-gray-900 cursor-pointer hover:underline">
                                 {review.author}
                             </h4>
-                            {review.verified && <Check size={12} className="text-white bg-blue-500 rounded-full p-[2px]" />}
+                            {review.verified && <CheckCircle size={12} className="text-blue-500 fill-blue-500 text-white" />}
                         </div>
                         
                         <div className="flex text-yellow-500 text-[10px] mb-1">
@@ -260,7 +267,6 @@ export default function Home() {
               ))}
             </div>
 
-            {/* --- "TOVÁBBI KOMMENTEK" (PSZICHOLÓGIA) --- */}
             <div className="mt-8 text-center pt-4">
                 <p className="text-gray-400 text-xs font-bold cursor-pointer hover:text-gray-600 transition">
                     Előző 392 hozzászólás betöltése...
@@ -345,11 +351,4 @@ export default function Home() {
                         {orderStatus === 'loading' ? 'Feldolgozás...' : 'Tovább a Fizetéshez (PayPal)'}
                       </button>
                       <p className="text-center text-[10px] text-gray-400 mt-3 flex justify-center items-center gap-1">
-                        <Shield size={10}/> SSL Titkosított Fizetés
-                      </p>
-                    </div>
-                  </form>
-                )}
-              </div>
-            </div>
-          </d
+             
