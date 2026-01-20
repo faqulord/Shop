@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 
-// --- 1. ADATBÁZIS KAPCSOLÓDÁS ---
 const MONGODB_URI = process.env.MONGODB_URI;
 
 async function connectToDb() {
@@ -10,7 +9,7 @@ async function connectToDb() {
   return await mongoose.connect(MONGODB_URI);
 }
 
-// --- 2. MODELL DEFINIÁLÁSA HELYBEN (A Hiba elkerülése végett) ---
+// ITT A LÉNYEG: Nincs import, itt van a modell definíciója!
 const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
@@ -22,13 +21,8 @@ const productSchema = new mongoose.Schema({
   rating: { type: Number, default: 5 }
 }, { timestamps: true });
 
-// Így biztosan megtalálja a Product modellt!
 const Product = mongoose.models.Product || mongoose.model('Product', productSchema);
 
-
-// --- 3. API FUNKCIÓK ---
-
-// LEKÉRÉS (GET)
 export async function GET() {
   try {
     await connectToDb();
@@ -39,15 +33,11 @@ export async function GET() {
   }
 }
 
-// MENTÉS (PUT)
 export async function PUT(req: Request) {
   try {
     await connectToDb();
     const body = await req.json();
-    
-    // Frissítjük az első terméket
     const updatedProduct = await Product.findOneAndUpdate({}, body, { new: true });
-    
     return NextResponse.json(updatedProduct);
   } catch (error: any) {
     return NextResponse.json({ error: "Hiba: " + error.message }, { status: 500 });
