@@ -1,60 +1,69 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 
-// --- 1. RÉSZ: A KAPCSOLAT ÉS MODELLEK (Mindent ideírunk, hogy ne legyen útvonal hiba) ---
-
 const MONGODB_URI = process.env.MONGODB_URI;
 
-// Adatbázis kapcsolódás
 async function connectToDb() {
-  if (mongoose.connection.readyState === 1) {
-    return mongoose.connection;
-  }
-  if (!MONGODB_URI) {
-    throw new Error('HIÁNYZIK A MONGODB_URI a Railway Variables-ből!');
-  }
+  if (mongoose.connection.readyState === 1) return mongoose.connection;
+  if (!MONGODB_URI) throw new Error('HIÁNYZIK A MONGODB_URI!');
   return await mongoose.connect(MONGODB_URI);
 }
 
-// Termék Tervrajz
-const productSchema = new mongoose.Schema({
-  name: String,
-  description: String,
-  price: Number,
-  originalPrice: Number,
-  discountText: String,
-  imageUrl: String,
-  reviewsCount: Number,
-  rating: Number,
-}, { timestamps: true });
+// --- MODELLEK DEFINIÁLÁSA (Biztonsági okból itt helyben) ---
 
-// Ha már létezik, használjuk azt, ha nem, létrehozzuk (Precízen kezelve a kis-nagybetűt)
+// 1. Termék
+const productSchema = new mongoose.Schema({ 
+  name: String, 
+  description: String, 
+  price: Number, 
+  originalPrice: Number, 
+  discountText: String, 
+  imageUrl: String, 
+  reviewsCount: Number, 
+  rating: Number 
+}, { timestamps: true });
 const Product = mongoose.models.Product || mongoose.model('Product', productSchema);
 
-// Komment Tervrajz
-const reviewSchema = new mongoose.Schema({
-  author: String,
-  text: String,
-  rating: Number,
-  date: String,
-  likes: Number,
-  hasPhoto: Boolean,
-  verified: Boolean
+// 2. Komment (Vélemény) - Bővítve képpel
+const reviewSchema = new mongoose.Schema({ 
+  author: String, 
+  text: String, 
+  rating: Number, 
+  date: String, 
+  likes: Number, 
+  hasPhoto: Boolean, 
+  verified: Boolean, 
+  imageUrl: String 
 }, { timestamps: true });
-
 const Review = mongoose.models.Review || mongoose.model('Review', reviewSchema);
 
+// 3. Rendelés (EZ AZ ÚJ!)
+const orderSchema = new mongoose.Schema({ 
+  customerName: String, 
+  email: String, 
+  phone: String, 
+  address: String, 
+  city: String, 
+  zip: String, 
+  products: Array, 
+  totalAmount: Number, 
+  status: String 
+}, { timestamps: true });
+const Order = mongoose.models.Order || mongoose.model('Order', orderSchema);
 
-// --- 2. RÉSZ: A FELTÖLTÉS ---
+
+// --- A FOLYAMAT ---
 
 export async function GET() {
   try {
     await connectToDb(); 
 
-    // Törlés és Újraírás
+    // Törlünk mindent, hogy tiszta lappal induljunk
     await Product.deleteMany({});
     await Review.deleteMany({});
+    await Order.deleteMany({});
 
+    // 1. Létrehozzuk a TERMÉKET
     await Product.create({
       name: "Lipses Varázs Ajakdúsító",
       description: "Felejtsd el a fájdalmas tűszúrásokat! A Lipses Varázs természetes hatóanyagaival azonnal dúsítja az ajkakat.",
@@ -66,13 +75,51 @@ export async function GET() {
       rating: 4.9
     });
 
+    // 2. Létrehozzuk a KOMMENTEKET
     await Review.create([
       { author: "Kovács Kinga", text: "Csajok! Ez valami brutál. 😱", rating: 5, date: "23 perce", likes: 124, verified: true },
-      { author: "Nagy Szandra", text: "Már a második tubussal rendeltem. 💋", rating: 5, date: "2 órája", likes: 89, hasPhoto: true, verified: true },
+      { author: "Nagy Szandra", text: "Már a második tubussal rendeltem. 💋", rating: 5, date: "2 órája", likes: 89, hasPhoto: true, verified: true, imageUrl: "https://images.unsplash.com/photo-1512413914633-b5043f4041ea?w=200" },
       { author: "Tóth Eszter", text: "Hihetetlen gyors szállítás! ❤️", rating: 5, date: "5 órája", likes: 45, verified: true }
     ]);
 
-    return NextResponse.json({ message: "SIKER! 🚀 Adatbázis feltöltve." });
+    // 3. Létrehozzuk a PRÓBA RENDELÉSEKET (Hogy legyen statisztika)
+    await Order.create([
+      { 
+        customerName: "Varga Judit", 
+        email: "judit@gmail.com", 
+        phone: "06301234567", 
+        address: "Kossuth u. 12.", 
+        city: "Budapest", 
+        zip: "1052", 
+        products: [{name: "Lipses", price: 9990, quantity: 1}], 
+        totalAmount: 9990, 
+        status: "Feldolgozás alatt" 
+      },
+      { 
+        customerName: "Kiss Péter", 
+        email: "peter@citromail.hu", 
+        phone: "06209876543", 
+        address: "Fő tér 5.", 
+        city: "Debrecen", 
+        zip: "4025", 
+        products: [{name: "Lipses", price: 9990, quantity: 2}], 
+        totalAmount: 19980, 
+        status: "Szállítás alatt" 
+      },
+      { 
+        customerName: "Nagy Éva", 
+        email: "eva@freemail.hu", 
+        phone: "06705554433", 
+        address: "Petőfi S. u. 8.", 
+        city: "Szeged", 
+        zip: "6720", 
+        products: [{name: "Lipses", price: 9990, quantity: 1}], 
+        totalAmount: 9990, 
+        status: "Kézbesítve" 
+      }
+    ]);
+
+    return NextResponse.json({ message: "SIKER! 🚀 Adatbázis feltöltve termékkel, kommentekkel és próba rendelésekkel." });
     
   } catch (error: any) {
     return NextResponse.json({ error: "Hiba: " + error.message }, { status: 500 });
