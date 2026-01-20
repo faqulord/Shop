@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 
-// --- 1. RÉSZ: A MODELLEK ÉS KAPCSOLAT (Mindent idehoztunk) ---
+// --- 1. RÉSZ: A KAPCSOLAT ÉS MODELLEK (Mindent ideírunk, hogy ne legyen útvonal hiba) ---
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
-// Adatbázis kapcsolódás logikája
+// Adatbázis kapcsolódás
 async function connectToDb() {
   if (mongoose.connection.readyState === 1) {
     return mongoose.connection;
@@ -16,7 +16,7 @@ async function connectToDb() {
   return await mongoose.connect(MONGODB_URI);
 }
 
-// Termék "Tervrajz" (Schema)
+// Termék Tervrajz
 const productSchema = new mongoose.Schema({
   name: String,
   description: String,
@@ -28,10 +28,10 @@ const productSchema = new mongoose.Schema({
   rating: Number,
 }, { timestamps: true });
 
-// Ha már létezik a modell, használjuk azt, ha nem, létrehozzuk
+// Ha már létezik, használjuk azt, ha nem, létrehozzuk (Precízen kezelve a kis-nagybetűt)
 const Product = mongoose.models.Product || mongoose.model('Product', productSchema);
 
-// Komment "Tervrajz" (Schema)
+// Komment Tervrajz
 const reviewSchema = new mongoose.Schema({
   author: String,
   text: String,
@@ -45,17 +45,16 @@ const reviewSchema = new mongoose.Schema({
 const Review = mongoose.models.Review || mongoose.model('Review', reviewSchema);
 
 
-// --- 2. RÉSZ: MAGA A FELTÖLTÉS ---
+// --- 2. RÉSZ: A FELTÖLTÉS ---
 
 export async function GET() {
   try {
-    await connectToDb(); // 1. Kapcsolódunk
+    await connectToDb(); 
 
-    // 2. Töröljük a régit
+    // Törlés és Újraírás
     await Product.deleteMany({});
     await Review.deleteMany({});
 
-    // 3. Létrehozzuk a TERMÉKET
     await Product.create({
       name: "Lipses Varázs Ajakdúsító",
       description: "Felejtsd el a fájdalmas tűszúrásokat! A Lipses Varázs természetes hatóanyagaival azonnal dúsítja az ajkakat.",
@@ -67,38 +66,15 @@ export async function GET() {
       rating: 4.9
     });
 
-    // 4. Létrehozzuk a KOMMENTEKET
     await Review.create([
-      {
-        author: "Kovács Kinga",
-        text: "Csajok! Ez valami brutál. 😱 Én félek a tűtől, de ettől 5 perc alatt olyan szám lett, hogy a barátom azt hitte orvosnál voltam.",
-        rating: 5,
-        date: "23 perce",
-        likes: 124,
-        verified: true
-      },
-      {
-        author: "Nagy Szandra",
-        text: "Már a második tubussal rendeltem. Buliba kötelező! Kicsit csíp az elején, de pont ettől nő meg. 💋",
-        rating: 5,
-        date: "2 órája",
-        likes: 89,
-        hasPhoto: true,
-        verified: true
-      },
-      {
-        author: "Tóth Eszter",
-        text: "Hihetetlen gyors szállítás, tegnap rendeltem, ma reggel hozta a futár. Köszönöm Lipses! ❤️",
-        rating: 5,
-        date: "5 órája",
-        likes: 45,
-        verified: true
-      }
+      { author: "Kovács Kinga", text: "Csajok! Ez valami brutál. 😱", rating: 5, date: "23 perce", likes: 124, verified: true },
+      { author: "Nagy Szandra", text: "Már a második tubussal rendeltem. 💋", rating: 5, date: "2 órája", likes: 89, hasPhoto: true, verified: true },
+      { author: "Tóth Eszter", text: "Hihetetlen gyors szállítás! ❤️", rating: 5, date: "5 órája", likes: 45, verified: true }
     ]);
 
-    return NextResponse.json({ message: "SIKER! 🚀 Az adatbázis fel lett töltve a termékkel és kommentekkel." });
+    return NextResponse.json({ message: "SIKER! 🚀 Adatbázis feltöltve." });
     
   } catch (error: any) {
-    return NextResponse.json({ error: "Hiba történt: " + error.message }, { status: 500 });
+    return NextResponse.json({ error: "Hiba: " + error.message }, { status: 500 });
   }
 }
