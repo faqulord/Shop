@@ -1,18 +1,61 @@
 import { NextResponse } from 'next/server';
-// Itt javítottuk a címzést (a sok pont jelenti, hogy "menj visszább a mappákban"):
-import dbConnect from '../../../lib/mongoose';
-import Product from '../../../models/Product';
-import Review from '../../../models/Review';
+import mongoose from 'mongoose';
+
+// --- 1. RÉSZ: A MODELLEK ÉS KAPCSOLAT (Mindent idehoztunk) ---
+
+const MONGODB_URI = process.env.MONGODB_URI;
+
+// Adatbázis kapcsolódás logikája
+async function connectToDb() {
+  if (mongoose.connection.readyState === 1) {
+    return mongoose.connection;
+  }
+  if (!MONGODB_URI) {
+    throw new Error('HIÁNYZIK A MONGODB_URI a Railway Variables-ből!');
+  }
+  return await mongoose.connect(MONGODB_URI);
+}
+
+// Termék "Tervrajz" (Schema)
+const productSchema = new mongoose.Schema({
+  name: String,
+  description: String,
+  price: Number,
+  originalPrice: Number,
+  discountText: String,
+  imageUrl: String,
+  reviewsCount: Number,
+  rating: Number,
+}, { timestamps: true });
+
+// Ha már létezik a modell, használjuk azt, ha nem, létrehozzuk
+const Product = mongoose.models.Product || mongoose.model('Product', productSchema);
+
+// Komment "Tervrajz" (Schema)
+const reviewSchema = new mongoose.Schema({
+  author: String,
+  text: String,
+  rating: Number,
+  date: String,
+  likes: Number,
+  hasPhoto: Boolean,
+  verified: Boolean
+}, { timestamps: true });
+
+const Review = mongoose.models.Review || mongoose.model('Review', reviewSchema);
+
+
+// --- 2. RÉSZ: MAGA A FELTÖLTÉS ---
 
 export async function GET() {
   try {
-    await dbConnect();
+    await connectToDb(); // 1. Kapcsolódunk
 
-    // 1. Töröljük a régi szemetet
+    // 2. Töröljük a régit
     await Product.deleteMany({});
     await Review.deleteMany({});
 
-    // 2. Létrehozzuk a LIPSES terméket
+    // 3. Létrehozzuk a TERMÉKET
     await Product.create({
       name: "Lipses Varázs Ajakdúsító",
       description: "Felejtsd el a fájdalmas tűszúrásokat! A Lipses Varázs természetes hatóanyagaival azonnal dúsítja az ajkakat.",
@@ -24,7 +67,7 @@ export async function GET() {
       rating: 4.9
     });
 
-    // 3. Létrehozzuk a KAMU KOMMENTEKET
+    // 4. Létrehozzuk a KOMMENTEKET
     await Review.create([
       {
         author: "Kovács Kinga",
@@ -53,8 +96,9 @@ export async function GET() {
       }
     ]);
 
-    return NextResponse.json({ message: "ADATBÁZIS SIKERESEN FELTÖLTVE! 🚀 Mehetsz az oldalra." });
-  } catch (error) {
-    return NextResponse.json({ error: "Hiba történt a feltöltéskor: " + error }, { status: 500 });
+    return NextResponse.json({ message: "SIKER! 🚀 Az adatbázis fel lett töltve a termékkel és kommentekkel." });
+    
+  } catch (error: any) {
+    return NextResponse.json({ error: "Hiba történt: " + error.message }, { status: 500 });
   }
 }
