@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Star, Check, Shield, ArrowRight, Heart, CreditCard, Banknote, ThumbsUp, AlertTriangle, Zap, Clock } from 'lucide-react';
 
-// Ikon komponens a biztonság kedvéért kívül definiálva
+// --- IKON KOMPONENS (Kívülre téve, hogy ne okozzon hibát) ---
 function CheckCircle({ size, fill, className }: any) {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill || "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -13,14 +13,15 @@ function CheckCircle({ size, fill, className }: any) {
 }
 
 export default function Home() {
+  // --- ADATOK ÉS ÁLLAPOTOK ---
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  
-  // PAYPAL EMAIL
   const PAYPAL_EMAIL = "stylefaqu@gmail.com"; 
-
-  // --- VISSZASZÁMLÁLÓ ---
   const [timeLeft, setTimeLeft] = useState({ h: 3, m: 12, s: 45 });
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', address: '', city: '', zip: '' });
+  const [orderStatus, setOrderStatus] = useState('');
+
+  // --- IDŐZÍTŐ ---
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft(prev => {
@@ -31,6 +32,19 @@ export default function Home() {
       });
     }, 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  // --- BETÖLTÉS ---
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const prodRes = await fetch('/api/products');
+        const prodData = await prodRes.json();
+        setProduct(prodData);
+        setLoading(false);
+      } catch (err) { console.error(err); }
+    };
+    fetchData();
   }, []);
 
   // --- FIX KOMMENTEK ---
@@ -62,23 +76,6 @@ export default function Home() {
     }
   ];
 
-  const [formData, setFormData] = useState({
-    name: '', email: '', phone: '', address: '', city: '', zip: ''
-  });
-  const [orderStatus, setOrderStatus] = useState('');
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const prodRes = await fetch('/api/products');
-        const prodData = await prodRes.json();
-        setProduct(prodData);
-        setLoading(false);
-      } catch (err) { console.error(err); }
-    };
-    fetchData();
-  }, []);
-
   const scrollToOrder = () => {
     document.getElementById('order-section')?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -91,9 +88,7 @@ export default function Home() {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setOrderStatus('loading');
-    
     const totalAmount = calculateTotal();
-
     try {
         const orderData = {
             customerName: formData.name,
@@ -107,13 +102,11 @@ export default function Home() {
             paymentMethod: 'card',
             status: 'Fizetésre vár (PayPal)'
         };
-
         const response = await fetch('/api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(orderData)
         });
-
         if (response.ok) {
             const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${PAYPAL_EMAIL}&item_name=${encodeURIComponent(product.name)}&amount=${totalAmount}&currency_code=HUF&return=${encodeURIComponent(window.location.href)}`;
             window.location.href = paypalUrl;
@@ -127,15 +120,12 @@ export default function Home() {
     }
   };
 
-  // --- HIBAMENTESÍTETT LOADING CHECK ---
-  if (loading) {
+  // --- HA MÉG TÖLT, VAGY NINCS TERMÉK ---
+  if (loading || !product) {
     return <div className="min-h-screen flex items-center justify-center text-gray-500 font-medium">Betöltés...</div>;
   }
-  
-  if (!product) {
-    return <div className="min-h-screen flex items-center justify-center">Termék betöltése...</div>;
-  }
 
+  // --- FŐOLDAL MEGJELENÍTÉSE ---
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
       
@@ -150,16 +140,14 @@ export default function Home() {
       </nav>
 
       <main>
-        {/* HERO */}
+        {/* HERO SZEKCIÓ */}
         <section className="max-w-5xl mx-auto px-4 py-8 lg:py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             
-            {/* KÉP + -50% JELVÉNY */}
             <div className="relative">
                <div className="absolute top-4 right-4 bg-red-600 text-white w-16 h-16 flex items-center justify-center rounded-full shadow-xl z-10 border-2 border-white animate-pulse">
                  <p className="text-xl font-black">-50%</p>
                </div>
-               
                <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 border-4 border-white">
                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" onError={(e) => { (e.target as any).src = "https://images.unsplash.com/photo-1629198688000-71f23e745b6e?w=800"; }} />
                </div>
@@ -175,16 +163,13 @@ export default function Home() {
                   <span className="text-gray-400 text-xs">(395 vélemény)</span>
                 </div>
                 
-                {/* NAGY FEKETE CÍM */}
                 <h1 className="text-3xl md:text-5xl font-black text-gray-900 leading-tight mb-4">{product.name}</h1>
                 
-                {/* RÖVID LEÍRÁS HTML */}
                 <div className="text-lg font-medium text-black leading-relaxed" 
                      dangerouslySetInnerHTML={{ __html: product.description ? product.description.replace(/\n/g, '<br/>') : '' }}>
                 </div>
               </div>
 
-              {/* VISSZASZÁMLÁLÓ */}
               <div className="bg-red-50 border border-red-100 p-4 rounded-xl flex items-center justify-between">
                   <div>
                       <p className="text-xs text-red-500 font-bold uppercase flex items-center gap-1">
@@ -216,7 +201,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* --- FACEBOOK STÍLUSÚ KOMMENTEK --- */}
+        {/* KOMMENTEK SZEKCIÓ */}
         <section className="bg-white py-10 border-t border-gray-100">
           <div className="max-w-xl mx-auto px-4">
             <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
@@ -282,7 +267,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ŰRLAP + PIROS FIGYELMEZTETÉS */}
+        {/* ŰRLAP SZEKCIÓ */}
         <div id="order-section" className="py-12 bg-gray-50">
           <div className="max-w-xl mx-auto px-4">
             
@@ -357,4 +342,14 @@ export default function Home() {
                         {orderStatus === 'loading' ? 'Feldolgozás...' : 'Tovább a Fizetéshez (PayPal)'}
                       </button>
                       <p className="text-center text-[10px] text-gray-400 mt-3 flex justify-center items-center gap-1">
-               
+                        <Shield size={10}/> SSL Titkosított Fizetés
+                      </p>
+                    </div>
+                  </form>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <footer clas
