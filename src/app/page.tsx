@@ -4,9 +4,7 @@ import { Star, Check, Shield, ArrowRight, CreditCard, Banknote, AlertTriangle, Z
 
 export default function Home() {
 
-  // =========================================================================
-  // KÉPEK BEÁLLÍTÁSA
-  // =========================================================================
+  // --- KÉPEK ---
   const MAIN_IMAGE_URL = "https://i.imgur.com/gipJ587.jpg";
   const COMPARISON_PRODUCT_IMG = "https://i.imgur.com/uNDdP2q.jpg";
 
@@ -32,8 +30,9 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  // --- ADATLEKÉRÉS (DUMMY DATA) ---
+  // --- ADATLEKÉRÉS ---
   useEffect(() => {
+    // Dummy adat szimuláció
     const dummyProduct = {
       name: "Russian Lips Dúsító Készülék",
       description: "A forradalmian új, vákuum-technológiás ajakdúsító, amely tűszúrás nélkül varázsol telt, vonzó ajkakat percek alatt.",
@@ -44,30 +43,19 @@ export default function Home() {
     setLoading(false);
   }, []);
 
-  // --- KOMMENTEK ---
+  // --- VÉLEMÉNYEK ---
   const staticReviews = [
-    {
-      author: "Varga Niki",
-      text: "Lányok, ez valami kegyetlen! 😱 Azt hittem kamu, de 2 perc alatt olyat csinált a számmal, mintha töltettem volna. Kicsit bizserget, de megéri!",
-      rating: 5,
-      date: "2 órája"
-    },
-    {
-      author: "Kovács Petra",
-      text: "Nagyon gyorsan megjött! A gép kicsit hangosabb, mint gondoltam, ezért csak 4 csillag, de az eredmény tényleg brutál. Randi előtt kötelező.",
-      rating: 4,
-      date: "5 órája"
-    },
-    {
-      author: "Tóth Eszter",
-      text: "Már a barátnőmnek is rendeltem egyet. Imádom, hogy nem kell tűszúrás. Az Apple formájút használom, nagyon kényelmes.",
-      rating: 5,
-      date: "Tegnap"
-    }
+    { author: "Varga Niki", text: "Lányok, ez valami kegyetlen! 😱 Azt hittem kamu, de 2 perc alatt olyat csinált a számmal, mintha töltettem volna. Kicsit bizserget, de megéri!", rating: 5, date: "2 órája" },
+    { author: "Kovács Petra", text: "Nagyon gyorsan megjött! A gép kicsit hangosabb, mint gondoltam, ezért csak 4 csillag, de az eredmény tényleg brutál. Randi előtt kötelező.", rating: 4, date: "5 órája" },
+    { author: "Tóth Eszter", text: "Már a barátnőmnek is rendeltem egyet. Imádom, hogy nem kell tűszúrás. Az Apple formájút használom, nagyon kényelmes.", rating: 5, date: "Tegnap" }
   ];
 
+  // --- FUNKCIÓK ---
   const scrollToOrder = () => {
-    document.getElementById('order-section')?.scrollIntoView({ behavior: 'smooth' });
+    const section = document.getElementById('order-section');
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const calculateTotal = () => {
@@ -78,9 +66,16 @@ export default function Home() {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setOrderStatus('loading');
+    
     const totalAmount = calculateTotal();
-    const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${PAYPAL_EMAIL}&item_name=${encodeURIComponent(product.name)}&amount=${totalAmount}&currency_code=HUF&return=${encodeURIComponent(window.location.href)}`;
-    window.location.href = paypalUrl;
+    const returnUrl = encodeURIComponent(window.location.href);
+    const itemName = encodeURIComponent(product.name);
+    
+    // PayPal URL összerakása biztonságosan
+    const baseUrl = "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick";
+    const params = `&business=${PAYPAL_EMAIL}&item_name=${itemName}&amount=${totalAmount}&currency_code=HUF&return=${returnUrl}`;
+    
+    window.location.href = baseUrl + params;
   };
 
   // --- BETÖLTÉS ---
@@ -88,7 +83,7 @@ export default function Home() {
     return <div className="min-h-screen flex items-center justify-center text-gray-500 font-medium">Betöltés...</div>;
   }
 
-  // --- MEGJELENÍTÉS ---
+  // --- MEGJELENÍTÉS (MAIN RETURN) ---
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
 
@@ -337,4 +332,4 @@ export default function Home() {
                   </div>
 
                   <div className="pt-4 border-t border-gray-200">
-                
+  
