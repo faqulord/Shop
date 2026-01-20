@@ -1,16 +1,18 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { Star, Check, Truck, Shield, ArrowRight, Heart, CreditCard, Banknote, Lock, ThumbsUp, MessageCircle } from 'lucide-react';
+import { Star, Check, Truck, Shield, ArrowRight, Heart, CreditCard, Banknote, Lock, ThumbsUp } from 'lucide-react';
 
 export default function Home() {
   const [product, setProduct] = useState<any>(null);
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
-  // PAYPAL EMAIL
+  // A SAJÁT PAYPAL CÍMED
   const PAYPAL_EMAIL = "stylefaqu@gmail.com"; 
   
+  // Csak a 'card' az alapértelmezett
   const [paymentMethod, setPaymentMethod] = useState<'card'>('card');
+  
   const [formData, setFormData] = useState({
     name: '', email: '', phone: '', address: '', city: '', zip: ''
   });
@@ -85,7 +87,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
       
-      {/* FEJLÉC (Kicsit vékonyabb) */}
+      {/* FEJLÉC */}
       <nav className="bg-white/95 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 shadow-sm py-3">
         <div className="max-w-5xl mx-auto px-4 flex justify-between items-center">
           <span className="text-xl font-extrabold text-pink-600 tracking-tight">Lipses.</span>
@@ -96,7 +98,7 @@ export default function Home() {
       </nav>
 
       <main>
-        {/* HERO (Kompaktabb) */}
+        {/* HERO */}
         <section className="max-w-5xl mx-auto px-4 py-8 lg:py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             
@@ -141,36 +143,37 @@ export default function Home() {
           </div>
         </section>
 
-        {/* --- FACEBOOK STÍLUSÚ KOMMENTEK (Élethűbb!) --- */}
+        {/* --- FACEBOOK STÍLUSÚ KOMMENTEK (JAVÍTOTT VERZIÓ) --- */}
         <section className="bg-white py-10 border-t border-gray-100">
           <div className="max-w-2xl mx-auto px-4">
-            <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-              <MessageCircle className="text-blue-500" fill="currentColor" size={24} /> 
-              Vásárlói vélemények <span className="text-gray-400 font-normal text-sm">({reviews.length})</span>
-            </h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Vásárlói vélemények</h2>
             
-            <div className="space-y-4">
+            <div className="space-y-5">
               {reviews.length > 0 ? reviews.map((review, i) => (
-                <div key={i} className="flex gap-2 animate-fade-in-up">
+                <div key={i} className="flex gap-3 items-start animate-fade-in-up">
                   
-                  {/* PROFILKÉP (Ha nincs, generálunk egy színeset) */}
+                  {/* PROFILKÉP (Kerek, mint Facebookon) */}
                   <div className="flex-shrink-0">
                      {review.imageUrl && !review.hasPhoto ? (
                         <img src={review.imageUrl} className="w-10 h-10 rounded-full object-cover border border-gray-200" alt="Avatar"/>
                      ) : (
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-sm
-                          ${i % 3 === 0 ? 'bg-blue-500' : i % 3 === 1 ? 'bg-pink-500' : 'bg-green-500'}`}>
+                          ${i % 3 === 0 ? 'bg-blue-600' : i % 3 === 1 ? 'bg-indigo-500' : 'bg-green-600'}`}>
                            {review.author?.charAt(0) || "V"}
                         </div>
                      )}
                   </div>
 
-                  {/* KOMMENT BUBORÉK (Facebook stílus) */}
+                  {/* KOMMENT TARTALOM */}
                   <div className="flex-1">
-                    <div className="bg-[#f0f2f5] px-4 py-2.5 rounded-2xl inline-block relative min-w-[200px]">
-                        <h4 className="font-bold text-[13px] text-gray-900 cursor-pointer hover:underline">
+                    {/* A szürke buborék */}
+                    <div className="bg-[#f0f2f5] px-4 py-2.5 rounded-[18px] inline-block relative">
+                        <h4 className="font-bold text-[13px] text-gray-900 cursor-pointer hover:underline inline-block mr-1">
                             {review.author}
                         </h4>
+                         {/* Ellenőrzött pipa a név mellett */}
+                         {review.verified && <CheckCircle size={12} className="inline text-blue-500 fill-blue-500 text-white mb-0.5" />}
+                        
                         <p className="text-[14px] text-gray-800 leading-snug mt-0.5">{review.text}</p>
                         
                         {/* Kép a kommentben */}
@@ -180,17 +183,17 @@ export default function Home() {
                             </div>
                         )}
 
-                        {/* Kis kék like ikon a sarokban */}
-                        <div className="absolute -bottom-2 -right-1 bg-white p-0.5 rounded-full shadow-md border border-gray-100 flex items-center gap-0.5 px-1">
-                            <div className="bg-blue-500 rounded-full p-1"><ThumbsUp size={8} fill="white" className="text-white"/></div>
-                            <span className="text-[10px] text-gray-500 font-bold">{Math.floor(Math.random() * 20) + 2}</span>
+                        {/* Kis kék like ikon + szám (buborékon belül/szélén) */}
+                        <div className="absolute -bottom-2.5 -right-1 bg-white rounded-full shadow-md border border-gray-100 flex items-center gap-0.5 px-1 py-0.5">
+                            <div className="bg-blue-500 rounded-full p-[2px]"><ThumbsUp size={8} fill="white" className="text-white"/></div>
+                            <span className="text-[10px] text-gray-500 font-bold ml-0.5">{Math.floor(Math.random() * 20) + 2}</span>
                         </div>
                     </div>
 
-                    {/* LÁBJEGYZET */}
-                    <div className="flex gap-3 mt-1 ml-3 text-[12px] font-bold text-gray-500">
-                        <span className="cursor-pointer hover:underline">Tetszik</span>
-                        <span className="cursor-pointer hover:underline">Válasz</span>
+                    {/* A kis szürke sor alatta: Tetszik · Válasz · Idő */}
+                    <div className="flex gap-4 mt-1 ml-3 text-[12px] font-bold text-gray-500">
+                        <span className="cursor-pointer hover:underline text-gray-600">Tetszik</span>
+                        <span className="cursor-pointer hover:underline text-gray-600">Válasz</span>
                         <span className="font-normal text-gray-400">{review.date || '2 órája'}</span>
                     </div>
                   </div>
@@ -199,21 +202,22 @@ export default function Home() {
                 <p className="text-center text-gray-500 text-sm">Legyél te az első hozzászóló!</p>
               )}
             </div>
+            
+             <div className="mt-8 text-center border-t border-gray-100 pt-4">
+                <button className="text-gray-600 text-sm font-bold hover:bg-gray-50 px-4 py-2 rounded-lg transition">
+                    További hozzászólások megtekintése
+                </button>
+            </div>
           </div>
         </section>
 
-        {/* ŰRLAP (Kompakt és Figyelmeztető) */}
+        {/* ŰRLAP */}
         <div id="order-section" className="py-12 bg-gray-50">
           <div className="max-w-xl mx-auto px-4">
             <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
               <div className="bg-gray-900 p-6 text-white text-center">
                 <h3 className="text-2xl font-bold mb-1">Rendelés Leadása 📦</h3>
                 <p className="text-gray-400 text-xs uppercase tracking-wide">Biztonságos SSL Kapcsolat</p>
-                
-                {/* PIROS FIGYELMEZTETÉS */}
-                <div className="mt-3 bg-red-500 text-white px-3 py-1.5 rounded-md text-xs font-bold inline-block animate-pulse">
-                    ⚠️ Jelenleg csak Bankkártyás fizetés lehetséges!
-                </div>
               </div>
               
               <div className="p-6 md:p-8">
@@ -221,7 +225,7 @@ export default function Home() {
                   <div className="text-center py-10">
                     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"><Check size={32} className="text-green-600" /></div>
                     <h3 className="text-xl font-bold text-gray-900">Köszönjük! 🎉</h3>
-                    <p className="text-gray-500 text-sm mb-4">A futárnál tudsz fizetni.</p>
+                    <p className="text-gray-500 text-sm mb-4">A fizetést sikeresen rögzítettük.</p>
                     <button onClick={() => setOrderStatus('')} className="text-blue-600 font-bold text-sm hover:underline">Új rendelés</button>
                   </div>
                 ) : (
@@ -229,6 +233,7 @@ export default function Home() {
                     
                     {/* FIZETÉSI MÓDOK */}
                     <div className="grid grid-cols-2 gap-3">
+                        {/* 1. BANKKÁRTYA (Aktív) */}
                         <div className="cursor-pointer p-3 rounded-lg border-2 border-green-500 bg-green-50 relative">
                             <div className="absolute top-1 right-1 text-green-600"><CheckCircle size={16} fill="currentColor" className="text-white"/></div>
                             <div className="flex flex-col items-center text-center">
@@ -238,16 +243,20 @@ export default function Home() {
                             </div>
                         </div>
 
+                        {/* 2. UTÁNVÉT (Zárva + Dátum) */}
                         <div className="relative p-3 rounded-lg border-2 border-gray-200 bg-gray-100 opacity-60 cursor-not-allowed grayscale">
-                             <div className="absolute inset-0 flex items-center justify-center bg-white/60 rounded-lg z-10">
-                                <span className="text-[10px] font-bold text-gray-600 bg-white px-2 py-1 rounded shadow-sm flex items-center gap-1">
-                                    <Lock size={10}/> Nyitás: Feb 10.
-                                </span>
+                             {/* A DÁTUM KIÍRÁSA A KÖZEPÉN */}
+                             <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-lg z-10 text-center px-1">
+                                <div className="bg-white px-2 py-1 rounded border border-gray-300 shadow-sm">
+                                    <span className="block text-[10px] text-gray-500 font-bold uppercase">Elérhető:</span>
+                                    <span className="block text-xs font-black text-gray-800">FEBRUÁR 10.</span>
+                                </div>
                              </div>
-                            <div className="flex flex-col items-center text-center">
+                             
+                            <div className="flex flex-col items-center text-center blur-[1px]">
                                 <Banknote className="text-gray-500 mb-1" size={24} />
                                 <span className="font-bold text-gray-500 text-sm">Utánvét</span>
-                                <span className="text-[10px] text-gray-400 font-bold mt-1 bg-gray-200 px-2 py-0.5 rounded">ZÁRVA</span>
+                                <span className="text-[10px] text-gray-400 font-bold mt-1 bg-gray-200 px-2 py-0.5 rounded">+2500 FT</span>
                             </div>
                         </div>
                     </div>
