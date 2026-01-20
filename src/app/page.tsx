@@ -3,11 +3,11 @@ import { useState, useEffect } from 'react';
 import { Star, Check, Shield, ArrowRight, Heart, CreditCard, Banknote, ThumbsUp, AlertTriangle, Zap, Clock, CheckCircle } from 'lucide-react';
 
 export default function Home() {
-  
+
   // =========================================================================
-  // 1. A TERMÉK KÉP LINKJE (IDE MÁSOLD BE A LEGJOBB KÉPEDET!)
+  // 1. A TERMÉK KÉP LINKJE (JAVÍTVA: KÖZVETLEN KÉP LINKRE CSERÉLVE)
   // =========================================================================
-  const MAIN_IMAGE_URL = "https://imgur.com/a/gipJ587";
+  const MAIN_IMAGE_URL = "https://i.imgur.com/gipJ587.jpg";
 
   // --- ÁLLAPOTOK ---
   const [product, setProduct] = useState<any>(null);
@@ -15,7 +15,7 @@ export default function Home() {
   const [timeLeft, setTimeLeft] = useState({ h: 3, m: 12, s: 45 });
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', address: '', city: '', zip: '' });
   const [orderStatus, setOrderStatus] = useState('');
-  
+
   const PAYPAL_EMAIL = "stylefaqu@gmail.com"; 
 
   // --- IDŐZÍTŐ ---
@@ -84,7 +84,7 @@ export default function Home() {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setOrderStatus('loading');
-    
+
     const totalAmount = calculateTotal();
 
     try {
@@ -128,7 +128,7 @@ export default function Home() {
   // --- MEGJELENÍTÉS ---
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
-      
+
       {/* FEJLÉC */}
       <nav className="bg-white/95 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 shadow-sm py-3">
         <div className="max-w-5xl mx-auto px-4 flex justify-between items-center">
@@ -143,13 +143,13 @@ export default function Home() {
         {/* HERO */}
         <section className="max-w-5xl mx-auto px-4 py-8 lg:py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            
+
             {/* KÉP (FIX EGY DARAB KÉP) */}
             <div className="relative">
                <div className="absolute top-4 right-4 bg-red-600 text-white w-16 h-16 flex items-center justify-center rounded-full shadow-xl z-10 border-2 border-white animate-pulse">
                  <p className="text-xl font-black">-50%</p>
                </div>
-               
+
                <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 border-4 border-white">
                  <img 
                     src={MAIN_IMAGE_URL} 
@@ -169,9 +169,9 @@ export default function Home() {
                   </div>
                   <span className="text-gray-400 text-xs">(395 vélemény)</span>
                 </div>
-                
+
                 <h1 className="text-3xl md:text-5xl font-black text-gray-900 leading-tight mb-4">{product.name}</h1>
-                
+
                 <div className="text-lg font-medium text-black leading-relaxed" 
                      dangerouslySetInnerHTML={{ __html: product.description ? product.description.replace(/\n/g, '<br/>') : '' }}>
                 </div>
@@ -273,7 +273,7 @@ export default function Home() {
                 <h3 className="text-2xl font-bold mb-1">Rendelés Leadása 📦</h3>
                 <p className="text-gray-400 text-xs uppercase tracking-wide">Biztonságos SSL Kapcsolat</p>
               </div>
-              
+
               <div className="p-6 md:p-8">
                 {orderStatus === 'success' ? (
                   <div className="text-center py-10">
