@@ -1,13 +1,13 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { Star, Check, Truck, Shield, ArrowRight, Heart, CreditCard, Banknote, Lock, ThumbsUp, Zap, Settings } from 'lucide-react';
+import { Star, Check, Truck, Shield, ArrowRight, Heart, CreditCard, Banknote, Lock, ThumbsUp, MessageCircle, AlertTriangle, Zap } from 'lucide-react';
 
 export default function Home() {
   const [product, setProduct] = useState<any>(null);
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
-  // PAYPAL EMAIL
+  // A SAJÁT PAYPAL CÍMED
   const PAYPAL_EMAIL = "stylefaqu@gmail.com"; 
   
   const [formData, setFormData] = useState({
@@ -101,8 +101,8 @@ export default function Home() {
             
             <div className="relative">
                <div className="absolute -top-4 -right-4 bg-white p-3 rounded-xl shadow-lg z-10 border border-gray-100 animate-bounce-slow transform rotate-3">
-                 <p className="text-[10px] text-gray-500 font-bold uppercase">Megtakarítás</p>
-                 <p className="text-2xl font-black text-pink-600">{(product.originalPrice - product.price).toLocaleString()} Ft</p>
+                 <p className="text-[10px] text-gray-500 font-bold uppercase">Csak most</p>
+                 <p className="text-2xl font-black text-pink-600">{product.price.toLocaleString()} Ft</p>
                </div>
                <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 border-4 border-white">
                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" onError={(e) => { (e.target as any).src = "https://images.unsplash.com/photo-1629198688000-71f23e745b6e?w=800"; }} />
@@ -112,39 +112,37 @@ export default function Home() {
             <div className="space-y-6">
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="bg-pink-100 text-pink-700 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase">{product.discountText || "PRÉMIUM KÉSZÜLÉK"}</span>
+                  <span className="bg-pink-100 text-pink-700 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase">{product.discountText || "-50% AKCIÓ"}</span>
                   <div className="flex text-yellow-400">
                     {[1,2,3,4,5].map(i => <Star key={i} fill="currentColor" size={14}/>)}
                   </div>
                   <span className="text-gray-400 text-xs">({reviews.length} vélemény)</span>
                 </div>
                 <h1 className="text-3xl md:text-5xl font-black text-gray-900 leading-tight mb-4">{product.name}</h1>
-                <p className="text-gray-600 leading-relaxed">{product.description}</p>
+                
+                {/* --- ITT A VÁLTOZTATÁS: NAGYOBB ÉS FEKETÉBB SZÖVEG --- */}
+                <div className="text-lg md:text-xl font-medium text-black leading-relaxed" 
+                     dangerouslySetInnerHTML={{ __html: product.description.replace(/\n/g, '<br/>') }}>
+                </div>
               </div>
 
-              {/* --- GÉPRE SZABOTT ELŐNYÖK --- */}
               <div className="bg-gray-50 p-5 rounded-xl border border-gray-200 shadow-sm">
-                <h3 className="font-bold text-gray-900 flex items-center gap-2 text-sm mb-3"><Zap className="text-pink-500 fill-pink-500" size={18} /> Miért jobb, mint a feltöltés?</h3>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-center gap-2 text-gray-700"><Check size={16} className="text-green-600"/> 100% Fájdalommentes vákuum technológia</li>
-                  <li className="flex items-center gap-2 text-gray-700"><Check size={16} className="text-green-600"/> Azonnali eredmény szúrások nélkül</li>
-                  <li className="flex items-center gap-2 text-gray-700"><Check size={16} className="text-green-600"/> Újratölthető és évekig használható</li>
+                <h3 className="font-bold text-gray-900 flex items-center gap-2 text-sm mb-3"><Zap className="text-pink-500 fill-pink-500" size={18} /> Miért imádják a nők?</h3>
+                <ul className="space-y-2 text-base">
+                  <li className="flex items-center gap-2 text-black font-bold"><CheckCircle size={18} className="text-green-600"/> Tűmentes "Russian Lips" hatás</li>
+                  <li className="flex items-center gap-2 text-black font-bold"><CheckCircle size={18} className="text-green-600"/> Azonnali dúsítás fájdalom nélkül</li>
+                  <li className="flex items-center gap-2 text-black font-bold"><CheckCircle size={18} className="text-green-600"/> Tartós eredmény (akár 12 óra)</li>
                 </ul>
               </div>
 
-              <div className="flex items-center gap-2">
-                 <p className="text-gray-400 line-through text-sm">{product.originalPrice?.toLocaleString()} Ft</p>
-                 <p className="text-3xl font-black text-gray-900">{product.price.toLocaleString()} Ft</p>
-              </div>
-
               <button onClick={scrollToOrder} className="w-full bg-gray-900 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-black transition shadow-xl flex items-center justify-center gap-2">
-                Kérem a készüléket <ArrowRight size={20} />
+                Kérem a csomagot <ArrowRight size={20} />
               </button>
             </div>
           </div>
         </section>
 
-        {/* --- KOMMENTEK (Facebook Style) --- */}
+        {/* --- FACEBOOK STÍLUSÚ KOMMENTEK --- */}
         <section className="bg-white py-10 border-t border-gray-100">
           <div className="max-w-xl mx-auto px-4">
             <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
@@ -154,6 +152,8 @@ export default function Home() {
             <div className="space-y-4">
               {reviews.length > 0 ? reviews.map((review, i) => (
                 <div key={i} className="flex gap-2 items-start animate-fade-in-up">
+                  
+                  {/* PROFILKÉP */}
                   <div className="flex-shrink-0">
                      {review.imageUrl && !review.hasPhoto ? (
                         <img src={review.imageUrl} className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border border-gray-200" alt="Avatar"/>
@@ -164,14 +164,16 @@ export default function Home() {
                      )}
                   </div>
 
+                  {/* KOMMENT DOBOZ */}
                   <div className="flex-1">
                     <div className="bg-[#f0f2f5] px-3 py-2 rounded-[18px] inline-block relative min-w-[180px]">
                         <div className="flex items-center gap-1">
                             <h4 className="font-bold text-[13px] text-gray-900 cursor-pointer hover:underline">
                                 {review.author}
                             </h4>
-                            {review.verified && <Check size={12} className="text-white bg-blue-500 rounded-full p-[2px]" />}
+                            {review.verified && <CheckCircle size={12} className="text-blue-500 fill-blue-500 text-white" />}
                         </div>
+                        
                         <p className="text-[14px] text-gray-800 leading-snug mt-0.5">{review.text}</p>
                         
                         {review.imageUrl && review.hasPhoto && (
@@ -179,8 +181,8 @@ export default function Home() {
                                 <img src={review.imageUrl} alt="Review attachment" className="w-full object-cover"/>
                             </div>
                         )}
-                        
-                         <div className="absolute -bottom-2 -right-1 bg-white rounded-full shadow-md border border-gray-100 flex items-center gap-1 px-1 py-0.5 cursor-pointer">
+
+                        <div className="absolute -bottom-2 -right-1 bg-white rounded-full shadow-md border border-gray-100 flex items-center gap-1 px-1 py-0.5 cursor-pointer">
                             <div className="bg-blue-500 rounded-full p-[2px]"><ThumbsUp size={8} fill="white" className="text-white"/></div>
                             <span className="text-[10px] text-gray-500 font-bold">{Math.floor(Math.random() * 20) + 2}</span>
                         </div>
@@ -200,11 +202,12 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ŰRLAP */}
+        {/* ŰRLAP + PIROS FIGYELMEZTETÉS */}
         <div id="order-section" className="py-12 bg-gray-50">
           <div className="max-w-xl mx-auto px-4">
             
             <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 flex items-start gap-3 shadow-sm animate-pulse">
+                <AlertTriangle className="text-red-600 shrink-0" size={24} />
                 <div>
                     <h4 className="text-red-800 font-bold text-sm uppercase">Fontos Információ:</h4>
                     <p className="text-red-700 text-sm mt-1 leading-snug">
@@ -233,7 +236,7 @@ export default function Home() {
                     
                     <div className="grid grid-cols-2 gap-3">
                         <div className="cursor-pointer p-3 rounded-lg border-2 border-green-500 bg-green-50 relative">
-                            <div className="absolute top-1 right-1 text-green-600"><Check size={16} className="text-green-600"/></div>
+                            <div className="absolute top-1 right-1 text-green-600"><CheckCircle size={16} className="text-green-600"/></div>
                             <div className="flex flex-col items-center text-center">
                                 <CreditCard className="text-green-600 mb-1" size={24} />
                                 <span className="font-bold text-gray-900 text-sm">Bankkártya</span>
@@ -287,4 +290,8 @@ export default function Home() {
       <footer className="bg-white border-t border-gray-200 py-8 mt-8 text-center"><p className="text-gray-400 text-xs">© 2024 Lipses Shop.</p></footer>
     </div>
   );
+}
+
+function CheckCircle({ size, fill, className }: any) {
+    return ( <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill || "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> );
 }
