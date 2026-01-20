@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Star, Check, Shield, ArrowRight, Heart, CreditCard, Banknote, ThumbsUp, AlertTriangle, Zap, Clock } from 'lucide-react';
 
-// --- SEGÉD KOMPONENS (Hogy biztosan ne legyen hiba) ---
+// Ikon komponens javítva, hogy ne okozzon gondot
 function CheckCircle({ size, fill, className }: any) {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill || "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -16,7 +16,7 @@ export default function Home() {
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   
-  // PAYPAL EMAIL
+  // A SAJÁT PAYPAL CÍMED
   const PAYPAL_EMAIL = "stylefaqu@gmail.com"; 
 
   // --- VISSZASZÁMLÁLÓ ---
@@ -127,12 +127,9 @@ export default function Home() {
     }
   };
 
-  if (loading) {
+  // --- BIZTONSÁGI JAVÍTÁS ITT ---
+  if (loading || !product) {
     return <div className="min-h-screen flex items-center justify-center text-gray-500 font-medium">Betöltés...</div>;
-  }
-  
-  if (!product) {
-    return <div className="min-h-screen flex items-center justify-center">Termék betöltése...</div>;
   }
 
   return (
@@ -362,4 +359,4 @@ export default function Home() {
           </div>
         </div>
       </main>
-     
+      <footer className="bg-white border-t border-gray-200 py-8 mt-8 text-center"><
