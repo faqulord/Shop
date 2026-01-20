@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect } from 'react';
 import { Star, Check, Shield, ArrowRight, CreditCard, Banknote, AlertTriangle, Zap, Clock, CheckCircle, X } from 'lucide-react';
 
@@ -32,7 +33,6 @@ export default function Home() {
 
   // --- ADATLEKÉRÉS ---
   useEffect(() => {
-    // Dummy adat szimuláció
     const dummyProduct = {
       name: "Russian Lips Dúsító Készülék",
       description: "A forradalmian új, vákuum-technológiás ajakdúsító, amely tűszúrás nélkül varázsol telt, vonzó ajkakat percek alatt.",
@@ -71,7 +71,6 @@ export default function Home() {
     const returnUrl = encodeURIComponent(window.location.href);
     const itemName = encodeURIComponent(product.name);
     
-    // PayPal URL összerakása biztonságosan
     const baseUrl = "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick";
     const params = `&business=${PAYPAL_EMAIL}&item_name=${itemName}&amount=${totalAmount}&currency_code=HUF&return=${returnUrl}`;
     
@@ -83,7 +82,7 @@ export default function Home() {
     return <div className="min-h-screen flex items-center justify-center text-gray-500 font-medium">Betöltés...</div>;
   }
 
-  // --- MEGJELENÍTÉS (MAIN RETURN) ---
+  // --- FŐ MEGJELENÍTÉS ---
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
 
@@ -332,4 +331,5 @@ export default function Home() {
                   </div>
 
                   <div className="pt-4 border-t border-gray-200">
-  
+                    <div className="flex justify-between items-center mb-4">
+        
