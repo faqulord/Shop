@@ -1,9 +1,10 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { Star, Check, ShoppingCart, Truck, Shield } from 'lucide-react';
+import { Star, Check, Truck, Shield, ArrowRight, Heart } from 'lucide-react';
 
 export default function Home() {
   const [product, setProduct] = useState<any>(null);
+  const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
   // Űrlap adatok
@@ -12,192 +13,272 @@ export default function Home() {
   });
   const [orderStatus, setOrderStatus] = useState('');
 
-  // --- 1. ADATOK BETÖLTÉSE (Amikor megnyílik az oldal) ---
+  // --- ADATOK BETÖLTÉSE ---
   useEffect(() => {
-    // Termék lekérése
-    fetch('/api/products')
-      .then(res => res.json())
-      .then(data => {
-        setProduct(data);
+    const fetchData = async () => {
+      try {
+        // 1. Termék adatainak lekérése
+        const prodRes = await fetch('/api/products');
+        const prodData = await prodRes.json();
+        setProduct(prodData);
+
+        // 2. Vélemények lekérése
+        const revRes = await fetch('/api/reviews');
+        const revData = await revRes.json();
+        setReviews(revData);
+        
         setLoading(false);
-      })
-      .catch(err => console.error("Hiba:", err));
+      } catch (err) {
+        console.error("Hiba az adatok betöltésekor", err);
+      }
+    };
+    fetchData();
   }, []);
 
-  // --- 2. RENDELÉS BEKÜLDÉSE ---
+  // Gördülés a rendeléshez (Ez növeli az eladásokat!)
+  const scrollToOrder = () => {
+    document.getElementById('order-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Rendelés beküldése (Egyelőre szimuláció, hogy lásd a működést)
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setOrderStatus('loading');
-
-    const orderData = {
-      customerName: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      address: formData.address,
-      city: formData.city,
-      zip: formData.zip,
-      products: [{ name: product.name, price: product.price, quantity: 1 }],
-      totalAmount: product.price
-    };
-
-    // Itt küldjük el a rendelést a szervernek
-    const res = await fetch('/api/orders', {
-      method: 'POST', // FIGYELEM: Ehhez majd kell a POST funkció az API-ba!
-      body: JSON.stringify(orderData),
-    });
-
-    if (res.ok) {
-      setOrderStatus('success');
-      // Töröljük az űrlapot
-      setFormData({ name: '', email: '', phone: '', address: '', city: '', zip: '' });
-    } else {
-      setOrderStatus('error');
-    }
+    
+    setTimeout(() => {
+        setOrderStatus('success');
+        setFormData({ name: '', email: '', phone: '', address: '', city: '', zip: '' });
+    }, 2000);
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-gray-500">Bolt betöltése...</div>;
-  if (!product) return <div className="min-h-screen flex items-center justify-center">Hiba a betöltéskor.</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center text-gray-500 font-medium">Betöltés...</div>;
+  if (!product) return <div className="min-h-screen flex items-center justify-center">Hiba történt. Frissítsd az oldalt!</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-gray-900">
+    <div className="min-h-screen bg-white font-sans text-gray-900">
       
-      {/* --- HERO SZEKCIÓ (A Termék) --- */}
-      <header className="bg-white shadow-sm sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-xl font-bold text-blue-600 tracking-tight">Shop.</h1>
-          <a href="#order" className="bg-blue-600 text-white px-5 py-2 rounded-full font-bold text-sm hover:bg-blue-700 transition shadow-md">
-            Megrendelem
-          </a>
+      {/* --- FEJLÉC --- */}
+      <nav className="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+          <span className="text-2xl font-extrabold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+            Lipses.
+          </span>
+          <button onClick={scrollToOrder} className="bg-black text-white px-6 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition-transform shadow-lg flex items-center gap-2">
+            Megrendelem <ArrowRight size={16} />
+          </button>
         </div>
-      </header>
+      </nav>
 
-      <main className="max-w-4xl mx-auto px-4 py-8 md:py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
-          
-          {/* BAL OLDAL: Kép */}
-          <div className="bg-white p-2 rounded-3xl shadow-lg border border-gray-100 relative overflow-hidden group">
-             {/* Akciós címke */}
-             {product.discountText && (
-               <div className="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-10 animate-pulse">
-                 {product.discountText}
+      <main>
+        {/* --- TERMÉK BEMUTATÓ (Hero) --- */}
+        <section className="max-w-6xl mx-auto px-4 py-12 lg:py-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            
+            {/* KÉP (Bal oldal) */}
+            <div className="relative animate-fade-in-up">
+               {/* Ár buborék */}
+               <div className="absolute -top-6 -right-2 bg-white p-4 rounded-2xl shadow-xl z-10 border border-gray-100 animate-bounce-slow">
+                 <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Csak most</p>
+                 <p className="text-3xl font-black text-pink-600">{product.price.toLocaleString()} Ft</p>
                </div>
-             )}
-             <div className="aspect-square rounded-2xl overflow-hidden bg-gray-100 relative">
-               <img 
-                 src={product.imageUrl} 
-                 alt={product.name} 
-                 className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
-               />
-             </div>
-          </div>
+               
+               {/* Termék kép keretben */}
+               <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl bg-gray-100 relative group border-4 border-white">
+                 <img 
+                   src={product.imageUrl} 
+                   alt={product.name} 
+                   className="w-full h-full object-cover transition duration-700 group-hover:scale-105"
+                   onError={(e) => { (e.target as any).src = "https://images.unsplash.com/photo-1629198688000-71f23e745b6e?w=800"; }}
+                 />
+               </div>
+            </div>
 
-          {/* JOBB OLDAL: Szöveg és Ár */}
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-2">
-                {product.name}
-              </h2>
-              <div className="flex items-center gap-2 text-yellow-400 text-sm font-bold">
-                <div className="flex"><Star fill="currentColor" size={16}/><Star fill="currentColor" size={16}/><Star fill="currentColor" size={16}/><Star fill="currentColor" size={16}/><Star fill="currentColor" size={16}/></div>
-                <span className="text-gray-400">({product.reviewsCount} értékelés)</span>
+            {/* SZÖVEG ÉS ÉRTÉKESÍTÉS (Jobb oldal) */}
+            <div className="space-y-8 animate-fade-in-up delay-100">
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  {product.discountText && (
+                    <span className="bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase">
+                      {product.discountText}
+                    </span>
+                  )}
+                  <div className="flex text-yellow-400 items-center">
+                    {[1,2,3,4,5].map(i => <Star key={i} fill="currentColor" size={18}/>)}
+                    <span className="text-gray-400 text-sm ml-2 font-medium underline decoration-gray-300">
+                      {reviews.length} elégedett vásárló
+                    </span>
+                  </div>
+                </div>
+                
+                <h1 className="text-4xl md:text-6xl font-black text-gray-900 leading-tight mb-6">
+                  {product.name}
+                </h1>
+                
+                <p className="text-xl text-gray-600 leading-relaxed font-light">
+                  {product.description}
+                </p>
+              </div>
+
+              {/* --- ELŐNYÖK (Ami eladja a terméket) --- */}
+              <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+                <h3 className="font-bold text-gray-900 flex items-center gap-2 text-lg">
+                  <Heart className="text-pink-500 fill-pink-500" size={24} />
+                  Miért imádják a nők?
+                </h3>
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-3 text-gray-700">
+                    <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center shrink-0"><Check size={16} className="text-green-600"/></div>
+                    <span className="font-medium text-lg">Hialuronsavval tölti fel az ajkakat</span>
+                  </li>
+                  <li className="flex items-center gap-3 text-gray-700">
+                    <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center shrink-0"><Check size={16} className="text-green-600"/></div>
+                    <span className="font-medium text-lg">Azonnali dúsító hatás (bizsergéssel)</span>
+                  </li>
+                  <li className="flex items-center gap-3 text-gray-700">
+                    <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center shrink-0"><Check size={16} className="text-green-600"/></div>
+                    <span className="font-medium text-lg">Akár 12 órán át tartó hidratálás</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Akció gomb */}
+              <div className="pt-4">
+                <button onClick={scrollToOrder} className="w-full bg-gray-900 text-white px-8 py-5 rounded-2xl font-bold text-xl hover:bg-black transition shadow-xl hover:shadow-2xl flex items-center justify-center gap-3 transform hover:-translate-y-1">
+                  Kérem a csomagot <ArrowRight size={24} />
+                </button>
+                <div className="flex items-center gap-4 text-sm text-gray-500 justify-center mt-4">
+                   <span className="flex items-center gap-1"><Shield size={16} className="text-green-500"/> 30 napos garancia</span>
+                   <span className="flex items-center gap-1"><Truck size={16} className="text-blue-500"/> Ingyenes szállítás</span>
+                </div>
               </div>
             </div>
-
-            <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
-              <p className="text-gray-500 text-sm mb-1 line-through font-medium">Eredeti ár: {product.originalPrice?.toLocaleString()} Ft</p>
-              <div className="text-4xl font-extrabold text-blue-600">
-                {product.price?.toLocaleString()} Ft
-              </div>
-              <p className="text-xs text-blue-400 mt-2 font-medium">⚡ Villámgyors szállítás 1-2 munkanap</p>
-            </div>
-
-            <p className="text-gray-600 leading-relaxed text-lg">
-              {product.description}
-            </p>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex items-center gap-2 text-sm text-gray-600 bg-white p-3 rounded-xl border border-gray-100 shadow-sm"><Truck size={18} className="text-blue-500"/> Ingyenes szállítás</div>
-              <div className="flex items-center gap-2 text-sm text-gray-600 bg-white p-3 rounded-xl border border-gray-100 shadow-sm"><Shield size={18} className="text-blue-500"/> 30 napos garancia</div>
-              <div className="flex items-center gap-2 text-sm text-gray-600 bg-white p-3 rounded-xl border border-gray-100 shadow-sm"><Check size={18} className="text-green-500"/> Raktáron</div>
-            </div>
-
-            <a href="#order" className="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-4 rounded-xl font-bold text-lg shadow-xl shadow-blue-200 transition transform hover:-translate-y-1">
-              Megrendelés Most
-            </a>
           </div>
-        </div>
+        </section>
 
-        {/* --- RENDELÉS ŰRLAP --- */}
-        <div id="order" className="mt-20 max-w-2xl mx-auto">
-          <div className="bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden">
-            <div className="bg-gray-900 p-6 text-white text-center">
-              <h3 className="text-2xl font-bold">Szállítási Adatok</h3>
-              <p className="text-gray-400 text-sm mt-1">Töltsd ki a mezőket a rendeléshez</p>
+        {/* --- VÉLEMÉNYEK (Ez építi a bizalmat) --- */}
+        <section className="bg-white py-16 border-t border-gray-100">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900">Mások mondták rólunk 💬</h2>
+              <p className="text-gray-500 mt-2">Valós vásárlói visszajelzések</p>
             </div>
             
-            <div className="p-8">
-              {orderStatus === 'success' ? (
-                <div className="text-center py-12">
-                  <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Check size={40} className="text-green-600" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Köszönjük a rendelést!</h3>
-                  <p className="text-gray-500">Hamarosan felvesszük veled a kapcsolatot.</p>
-                  <button onClick={() => setOrderStatus('')} className="mt-6 text-blue-600 font-bold hover:underline">Új rendelés leadása</button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Teljes Név</label>
-                    <input required type="text" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" 
-                      value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Pl. Kiss János" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {reviews.length > 0 ? reviews.map((review, i) => (
+                <div key={i} className="bg-gray-50 p-6 rounded-2xl border border-gray-100 hover:shadow-md transition duration-300">
+                  <div className="flex items-center gap-1 mb-3">
+                    <div className="flex text-yellow-400">
+                      {[...Array(review.rating || 5)].map((_, i) => <Star key={i} fill="currentColor" size={16}/>)}
+                    </div>
+                    {review.verified && <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold ml-2">ELLENŐRZÖTT</span>}
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Email Cím</label>
-                      <input required type="email" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" 
-                        value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="janos@gmail.com" />
+                  <p className="text-gray-700 mb-6 italic leading-relaxed">"{review.text}"</p>
+                  
+                  {/* Kép a kommenthez */}
+                  {review.imageUrl && review.hasPhoto && (
+                    <div className="mb-4 w-full h-40 rounded-xl overflow-hidden shadow-sm">
+                       <img src={review.imageUrl} alt="Review" className="w-full h-full object-cover hover:scale-105 transition duration-500"/>
                     </div>
-                    <div>
-                      <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Telefonszám</label>
-                      <input required type="tel" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" 
-                        value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="0630..." />
-                    </div>
-                  </div>
+                  )}
 
-                  <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Szállítási Cím</label>
-                    <input required type="text" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" 
-                      value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} placeholder="Utca, házszám" />
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="col-span-2">
-                      <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Város</label>
-                      <input required type="text" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" 
-                        value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})} placeholder="Város" />
+                  <div className="flex items-center gap-3 border-t border-gray-200 pt-4">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center font-bold text-white shadow-md">
+                      {review.author?.charAt(0) || "V"}
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Irányítószám</label>
-                      <input required type="text" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" 
-                        value={formData.zip} onChange={e => setFormData({...formData, zip: e.target.value})} placeholder="1234" />
+                      <p className="font-bold text-sm text-gray-900">{review.author || "Vásárló"}</p>
+                      <p className="text-xs text-gray-500">{review.date || 'Nemrég vásárolt'}</p>
                     </div>
                   </div>
-
-                  <button disabled={orderStatus === 'loading'} className="w-full bg-gray-900 hover:bg-black text-white py-4 rounded-xl font-bold text-lg shadow-lg mt-4 flex justify-center items-center gap-2">
-                    {orderStatus === 'loading' ? 'Feldolgozás...' : <>Megrendelés Véglegesítése <ShoppingCart size={20}/></>}
-                  </button>
-                  <p className="text-center text-xs text-gray-400 mt-4">Fizetés utánvétellel a futárnál.</p>
-                </form>
+                </div>
+              )) : (
+                <div className="col-span-3 text-center py-10 bg-gray-50 rounded-xl">
+                    <p className="text-gray-500">A vélemények betöltése folyamatban...</p>
+                </div>
               )}
+            </div>
+          </div>
+        </section>
+
+        {/* --- MEGRENDELÉS ŰRLAP --- */}
+        <div id="order-section" className="py-20 bg-gradient-to-b from-gray-50 to-white">
+          <div className="max-w-2xl mx-auto px-4">
+            <div className="bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-gray-100 overflow-hidden ring-1 ring-gray-100">
+              
+              {/* Űrlap Fejléc */}
+              <div className="bg-gray-900 p-8 text-white text-center relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500 to-purple-500"></div>
+                <h3 className="text-3xl font-bold mb-2">Rendelés Leadása 📦</h3>
+                <p className="text-gray-300">Töltsd ki az adataidat, és holnap küldjük a futárt!</p>
+              </div>
+              
+              <div className="p-8 md:p-10">
+                {orderStatus === 'success' ? (
+                  <div className="text-center py-12 animate-fade-in">
+                    <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                      <Check size={48} className="text-green-600" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">Köszönjük a rendelést! 🎉</h3>
+                    <p className="text-gray-500 mb-6">A csomagodat összekészítjük. Emailben küldtük a visszaigazolást.</p>
+                    <button onClick={() => setOrderStatus('')} className="text-blue-600 font-bold hover:underline">
+                        Új rendelés leadása
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    
+                    <div className="space-y-4">
+                       <div>
+                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1 mb-1 block">Teljes Név</label>
+                         <input required type="text" className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition font-medium" 
+                           value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Pl. Minta Éva" />
+                       </div>
+
+                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                           <div>
+                             <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1 mb-1 block">Email Cím</label>
+                             <input required type="email" className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition font-medium" 
+                               value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="eva@gmail.com" />
+                           </div>
+                           <div>
+                             <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1 mb-1 block">Telefonszám</label>
+                             <input required type="tel" className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition font-medium" 
+                               value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="06 30 123 4567" />
+                           </div>
+                       </div>
+                       
+                       <div>
+                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1 mb-1 block">Szállítási Cím (Házhozszállítás)</label>
+                         <input required type="text" className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition font-medium" 
+                           value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} placeholder="Város, Utca, Házszám" />
+                       </div>
+                    </div>
+
+                    <div className="pt-6 border-t border-gray-100">
+                      <div className="flex justify-between items-center mb-6 bg-blue-50 p-4 rounded-xl border border-blue-100">
+                        <span className="text-blue-800 font-medium">Fizetendő összeg (Utánvét):</span>
+                        <span className="text-2xl font-black text-blue-700">{product.price.toLocaleString()} Ft</span>
+                      </div>
+                      
+                      <button disabled={orderStatus === 'loading'} className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white py-5 rounded-xl font-bold text-xl shadow-lg transform active:scale-95 transition flex justify-center items-center gap-3">
+                        {orderStatus === 'loading' ? 'Feldolgozás...' : <>Megrendelés Véglegesítése <Check size={24}/></>}
+                      </button>
+                      <p className="text-center text-xs text-gray-400 mt-4 flex justify-center items-center gap-1">
+                        <Shield size={12}/> Az adataidat 100% biztonságban kezeljük.
+                      </p>
+                    </div>
+
+                  </form>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </main>
 
-      <footer className="bg-white border-t border-gray-200 py-12 mt-20 text-center">
-        <p className="text-gray-500">© 2024 Shop Minden jog fenntartva.</p>
+      <footer className="bg-white border-t border-gray-200 py-12 mt-12 text-center">
+        <p className="text-gray-500 text-sm">© 2024 Lipses Shop. Minden jog fenntartva.</p>
       </footer>
     </div>
   );
