@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
-import Order from '@/models/ShopOrder'; // <--- ITT AZ ÚJ NÉV!
+import Order from '@/models/ShopOrder'; // <--- ITT A LÉNYEG!
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -12,6 +12,7 @@ async function connectToDb() {
 export async function GET() {
   try {
     await connectToDb();
+    // Lekérjük az összes rendelést, legújabbal kezdve
     const orders = await Order.find().sort({ createdAt: -1 });
     return NextResponse.json(orders);
   } catch (error) {
