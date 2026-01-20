@@ -2,26 +2,29 @@
 import { useState, useEffect } from 'react';
 import { Star, Check, Shield, ArrowRight, Heart, CreditCard, Banknote, ThumbsUp, AlertTriangle, Zap, Clock } from 'lucide-react';
 
-// --- IKON KOMPONENS (Kívülre téve, hogy ne okozzon hibát) ---
+// --- SEGÉD KOMPONENS: PIPA IKON (Kívül definiálva a biztonságért) ---
 function CheckCircle({ size, fill, className }: any) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill || "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-        </svg>
-    );
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill || "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+  );
 }
 
+// --- FŐ KOMPONENS KEZDETE ---
 export default function Home() {
-  // --- ADATOK ÉS ÁLLAPOTOK ---
+  
+  // 1. ÁLLAPOTOK (State)
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const PAYPAL_EMAIL = "stylefaqu@gmail.com"; 
   const [timeLeft, setTimeLeft] = useState({ h: 3, m: 12, s: 45 });
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', address: '', city: '', zip: '' });
   const [orderStatus, setOrderStatus] = useState('');
+  
+  const PAYPAL_EMAIL = "stylefaqu@gmail.com"; 
 
-  // --- IDŐZÍTŐ ---
+  // 2. IDŐZÍTŐ EFFECT
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft(prev => {
@@ -34,7 +37,7 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  // --- BETÖLTÉS ---
+  // 3. ADATLEKÉRÉS EFFECT
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -47,7 +50,7 @@ export default function Home() {
     fetchData();
   }, []);
 
-  // --- FIX KOMMENTEK ---
+  // 4. FIX KOMMENTEK LISTÁJA
   const staticReviews = [
     {
       author: "Varga Niki",
@@ -76,19 +79,24 @@ export default function Home() {
     }
   ];
 
+  // 5. GÖRGETÉS
   const scrollToOrder = () => {
     document.getElementById('order-section')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // 6. ÖSSZEG SZÁMÍTÁS
   const calculateTotal = () => {
     if (!product) return 0;
     return product.price;
   };
 
+  // 7. RENDELÉS LEADÁSA (HANDLE SUBMIT)
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setOrderStatus('loading');
+    
     const totalAmount = calculateTotal();
+
     try {
         const orderData = {
             customerName: formData.name,
@@ -102,11 +110,13 @@ export default function Home() {
             paymentMethod: 'card',
             status: 'Fizetésre vár (PayPal)'
         };
+
         const response = await fetch('/api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(orderData)
         });
+
         if (response.ok) {
             const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${PAYPAL_EMAIL}&item_name=${encodeURIComponent(product.name)}&amount=${totalAmount}&currency_code=HUF&return=${encodeURIComponent(window.location.href)}`;
             window.location.href = paypalUrl;
@@ -118,14 +128,15 @@ export default function Home() {
         console.error("Hiba:", error);
         setOrderStatus('');
     }
-  };
+  }; 
+  // --- ITT ZÁRUL A HANDLE SUBMIT, ELLENŐRIZVE ---
 
-  // --- HA MÉG TÖLT, VAGY NINCS TERMÉK ---
+  // 8. TÖLTŐKÉPERNYŐ (Feltételes megjelenítés)
   if (loading || !product) {
     return <div className="min-h-screen flex items-center justify-center text-gray-500 font-medium">Betöltés...</div>;
   }
 
-  // --- FŐOLDAL MEGJELENÍTÉSE ---
+  // 9. A FŐOLDAL HTML (RETURN)
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
       
@@ -148,6 +159,7 @@ export default function Home() {
                <div className="absolute top-4 right-4 bg-red-600 text-white w-16 h-16 flex items-center justify-center rounded-full shadow-xl z-10 border-2 border-white animate-pulse">
                  <p className="text-xl font-black">-50%</p>
                </div>
+               
                <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 border-4 border-white">
                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" onError={(e) => { (e.target as any).src = "https://images.unsplash.com/photo-1629198688000-71f23e745b6e?w=800"; }} />
                </div>
@@ -343,13 +355,4 @@ export default function Home() {
                       </button>
                       <p className="text-center text-[10px] text-gray-400 mt-3 flex justify-center items-center gap-1">
                         <Shield size={10}/> SSL Titkosított Fizetés
-                      </p>
-                    </div>
-                  </form>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-      <footer clas
+                  
