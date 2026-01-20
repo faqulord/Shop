@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Star, Check, Shield, ArrowRight, Heart, CreditCard, Banknote, ThumbsUp, AlertTriangle, Zap, Clock } from 'lucide-react';
 
-// Ikon komponens javítva, hogy ne okozzon gondot
+// Ikon komponens (hogy ne legyen import hiba)
 function CheckCircle({ size, fill, className }: any) {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill || "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -16,7 +16,7 @@ export default function Home() {
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   
-  // A SAJÁT PAYPAL CÍMED
+  // PAYPAL EMAIL
   const PAYPAL_EMAIL = "stylefaqu@gmail.com"; 
 
   // --- VISSZASZÁMLÁLÓ ---
@@ -127,11 +127,16 @@ export default function Home() {
     }
   };
 
-  // --- BIZTONSÁGI JAVÍTÁS ITT ---
-  if (loading || !product) {
+  // --- HIBA JAVÍTVA: A loading check összevonva, hogy ne legyen zárójel hiba ---
+  if (loading) {
     return <div className="min-h-screen flex items-center justify-center text-gray-500 font-medium">Betöltés...</div>;
   }
+  
+  if (!product) {
+    return <div className="min-h-screen flex items-center justify-center">Termék betöltése...</div>;
+  }
 
+  // --- INNEN KEZDŐDIK A FŐOLDAL MEGJELENÍTÉSE ---
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
       
@@ -352,11 +357,4 @@ export default function Home() {
                         <Shield size={10}/> SSL Titkosított Fizetés
                       </p>
                     </div>
-                  </form>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-      <footer className="bg-white border-t border-gray-200 py-8 mt-8 text-center"><
+            
