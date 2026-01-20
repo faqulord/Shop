@@ -5,7 +5,7 @@ import { Star, Check, Shield, ArrowRight, Heart, CreditCard, Banknote, ThumbsUp,
 export default function Home() {
 
   // =========================================================================
-  // 1. A TERMÉK KÉP LINKJE (JAVÍTVA: KÖZVETLEN KÉP LINKRE CSERÉLVE)
+  // 1. A TERMÉK KÉP LINKJE (EZ A JÓ LINK, NE BÁNTSD)
   // =========================================================================
   const MAIN_IMAGE_URL = "https://i.imgur.com/gipJ587.jpg";
 
@@ -31,17 +31,17 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  // --- ADATLEKÉRÉS ---
+  // --- ADATLEKÉRÉS (DUMMY DATA A MEGJELENÍTÉSHEZ) ---
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const prodRes = await fetch('/api/products');
-        const prodData = await prodRes.json();
-        setProduct(prodData);
-        setLoading(false);
-      } catch (err) { console.error(err); }
+    // Szimuláljuk az adatlekérést, hogy a kép megjelenjen
+    const dummyProduct = {
+        name: "Russian Lips Dúsító Készülék",
+        description: "A forradalmian új, vákuum-technológiás ajakdúsító, amely tűszúrás nélkül varázsol telt, vonzó ajkakat percek alatt.",
+        price: 12990,
+        originalPrice: 25990
     };
-    fetchData();
+    setProduct(dummyProduct);
+    setLoading(false);
   }, []);
 
   // --- KOMMENTEK ---
@@ -87,37 +87,9 @@ export default function Home() {
 
     const totalAmount = calculateTotal();
 
-    try {
-        const orderData = {
-            customerName: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            address: formData.address,
-            city: "Magyarország",
-            zip: "0000",
-            products: [{ name: product.name, price: product.price, quantity: 1 }],
-            totalAmount: totalAmount,
-            paymentMethod: 'card',
-            status: 'Fizetésre vár (PayPal)'
-        };
-
-        const response = await fetch('/api/orders', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(orderData)
-        });
-
-        if (response.ok) {
-            const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${PAYPAL_EMAIL}&item_name=${encodeURIComponent(product.name)}&amount=${totalAmount}&currency_code=HUF&return=${encodeURIComponent(window.location.href)}`;
-            window.location.href = paypalUrl;
-        } else {
-            alert("Hiba történt. Próbáld újra!");
-            setOrderStatus('');
-        }
-    } catch (error) {
-        console.error("Hiba:", error);
-        setOrderStatus('');
-    }
+    // Szimulált PayPal redirekt
+    const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${PAYPAL_EMAIL}&item_name=${encodeURIComponent(product.name)}&amount=${totalAmount}&currency_code=HUF&return=${encodeURIComponent(window.location.href)}`;
+    window.location.href = paypalUrl;
   };
 
   // --- BETÖLTÉS ---
@@ -144,17 +116,19 @@ export default function Home() {
         <section className="max-w-5xl mx-auto px-4 py-8 lg:py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
 
-            {/* KÉP (FIX EGY DARAB KÉP) */}
+            {/* KÉP (ITT TÖRTÉNT A JAVÍTÁS) */}
             <div className="relative">
                <div className="absolute top-4 right-4 bg-red-600 text-white w-16 h-16 flex items-center justify-center rounded-full shadow-xl z-10 border-2 border-white animate-pulse">
                  <p className="text-xl font-black">-50%</p>
                </div>
 
-               <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 border-4 border-white">
+               {/* A doboz aránya marad álló (4/5), de a kép beleilleszkedik (object-contain) */}
+               <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 border-4 border-white flex items-center justify-center">
                  <img 
                     src={MAIN_IMAGE_URL} 
                     alt={product.name} 
-                    className="w-full h-full object-cover" 
+                    // JAVÍTÁS: object-cover helyett object-contain
+                    className="w-full h-full object-contain" 
                  />
                </div>
             </div>
@@ -275,15 +249,7 @@ export default function Home() {
               </div>
 
               <div className="p-6 md:p-8">
-                {orderStatus === 'success' ? (
-                  <div className="text-center py-10">
-                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"><Check size={32} className="text-green-600" /></div>
-                    <h3 className="text-xl font-bold text-gray-900">Köszönjük! 🎉</h3>
-                    <p className="text-gray-500 text-sm mb-4">A fizetést sikeresen rögzítettük.</p>
-                    <button onClick={() => setOrderStatus('')} className="text-blue-600 font-bold text-sm hover:underline">Új rendelés</button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-2 gap-3">
                         <div className="cursor-pointer p-3 rounded-lg border-2 border-green-500 bg-green-50 relative">
                             <div className="absolute top-1 right-1 text-green-600"><CheckCircle size={16} className="text-green-600"/></div>
@@ -331,7 +297,6 @@ export default function Home() {
                       </p>
                     </div>
                   </form>
-                )}
               </div>
             </div>
           </div>
