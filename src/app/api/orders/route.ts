@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
-import Order from '@/models/Order'; // <--- ITT A LÉNYEG: Nagy "O"-val írtuk!
+import Order from '@/models/order'; // <--- ITT A JAVÍTÁS: KISBETŰS "order"
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
