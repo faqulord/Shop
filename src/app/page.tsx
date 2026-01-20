@@ -1,13 +1,18 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { Star, Check, Shield, ArrowRight, Heart, CreditCard, Banknote, ThumbsUp, AlertTriangle, Zap, Clock, CheckCircle } from 'lucide-react';
+import { Star, Check, Shield, ArrowRight, Heart, CreditCard, Banknote, ThumbsUp, AlertTriangle, Zap, Clock, CheckCircle, X } from 'lucide-react';
 
 export default function Home() {
 
   // =========================================================================
-  // A KÉP LINKJE
+  // KÉPEK BEÁLLÍTÁSA
   // =========================================================================
+  // 1. Fő kép (Hero szekció) - Maradt a régi, mert az jól mutat nagyban
   const MAIN_IMAGE_URL = "https://i.imgur.com/gipJ587.jpg";
+  
+  // 2. Összehasonlító kép (A fehér készülék, amit most küldtél)
+  // Átalakítottam direkt linkké, hogy megjelenjen!
+  const COMPARISON_PRODUCT_IMG = "https://i.imgur.com/uNDdP2q.jpg"; 
 
   // --- ÁLLAPOTOK ---
   const [product, setProduct] = useState<any>(null);
@@ -31,7 +36,7 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  // --- ADATLEKÉRÉS (DUMMY DATA A MEGJELENÍTÉSHEZ) ---
+  // --- ADATLEKÉRÉS (DUMMY DATA) ---
   useEffect(() => {
     const dummyProduct = {
         name: "Russian Lips Dúsító Készülék",
@@ -83,9 +88,7 @@ export default function Home() {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setOrderStatus('loading');
-
     const totalAmount = calculateTotal();
-
     const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${PAYPAL_EMAIL}&item_name=${encodeURIComponent(product.name)}&amount=${totalAmount}&currency_code=HUF&return=${encodeURIComponent(window.location.href)}`;
     window.location.href = paypalUrl;
   };
@@ -110,25 +113,21 @@ export default function Home() {
       </nav>
 
       <main>
-        {/* HERO */}
+        {/* HERO SZEKCIÓ */}
         <section className="max-w-5xl mx-auto px-4 py-8 lg:py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
 
-            {/* KÉP (ITT A VÉGSŐ JAVÍTÁS: NAGYÍTÁS ÉS POZICIONÁLÁS) */}
+            {/* FŐ KÉP */}
             <div className="relative group">
                <div className="absolute top-4 right-4 bg-red-600 text-white w-16 h-16 flex items-center justify-center rounded-full shadow-xl z-20 border-2 border-white animate-pulse">
                  <p className="text-xl font-black">-50%</p>
                </div>
-
-               {/* A keret, ami levágja a kilógó részeket (overflow-hidden) */}
                <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 border-4 border-white relative">
                  <img 
                     src={MAIN_IMAGE_URL} 
                     alt={product.name} 
-                    // JAVÍTÁS: Ránagyítunk (scale) és kicsit feljebb toljuk (translate-y), hogy a fehér részek eltűnjenek.
                     className="w-full h-full object-cover transform scale-[1.15] translate-y-[-8%] transition-transform duration-500 group-hover:scale-[1.2]"
                  />
-                 {/* Egy finom árnyék a kép aljára, hogy profibb legyen */}
                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
                </div>
             </div>
@@ -172,14 +171,95 @@ export default function Home() {
                 <h3 className="font-bold text-gray-900 flex items-center gap-2 text-sm mb-3"><Zap className="text-pink-500 fill-pink-500" size={18} /> Miért imádják a nők?</h3>
                 <ul className="space-y-2 text-base">
                   <li className="flex items-center gap-2 text-black font-bold"><Check size={18} className="text-green-600"/> Tűmentes "Russian Lips" hatás</li>
-                  <li className="flex items-center gap-2 text-black font-bold"><Check size={18} className="text-green-600"/> Természetes kollagén-aktiválás (Vegyszermentes)</li>
-                  <li className="flex items-center gap-2 text-black font-bold"><Check size={18} className="text-green-600"/> Hialuronnal & növényi olajokkal is használható!</li>
+                  <li className="flex items-center gap-2 text-black font-bold"><Check size={18} className="text-green-600"/> Természetes kollagén-aktiválás</li>
+                  <li className="flex items-center gap-2 text-black font-bold"><Check size={18} className="text-green-600"/> Hialuronnal & olajokkal is használható!</li>
                 </ul>
               </div>
 
               <button onClick={scrollToOrder} className="w-full bg-gray-900 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-black transition shadow-xl flex items-center justify-center gap-2">
                 Kérem a készüléket <ArrowRight size={20} />
               </button>
+            </div>
+          </div>
+        </section>
+
+        {/* ================================================================= */}
+        {/* ÚJ "VS" ÖSSZEHASONLÍTÓ SZEKCIÓ (A KÉP HELYETT KÓDDAL) */}
+        {/* ================================================================= */}
+        <section className="py-12 bg-gray-50">
+          <div className="max-w-5xl mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl font-black text-center mb-10 text-gray-900 uppercase tracking-tight">
+              Miért válaszd a Lipses-t?
+            </h2>
+            
+            <div className="flex flex-col md:flex-row rounded-3xl overflow-hidden shadow-2xl border border-gray-200 bg-white">
+              
+              {/* BAL OLDAL: Hagyományos (ROSSZ) */}
+              <div className="flex-1 bg-gray-100 p-8 flex flex-col justify-center relative border-b md:border-b-0 md:border-r border-gray-200">
+                <h3 className="text-xl md:text-2xl font-bold text-gray-500 mb-6 leading-tight">
+                  Hagyományos <br/>
+                  <span className="text-gray-700">Injekciós Feltöltés</span>
+                </h3>
+                
+                <ul className="space-y-5">
+                  <li className="flex items-start gap-3 opacity-70">
+                    <div className="bg-gray-400 rounded-full p-1 mt-0.5"><X size={14} className="text-white"/></div> 
+                    <span className="font-bold text-gray-600 text-sm md:text-base">Maradandó, nehéz javítani ha nem jó</span>
+                  </li>
+                  <li className="flex items-start gap-3 opacity-70">
+                     <div className="bg-gray-400 rounded-full p-1 mt-0.5 shrink-0"><X size={14} className="text-white"/></div>
+                    <span className="font-bold text-gray-600 text-sm md:text-base">Hosszú gyógyulás, kék-zöld foltok</span>
+                  </li>
+                  <li className="flex items-start gap-3 opacity-70">
+                     <div className="bg-gray-400 rounded-full p-1 mt-0.5 shrink-0"><X size={14} className="text-white"/></div>
+                    <span className="font-bold text-gray-600 text-sm md:text-base">Fájdalmas szúrások, duzzanat</span>
+                  </li>
+                  <li className="flex items-start gap-3 opacity-70">
+                     <div className="bg-gray-400 rounded-full p-1 mt-0.5 shrink-0"><X size={14} className="text-white"/></div>
+                    <span className="font-bold text-gray-600 text-sm md:text-base">Evés nehézkes a kezelés után</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* VS BADGE KÖZÉPEN */}
+              <div className="absolute left-1/2 -translate-x-1/2 mt-[280px] md:mt-0 md:top-auto md:self-center z-20">
+                 <span className="text-3xl md:text-4xl font-black text-white bg-red-600 rounded-full w-16 h-16 md:w-20 md:h-20 flex items-center justify-center border-4 border-white shadow-xl italic transform -rotate-12">VS</span>
+              </div>
+
+              {/* JOBB OLDAL: LIPSES (JÓ - ITT JELENIK MEG A FEHÉR KÉSZÜLÉKED) */}
+              <div className="flex-1 bg-gradient-to-br from-red-600 to-red-800 p-8 relative overflow-hidden text-white">
+                
+                {/* A Termék képe a jobb felső sarokban / háttérben */}
+                <div className="md:absolute md:top-4 md:right-4 w-32 h-32 md:w-40 md:h-40 mx-auto md:mx-0 mb-6 md:mb-0 bg-white/20 rounded-full p-2 backdrop-blur-sm shadow-inner border border-white/30">
+                    <img src={COMPARISON_PRODUCT_IMG} className="w-full h-full object-cover rounded-full" alt="Lipses készülék" />
+                </div>
+
+                <div className="relative z-10">
+                    <h3 className="text-xl md:text-2xl font-bold text-white mb-6 leading-tight">
+                    LIPSES <br/>
+                    <span className="text-red-200">Elektromos Dúsító</span>
+                    </h3>
+
+                    <ul className="space-y-5">
+                    <li className="flex items-start gap-3">
+                        <div className="bg-green-500 rounded-full p-1 mt-0.5 shrink-0"><Check size={14} className="text-white"/></div>
+                        <span className="font-bold text-white text-sm md:text-base">Vákuumos technológia mellékhatás nélkül</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                        <div className="bg-green-500 rounded-full p-1 mt-0.5 shrink-0"><Check size={14} className="text-white"/></div>
+                        <span className="font-bold text-white text-sm md:text-base">Azonnali eredmény 1 perc alatt</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                        <div className="bg-green-500 rounded-full p-1 mt-0.5 shrink-0"><Check size={14} className="text-white"/></div>
+                        <span className="font-bold text-white text-sm md:text-base">Enyhe, kellemes bizsergés (nincs fájdalom)</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                        <div className="bg-green-500 rounded-full p-1 mt-0.5 shrink-0"><Check size={14} className="text-white"/></div>
+                        <span className="font-bold text-white text-sm md:text-base">Nincs gyógyulási idő, azonnal mehetsz randira</span>
+                    </li>
+                    </ul>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -208,22 +288,10 @@ export default function Home() {
                             {[...Array(review.rating)].map((_, i) => <Star key={i} fill="currentColor" size={8}/>)}
                         </div>
                         <p className="text-[14px] text-gray-800 leading-snug mt-0.5">{review.text}</p>
-                        <div className="absolute -bottom-2 -right-1 bg-white rounded-full shadow-md border border-gray-100 flex items-center gap-1 px-1 py-0.5 cursor-pointer">
-                            <div className="bg-blue-500 rounded-full p-[2px]"><ThumbsUp size={8} fill="white" className="text-white"/></div>
-                            <span className="text-[10px] text-gray-500 font-bold">24</span>
-                        </div>
-                    </div>
-                    <div className="flex gap-3 mt-1 ml-3 text-[11px] font-bold text-gray-500">
-                        <span className="cursor-pointer hover:underline text-gray-600">Tetszik</span>
-                        <span className="cursor-pointer hover:underline text-gray-600">Válasz</span>
-                        <span className="font-normal text-gray-400">{review.date}</span>
                     </div>
                   </div>
                 </div>
               ))}
-            </div>
-            <div className="mt-8 text-center pt-4">
-                <p className="text-gray-400 text-xs font-bold cursor-pointer hover:text-gray-600 transition">Előző 392 hozzászólás betöltése...</p>
             </div>
           </div>
         </section>
@@ -278,31 +346,4 @@ export default function Home() {
                     <div className="space-y-3">
                        <div><label className="text-[10px] font-bold text-gray-500 uppercase ml-1">Név</label><input required type="text" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 outline-none" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Pl. Minta Éva" /></div>
                        <div className="grid grid-cols-2 gap-3">
-                           <div><label className="text-[10px] font-bold text-gray-500 uppercase ml-1">Email</label><input required type="email" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 outline-none" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="email@cim.hu" /></div>
-                           <div><label className="text-[10px] font-bold text-gray-500 uppercase ml-1">Telefon</label><input required type="tel" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 outline-none" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="06 30..." /></div>
-                       </div>
-                       <div><label className="text-[10px] font-bold text-gray-500 uppercase ml-1">Cím</label><input required type="text" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 outline-none" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} placeholder="Város, Utca, Házszám" /></div>
-                    </div>
-
-                    <div className="pt-4 border-t border-gray-200">
-                      <div className="flex justify-between items-center mb-4">
-                          <span className="text-sm text-gray-500 font-medium">Fizetendő:</span>
-                          <span className="text-2xl font-black text-pink-600">{calculateTotal().toLocaleString()} Ft</span>
-                      </div>
-                      <button disabled={orderStatus === 'loading'} className="w-full bg-black text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-gray-800 transition transform active:scale-95">
-                        {orderStatus === 'loading' ? 'Feldolgozás...' : 'Tovább a Fizetéshez (PayPal)'}
-                      </button>
-                      <p className="text-center text-[10px] text-gray-400 mt-3 flex justify-center items-center gap-1">
-                        <Shield size={10}/> SSL Titkosított Fizetés
-                      </p>
-                    </div>
-                  </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-      <footer className="bg-white border-t border-gray-200 py-8 mt-8 text-center"><p className="text-gray-400 text-xs">© 2024 Lipses Shop.</p></footer>
-    </div>
-  );
-}
+                           <div><label className="text-[10px] font-bold text-gray-500 uppercase ml-1">Email</label><input required type="email" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 outline
