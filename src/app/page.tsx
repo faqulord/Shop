@@ -5,7 +5,7 @@ import { Star, Check, Shield, ArrowRight, Heart, CreditCard, Banknote, ThumbsUp,
 export default function Home() {
 
   // =========================================================================
-  // 1. A TERMÉK KÉP LINKJE (EZ A JÓ LINK, NE BÁNTSD)
+  // A KÉP LINKJE
   // =========================================================================
   const MAIN_IMAGE_URL = "https://i.imgur.com/gipJ587.jpg";
 
@@ -33,7 +33,6 @@ export default function Home() {
 
   // --- ADATLEKÉRÉS (DUMMY DATA A MEGJELENÍTÉSHEZ) ---
   useEffect(() => {
-    // Szimuláljuk az adatlekérést, hogy a kép megjelenjen
     const dummyProduct = {
         name: "Russian Lips Dúsító Készülék",
         description: "A forradalmian új, vákuum-technológiás ajakdúsító, amely tűszúrás nélkül varázsol telt, vonzó ajkakat percek alatt.",
@@ -87,7 +86,6 @@ export default function Home() {
 
     const totalAmount = calculateTotal();
 
-    // Szimulált PayPal redirekt
     const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${PAYPAL_EMAIL}&item_name=${encodeURIComponent(product.name)}&amount=${totalAmount}&currency_code=HUF&return=${encodeURIComponent(window.location.href)}`;
     window.location.href = paypalUrl;
   };
@@ -116,20 +114,22 @@ export default function Home() {
         <section className="max-w-5xl mx-auto px-4 py-8 lg:py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
 
-            {/* KÉP (ITT TÖRTÉNT A JAVÍTÁS) */}
-            <div className="relative">
-               <div className="absolute top-4 right-4 bg-red-600 text-white w-16 h-16 flex items-center justify-center rounded-full shadow-xl z-10 border-2 border-white animate-pulse">
+            {/* KÉP (ITT A VÉGSŐ JAVÍTÁS: NAGYÍTÁS ÉS POZICIONÁLÁS) */}
+            <div className="relative group">
+               <div className="absolute top-4 right-4 bg-red-600 text-white w-16 h-16 flex items-center justify-center rounded-full shadow-xl z-20 border-2 border-white animate-pulse">
                  <p className="text-xl font-black">-50%</p>
                </div>
 
-               {/* A doboz aránya marad álló (4/5), de a kép beleilleszkedik (object-contain) */}
-               <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 border-4 border-white flex items-center justify-center">
+               {/* A keret, ami levágja a kilógó részeket (overflow-hidden) */}
+               <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 border-4 border-white relative">
                  <img 
                     src={MAIN_IMAGE_URL} 
                     alt={product.name} 
-                    // JAVÍTÁS: object-cover helyett object-contain
-                    className="w-full h-full object-contain" 
+                    // JAVÍTÁS: Ránagyítunk (scale) és kicsit feljebb toljuk (translate-y), hogy a fehér részek eltűnjenek.
+                    className="w-full h-full object-cover transform scale-[1.15] translate-y-[-8%] transition-transform duration-500 group-hover:scale-[1.2]"
                  />
+                 {/* Egy finom árnyék a kép aljára, hogy profibb legyen */}
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
                </div>
             </div>
 
