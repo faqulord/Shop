@@ -5,12 +5,12 @@ import { Star, Check, Shield, ArrowRight, CreditCard, Banknote, AlertTriangle, Z
 export default function Home() {
 
   // =========================================================================
-  // KÉPEK BEÁLLÍTÁSA (STABIL VERZIÓ)
+  // KÉP BEÁLLÍTÁSA (EZT KÉRTED, HOGY EZ LEGYEN FIX)
   // =========================================================================
   const MAIN_IMAGE_URL = "https://i.imgur.com/gipJ587.jpg";
 
   // --- ÁLLAPOTOK ---
-  const [product, setProduct] = useState<any>(null);
+  const [product, setProduct] = useState<any>(null); // Itt tároljuk az adatbázisból jövő adatot
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState({ h: 3, m: 12, s: 45 });
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', address: '', city: '', zip: '' });
@@ -31,16 +31,35 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  // --- ADATLEKÉRÉS ---
+  // --- ADATLEKÉRÉS (VISSZAKÖTÖTTEM AZ ADMIN PANELT!) ---
   useEffect(() => {
-    const dummyProduct = {
-        name: "Russian Lips Dúsító Készülék",
-        description: "A forradalmian új, vákuum-technológiás ajakdúsító, amely tűszúrás nélkül varázsol telt, vonzó ajkakat percek alatt.",
-        price: 12990,
-        originalPrice: 25990
+    const fetchData = async () => {
+      try {
+        // Ez a sor kéri le az adatokat az Admin Panelből/Adatbázisból
+        const prodRes = await fetch('/api/products');
+        
+        if (!prodRes.ok) throw new Error("Hiba a lekérésben");
+        
+        const prodData = await prodRes.json();
+        
+        // Ha az API tömböt ad vissza, az első elemet vesszük, ha objektumot, akkor azt
+        const activeProduct = Array.isArray(prodData) ? prodData[0] : prodData;
+        
+        setProduct(activeProduct);
+        setLoading(false);
+      } catch (err) { 
+        console.error("Adatbázis hiba:", err);
+        // Ha nem sikerül betölteni, csak akkor használunk vésztartalék adatot
+        setProduct({
+            name: "Russian Lips (Betöltési Hiba)",
+            description: "Nem sikerült betölteni az adatokat az admin panelből.",
+            price: 0,
+            originalPrice: 0
+        });
+        setLoading(false);
+      }
     };
-    setProduct(dummyProduct);
-    setLoading(false);
+    fetchData();
   }, []);
 
   // --- KOMMENTEK ---
@@ -75,7 +94,7 @@ export default function Home() {
 
   const calculateTotal = () => {
     if (!product) return 0;
-    return product.price;
+    return product.price; // Ez most már az Admin Panel árát használja!
   };
 
   const handleSubmit = async (e: any) => {
@@ -83,10 +102,36 @@ export default function Home() {
     setOrderStatus('loading');
 
     const totalAmount = calculateTotal();
+    
+    // --- RENDELÉS MENTÉSE AZ ADATBÁZISBA ---
+    try {
+        const orderData = {
+            customerName: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            address: formData.address,
+            city: "Magyarország", // Egyszerűsítve
+            zip: "0000",
+            products: [{ name: product.name, price: product.price, quantity: 1 }],
+            totalAmount: totalAmount,
+            paymentMethod: 'card', // PayPal
+            status: 'Fizetésre vár (PayPal)'
+        };
+
+        // Elküldjük a rendelést a backendnek (hogy lásd az Adminban)
+        await fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+        });
+
+    } catch (error) {
+        console.error("Rendelés mentési hiba:", error);
+    }
+
+    // --- PAYPAL INDÍTÁSA ---
     const returnUrl = encodeURIComponent(window.location.href);
     const itemName = encodeURIComponent(product.name);
-    
-    // PayPal URL
     const baseUrl = "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick";
     const params = `&business=${PAYPAL_EMAIL}&item_name=${itemName}&amount=${totalAmount}&currency_code=HUF&return=${returnUrl}`;
     
@@ -117,25 +162,24 @@ export default function Home() {
         <section className="max-w-5xl mx-auto px-4 py-8 lg:py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
 
-            {/* FŐ KÉP (Javított, nagyított verzió) */}
+            {/* FŐ KÉP */}
             <div className="relative group">
                <div className="absolute top-4 right-4 bg-red-600 text-white w-16 h-16 flex items-center justify-center rounded-full shadow-xl z-20 border-2 border-white animate-pulse">
                  <p className="text-xl font-black">-50%</p>
                </div>
 
-               {/* A keret */}
+               {/* A KÉP, AMIT BEÁLLÍTOTTUNK HOGY JÓ LEGYEN A MÉRETE */}
                <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 border-4 border-white relative">
                  <img 
                     src={MAIN_IMAGE_URL} 
                     alt={product.name} 
-                    // ITT A JAVÍTÁS: Ránagyítunk (scale) és feljebb toljuk
                     className="w-full h-full object-cover transform scale-[1.15] translate-y-[-8%] transition-transform duration-500 group-hover:scale-[1.2]"
                  />
                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
                </div>
             </div>
 
-            {/* SZÖVEG */}
+            {/* SZÖVEG - MOST MÁR AZ ADATBÁZISBÓL JÖN! */}
             <div className="space-y-6">
               <div>
                 <div className="flex items-center gap-2 mb-2">
@@ -146,14 +190,16 @@ export default function Home() {
                   <span className="text-gray-400 text-xs">(395 vélemény)</span>
                 </div>
 
+                {/* TERMÉK NEVE AZ ADMINBÓL */}
                 <h1 className="text-3xl md:text-5xl font-black text-gray-900 leading-tight mb-4">{product.name}</h1>
 
+                {/* TERMÉK LEÍRÁSA AZ ADMINBÓL */}
                 <div className="text-lg font-medium text-black leading-relaxed" 
                      dangerouslySetInnerHTML={{ __html: product.description ? product.description.replace(/\n/g, '<br/>') : '' }}>
                 </div>
               </div>
 
-              {/* VISSZASZÁMLÁLÓ */}
+              {/* ÁR DOBOZ */}
               <div className="bg-red-50 border border-red-100 p-4 rounded-xl flex items-center justify-between">
                   <div>
                       <p className="text-xs text-red-500 font-bold uppercase flex items-center gap-1">
@@ -164,8 +210,9 @@ export default function Home() {
                       </p>
                   </div>
                   <div className="text-right">
-                      <p className="text-gray-400 line-through text-sm">{product.originalPrice?.toLocaleString()} Ft</p>
-                      <p className="text-2xl font-black text-gray-900">{product.price.toLocaleString()} Ft</p>
+                      {/* ÁRAK AZ ADMINBÓL */}
+                      <p className="text-gray-400 line-through text-sm">{product.originalPrice ? product.originalPrice.toLocaleString() : "25 990"} Ft</p>
+                      <p className="text-2xl font-black text-gray-900">{product.price ? product.price.toLocaleString() : "0"} Ft</p>
                   </div>
               </div>
 
@@ -277,7 +324,7 @@ export default function Home() {
                     <div className="pt-4 border-t border-gray-200">
                       <div className="flex justify-between items-center mb-4">
                           <span className="text-sm text-gray-500 font-medium">Fizetendő:</span>
-                          <span className="text-2xl font-black text-pink-600">{calculateTotal().toLocaleString()} Ft</span>
+                          <span className="text-2xl font-black text-pink-600">{product.price ? product.price.toLocaleString() : "..."} Ft</span>
                       </div>
                       <button disabled={orderStatus === 'loading'} className="w-full bg-black text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-gray-800 transition transform active:scale-95">
                         {orderStatus === 'loading' ? 'Feldolgozás...' : 'Tovább a Fizetéshez (PayPal)'}
