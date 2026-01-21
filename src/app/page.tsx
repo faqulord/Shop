@@ -5,12 +5,12 @@ import { Star, Check, Shield, ArrowRight, CreditCard, Banknote, AlertTriangle, Z
 export default function Home() {
 
   // =========================================================================
-  // KÉP BEÁLLÍTÁSA (EZT KÉRTED, HOGY EZ LEGYEN FIX)
+  // ALAPÉRTELMEZETT KÉP (Biztonsági tartalék, ha az Adminban nincs megadva)
   // =========================================================================
-  const MAIN_IMAGE_URL = "https://i.imgur.com/gipJ587.jpg";
+  const FALLBACK_IMAGE = "https://i.imgur.com/gipJ587.jpg";
 
   // --- ÁLLAPOTOK ---
-  const [product, setProduct] = useState<any>(null); // Itt tároljuk az adatbázisból jövő adatot
+  const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState({ h: 3, m: 12, s: 45 });
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', address: '', city: '', zip: '' });
@@ -31,30 +31,28 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  // --- ADATLEKÉRÉS (VISSZAKÖTÖTTEM AZ ADMIN PANELT!) ---
+  // --- ADATLEKÉRÉS (ADMIN PANEL) ---
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Ez a sor kéri le az adatokat az Admin Panelből/Adatbázisból
         const prodRes = await fetch('/api/products');
-        
-        if (!prodRes.ok) throw new Error("Hiba a lekérésben");
-        
+        if (!prodRes.ok) throw new Error("Hiba");
         const prodData = await prodRes.json();
         
-        // Ha az API tömböt ad vissza, az első elemet vesszük, ha objektumot, akkor azt
+        // Az első terméket vesszük ki az adatbázisból
         const activeProduct = Array.isArray(prodData) ? prodData[0] : prodData;
         
         setProduct(activeProduct);
         setLoading(false);
       } catch (err) { 
-        console.error("Adatbázis hiba:", err);
-        // Ha nem sikerül betölteni, csak akkor használunk vésztartalék adatot
+        console.error(err);
+        // Hiba esetén alapértelmezett adatok
         setProduct({
-            name: "Russian Lips (Betöltési Hiba)",
-            description: "Nem sikerült betölteni az adatokat az admin panelből.",
-            price: 0,
-            originalPrice: 0
+            name: "Russian Lips Készülék",
+            description: "Adatbetöltési hiba...",
+            price: 12990,
+            originalPrice: 25990,
+            image: FALLBACK_IMAGE // Ha hiba van, a fix képet használjuk
         });
         setLoading(false);
       }
@@ -64,27 +62,9 @@ export default function Home() {
 
   // --- KOMMENTEK ---
   const staticReviews = [
-    {
-      author: "Varga Niki",
-      text: "Lányok, ez valami kegyetlen! 😱 Azt hittem kamu, de 2 perc alatt olyat csinált a számmal, mintha töltettem volna. Kicsit bizserget, de megéri!",
-      rating: 5,
-      date: "2 órája",
-      verified: true
-    },
-    {
-      author: "Kovács Petra",
-      text: "Nagyon gyorsan megjött! A gép kicsit hangosabb, mint gondoltam, ezért csak 4 csillag, de az eredmény tényleg brutál. Randi előtt kötelező.",
-      rating: 4,
-      date: "5 órája",
-      verified: true
-    },
-    {
-      author: "Tóth Eszter",
-      text: "Már a barátnőmnek is rendeltem egyet. Imádom, hogy nem kell tűszúrás. Az Apple formájút használom, nagyon kényelmes.",
-      rating: 5,
-      date: "Tegnap",
-      verified: true
-    }
+    { author: "Varga Niki", text: "Lányok, ez valami kegyetlen! 😱 Azt hittem kamu, de 2 perc alatt olyat csinált a számmal, mintha töltettem volna.", rating: 5, date: "2 órája", verified: true },
+    { author: "Kovács Petra", text: "Nagyon gyorsan megjött! A gép kicsit hangosabb, mint gondoltam, ezért csak 4 csillag, de az eredmény tényleg brutál.", rating: 4, date: "5 órája", verified: true },
+    { author: "Tóth Eszter", text: "Már a barátnőmnek is rendeltem egyet. Imádom, hogy nem kell tűszúrás. Az Apple formájút használom, nagyon kényelmes.", rating: 5, date: "Tegnap", verified: true }
   ];
 
   const scrollToOrder = () => {
@@ -94,60 +74,51 @@ export default function Home() {
 
   const calculateTotal = () => {
     if (!product) return 0;
-    return product.price; // Ez most már az Admin Panel árát használja!
+    return product.price;
   };
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setOrderStatus('loading');
-
     const totalAmount = calculateTotal();
     
-    // --- RENDELÉS MENTÉSE AZ ADATBÁZISBA ---
+    // --- RENDELÉS MENTÉSE ---
     try {
         const orderData = {
             customerName: formData.name,
             email: formData.email,
             phone: formData.phone,
             address: formData.address,
-            city: "Magyarország", // Egyszerűsítve
+            city: "Magyarország",
             zip: "0000",
             products: [{ name: product.name, price: product.price, quantity: 1 }],
             totalAmount: totalAmount,
-            paymentMethod: 'card', // PayPal
+            paymentMethod: 'card',
             status: 'Fizetésre vár (PayPal)'
         };
-
-        // Elküldjük a rendelést a backendnek (hogy lásd az Adminban)
         await fetch('/api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(orderData)
         });
+    } catch (error) { console.error(error); }
 
-    } catch (error) {
-        console.error("Rendelés mentési hiba:", error);
-    }
-
-    // --- PAYPAL INDÍTÁSA ---
+    // --- PAYPAL ---
     const returnUrl = encodeURIComponent(window.location.href);
     const itemName = encodeURIComponent(product.name);
     const baseUrl = "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick";
     const params = `&business=${PAYPAL_EMAIL}&item_name=${itemName}&amount=${totalAmount}&currency_code=HUF&return=${returnUrl}`;
-    
     window.location.href = baseUrl + params;
   };
 
-  // --- BETÖLTÉS ---
-  if (loading || !product) {
-    return <div className="min-h-screen flex items-center justify-center text-gray-500 font-medium">Betöltés...</div>;
-  }
+  if (loading || !product) return <div className="min-h-screen flex items-center justify-center">Betöltés...</div>;
 
-  // --- MEGJELENÍTÉS ---
+  // --- DYNAMIKUS KÉP KIVÁLASZTÁSA ---
+  // Ha van kép az Adminban (product.image), azt használjuk. Ha nincs, akkor a FALLBACK_IMAGE-t.
+  const displayImage = product.image && product.image.length > 5 ? product.image : FALLBACK_IMAGE;
+
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
-
-      {/* FEJLÉC */}
       <nav className="bg-white/95 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 shadow-sm py-3">
         <div className="max-w-5xl mx-auto px-4 flex justify-between items-center">
           <span className="text-2xl font-black text-pink-600 tracking-tighter">LIPSES.</span>
@@ -158,20 +129,17 @@ export default function Home() {
       </nav>
 
       <main>
-        {/* HERO SZEKCIÓ */}
         <section className="max-w-5xl mx-auto px-4 py-8 lg:py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-
-            {/* FŐ KÉP */}
+            
+            {/* KÉP MEGJELENÍTÉS */}
             <div className="relative group">
                <div className="absolute top-4 right-4 bg-red-600 text-white w-16 h-16 flex items-center justify-center rounded-full shadow-xl z-20 border-2 border-white animate-pulse">
                  <p className="text-xl font-black">-50%</p>
                </div>
-
-               {/* A KÉP, AMIT BEÁLLÍTOTTUNK HOGY JÓ LEGYEN A MÉRETE */}
                <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 border-4 border-white relative">
                  <img 
-                    src={MAIN_IMAGE_URL} 
+                    src={displayImage} // ITT HASZNÁLJUK A DINAMIKUS KÉPET
                     alt={product.name} 
                     className="w-full h-full object-cover transform scale-[1.15] translate-y-[-8%] transition-transform duration-500 group-hover:scale-[1.2]"
                  />
@@ -179,7 +147,6 @@ export default function Home() {
                </div>
             </div>
 
-            {/* SZÖVEG - MOST MÁR AZ ADATBÁZISBÓL JÖN! */}
             <div className="space-y-6">
               <div>
                 <div className="flex items-center gap-2 mb-2">
@@ -189,34 +156,23 @@ export default function Home() {
                   </div>
                   <span className="text-gray-400 text-xs">(395 vélemény)</span>
                 </div>
-
-                {/* TERMÉK NEVE AZ ADMINBÓL */}
                 <h1 className="text-3xl md:text-5xl font-black text-gray-900 leading-tight mb-4">{product.name}</h1>
-
-                {/* TERMÉK LEÍRÁSA AZ ADMINBÓL */}
                 <div className="text-lg font-medium text-black leading-relaxed" 
                      dangerouslySetInnerHTML={{ __html: product.description ? product.description.replace(/\n/g, '<br/>') : '' }}>
                 </div>
               </div>
 
-              {/* ÁR DOBOZ */}
               <div className="bg-red-50 border border-red-100 p-4 rounded-xl flex items-center justify-between">
                   <div>
-                      <p className="text-xs text-red-500 font-bold uppercase flex items-center gap-1">
-                          <Clock size={12}/> Az akció lejár:
-                      </p>
-                      <p className="text-xl font-mono font-black text-red-600">
-                          0{timeLeft.h}:{timeLeft.m < 10 ? `0${timeLeft.m}` : timeLeft.m}:{timeLeft.s < 10 ? `0${timeLeft.s}` : timeLeft.s}
-                      </p>
+                      <p className="text-xs text-red-500 font-bold uppercase flex items-center gap-1"><Clock size={12}/> Az akció lejár:</p>
+                      <p className="text-xl font-mono font-black text-red-600">0{timeLeft.h}:{timeLeft.m < 10 ? `0${timeLeft.m}` : timeLeft.m}:{timeLeft.s < 10 ? `0${timeLeft.s}` : timeLeft.s}</p>
                   </div>
                   <div className="text-right">
-                      {/* ÁRAK AZ ADMINBÓL */}
                       <p className="text-gray-400 line-through text-sm">{product.originalPrice ? product.originalPrice.toLocaleString() : "25 990"} Ft</p>
-                      <p className="text-2xl font-black text-gray-900">{product.price ? product.price.toLocaleString() : "0"} Ft</p>
+                      <p className="text-2xl font-black text-gray-900">{product.price ? product.price.toLocaleString() : "..."} Ft</p>
                   </div>
               </div>
 
-              {/* ELŐNYÖK */}
               <div className="bg-gray-50 p-5 rounded-xl border border-gray-200 shadow-sm">
                 <h3 className="font-bold text-gray-900 flex items-center gap-2 text-sm mb-3"><Zap className="text-pink-500 fill-pink-500" size={18} /> Miért imádják a nők?</h3>
                 <ul className="space-y-2 text-base">
@@ -233,12 +189,9 @@ export default function Home() {
           </div>
         </section>
 
-        {/* KOMMENTEK */}
         <section className="bg-white py-10 border-t border-gray-100">
           <div className="max-w-xl mx-auto px-4">
-            <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                Vásárlói vélemények <span className="text-gray-500 font-normal text-sm">(395)</span>
-            </h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">Vásárlói vélemények <span className="text-gray-500 font-normal text-sm">(395)</span></h2>
             <div className="space-y-4">
               {staticReviews.map((review, i) => (
                 <div key={i} className="flex gap-2 items-start animate-fade-in-up">
@@ -265,17 +218,13 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ŰRLAP */}
         <div id="order-section" className="py-12 bg-gray-50">
           <div className="max-w-xl mx-auto px-4">
             <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 flex items-start gap-3 shadow-sm animate-pulse">
                 <AlertTriangle className="text-red-600 shrink-0" size={24} />
                 <div>
                     <h4 className="text-red-800 font-bold text-sm uppercase">Fontos Információ:</h4>
-                    <p className="text-red-700 text-sm mt-1 leading-snug">
-                        Jelenleg csak <strong>Bankkártyás fizetés</strong> (PayPal) lehetséges! <br/>
-                        Az utánvétes fizetés <strong>Február 10-én</strong> nyílik meg.
-                    </p>
+                    <p className="text-red-700 text-sm mt-1 leading-snug">Jelenleg csak <strong>Bankkártyás fizetés</strong> (PayPal) lehetséges! <br/>Az utánvétes fizetés <strong>Február 10-én</strong> nyílik meg.</p>
                 </div>
             </div>
 
@@ -296,7 +245,6 @@ export default function Home() {
                                 <span className="text-[10px] text-green-700 font-bold mt-1 bg-green-200 px-2 py-0.5 rounded">INGYEN SZÁLLÍTÁS</span>
                             </div>
                         </div>
-
                         <div className="relative p-3 rounded-lg border-2 border-gray-200 bg-gray-100 opacity-60 cursor-not-allowed grayscale">
                              <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-lg z-10 text-center px-1">
                                 <div className="bg-white px-2 py-1 rounded border border-gray-300 shadow-sm transform -rotate-2">
@@ -329,9 +277,7 @@ export default function Home() {
                       <button disabled={orderStatus === 'loading'} className="w-full bg-black text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-gray-800 transition transform active:scale-95">
                         {orderStatus === 'loading' ? 'Feldolgozás...' : 'Tovább a Fizetéshez (PayPal)'}
                       </button>
-                      <p className="text-center text-[10px] text-gray-400 mt-3 flex justify-center items-center gap-1">
-                        <Shield size={10}/> SSL Titkosított Fizetés
-                      </p>
+                      <p className="text-center text-[10px] text-gray-400 mt-3 flex justify-center items-center gap-1"><Shield size={10}/> SSL Titkosított Fizetés</p>
                     </div>
                   </form>
               </div>
