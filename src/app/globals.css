@@ -2,24 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
+/* --- Prémium Rózsaarany-Márvány Stílus --- */
 :root {
-  /* Új prémium színek a LipsesHungary arculathoz */
-  --bg-marble: url('https://img.freepik.com/free-photo/pink-marble-texture-background_53876-133679.jpg'); /* Rózsaszín márvány textúra */
-  --rose-gold: #d4af37; /* Rose gold árnyalat (a logóhoz hasonló) */
+  --bg-marble: url('https://img.freepik.com/free-photo/white-marble-texture-with-natural-pattern-for-background_1258-54364.jpg'); /* Elegáns fehér márvány */
+  --rose-gold: #d4af37; /* Rózsaarany színkód (aranyosabb árnyalat) */
+  --rose-gold-light: #e6c97a; /* Világosabb rózsaarany */
   --text-dark: #4a4a4a; /* Elegáns sötétszürke szöveg */
   --text-light: #ffffff;
+  --overlay-color: rgba(255, 255, 255, 0.85); /* Fehér átlátszóság */
 }
 
 body {
   background-image: var(--bg-marble);
   background-size: cover;
-  background-attachment: fixed; /* A háttér nem görög a tartalommal */
+  background-attachment: fixed; /* A háttér fix */
   color: var(--text-dark);
-  font-family: 'Inter', sans-serif; /* Marad az Inter, de elegánsabban használjuk */
-  overflow-x: hidden;
+  font-family: 'Playfair Display', serif; /* Elegáns, talpas betűtípus a címsoroknak */
 }
 
-/* Hóesés (Előtérbe hozva) */
+/* Betűtípus importálása (ha nincs, az alap serif is jó) */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap');
+
+/* Folyószöveg betűtípusa */
+p, span, input, label, button {
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* --- Nagy, Látványos Hóesés (Előtérben) --- */
 .snow-container {
   position: fixed;
   top: 0;
@@ -27,34 +36,55 @@ body {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  /* Magas z-index, hogy a tartalom előtt legyen */
-  z-index: 9999;
-  background-image: radial-gradient(2px 2px at 20px 30px, #fff, rgba(0,0,0,0)),
-                    radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
-                    radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
-                    radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
-                    radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0));
-  background-repeat: repeat;
-  background-size: 200px 200px;
-  animation: snow 6s linear infinite; /* Kicsit lassabb, elegánsabb mozgás */
-  opacity: 0.6; /* Jobban látszódjon */
+  z-index: 9999; /* Legfelül legyen */
+  background-image: 
+    radial-gradient(4px 4px at 100px 50px, #fff, transparent),
+    radial-gradient(6px 6px at 200px 150px, #fff, transparent),
+    radial-gradient(3px 3px at 300px 250px, #fff, transparent),
+    radial-gradient(4px 4px at 400px 350px, #fff, transparent),
+    radial-gradient(6px 6px at 500px 100px, #fff, transparent),
+    radial-gradient(8px 8px at 50px 200px, #fff, transparent),
+    radial-gradient(4px 4px at 150px 300px, #fff, transparent),
+    radial-gradient(6px 6px at 250px 400px, #fff, transparent),
+    radial-gradient(3px 3px at 350px 500px, #fff, transparent);
+  background-size: 550px 550px;
+  animation: snow 5s linear infinite; /* Gyorsabb, sűrűbb */
+  opacity: 0.8; /* Jól látható */
 }
 
 @keyframes snow {
   0% { background-position: 0px 0px; }
-  100% { background-position: 100px 300px; }
+  100% { background-position: 100px 550px; }
 }
 
-/* Glassmorphism (Üveg hatás a dobozoknak - rózsaarany kerettel) */
+/* --- Glassmorphism (Rózsaarany Kerettel) --- */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.8); /* Világosabb üveg */
+  background: var(--overlay-color);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--rose-gold); /* Rózsaarany keret */
-  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.2); /* Rózsaarany árnyék */
+  border: 1px solid var(--rose-gold);
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
 }
 
-/* Rózsaarany szöveg kiemelés */
+/* --- Rózsaarany Elemek --- */
 .text-rose-gold {
   color: var(--rose-gold);
+}
+
+.bg-rose-gold {
+  background-color: var(--rose-gold);
+}
+
+.border-rose-gold {
+  border-color: var(--rose-gold);
+}
+
+.rose-gold-gradient {
+  background: linear-gradient(to right, var(--rose-gold), var(--rose-gold-light));
+}
+
+.rose-gold-text-gradient {
+  background: linear-gradient(to right, var(--rose-gold), var(--rose-gold-light));
+  -webkit-background-clip: text;
+  color: transparent;
 }
