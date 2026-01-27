@@ -3,31 +3,33 @@
 @tailwind utilities;
 
 :root {
-  /* A Te márkaszíneid a képek alapján */
-  --rose-gold: #c69c6d;
-  --rose-gold-light: #eacda3;
-  --rose-pink-bg: #fff0f5; 
-  --text-dark: #444444;
+  /* A TE SZÍNEID (A képek alapján) */
+  --rose-gold: #c59d5f; 
+  --rose-gold-light: #eecf97;
+  --bg-pink: #fdf2f8; 
+  --text-dark: #4a4a4a;
 }
 
-/* Kényszerített Márvány Háttér */
+/* KÉNYSZERÍTETT HÁTTÉR - Rózsaszín márvány */
 body {
-  background-color: var(--rose-pink-bg);
-  /* Finom márvány textúra */
-  background-image: url('https://img.freepik.com/free-photo/white-marble-texture-with-natural-pattern-for-background_1258-54364.jpg');
+  background-color: #fff0f5; 
+  /* Ez a kép egy szép rózsaszín márvány textúra */
+  background-image: url('https://img.freepik.com/free-photo/pink-marble-texture-background-abstract-nature_1258-52599.jpg');
   background-size: cover;
   background-attachment: fixed;
+  background-position: center;
   color: var(--text-dark);
-  font-family: 'Montserrat', sans-serif;
-  overflow-x: hidden;
 }
 
-/* Elegáns Címsorok (Serif) */
-h1, h2, h3, .font-serif {
-  font-family: 'Playfair Display', serif;
+/* Betűtípusok beállítása (Tailwind config nélkül is működjön) */
+h1, h2, h3, h4 {
+  font-family: 'Playfair Display', serif; /* Luxus hatás */
+}
+body, p, button, input, span, div {
+  font-family: 'Montserrat', sans-serif; /* Olvasható modern */
 }
 
-/* HÓESÉS (ELŐTÉRBEN - Z-index: 50) */
+/* --- NAGY SZEMERKÉLŐ HÓESÉS --- */
 .snow-container {
   position: fixed;
   top: 0;
@@ -35,49 +37,43 @@ h1, h2, h3, .font-serif {
   width: 100%;
   height: 100vh;
   pointer-events: none;
-  z-index: 50; /* A tartalom felett, de a gombokra kattintani lehessen */
+  z-index: 50; /* A tartalom felett, de a menü alatt */
+  overflow: hidden;
 }
 
-.snowflake {
+.snow {
   position: absolute;
-  top: -10px;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: radial-gradient(3px 3px at 20% 30%, white, transparent),
+                    radial-gradient(3px 3px at 40% 70%, white, transparent),
+                    radial-gradient(3px 3px at 60% 40%, white, transparent),
+                    radial-gradient(3px 3px at 80% 80%, white, transparent);
+  background-size: 200px 200px;
+  animation: snowfall 4s linear infinite;
+  opacity: 0.8;
+}
+
+@keyframes snowfall {
+  from { transform: translateY(-200px); }
+  to { transform: translateY(0); }
+}
+
+/* Rózsaarany Gradiens Gomb */
+.btn-rose-gold {
+  background: linear-gradient(to right, #d4af37, #c59d5f);
   color: white;
-  text-shadow: 0 0 5px rgba(0,0,0,0.1);
-  animation: fall linear infinite;
-}
-
-@keyframes fall {
-  to { transform: translateY(105vh); }
-}
-
-/* Rózsaarany Gradiens Szöveg */
-.text-gradient-gold {
-  background: linear-gradient(to right, #b88746, #fdf5a6, #b88746);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-weight: 800;
-}
-
-/* Üveg hatású kártyák arany kerettel */
-.glass-card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--rose-gold);
-  box-shadow: 0 10px 30px rgba(198, 156, 109, 0.15);
-}
-
-/* Nagy Gombok dropshippinghez */
-.btn-primary {
-  background: linear-gradient(135deg, #c69c6d 0%, #d4af37 100%);
-  color: white;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: bold;
-  box-shadow: 0 4px 15px rgba(198, 156, 109, 0.4);
   transition: all 0.3s ease;
 }
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(198, 156, 109, 0.6);
+.btn-rose-gold:hover {
+  background: linear-gradient(to right, #bfa05d, #a37e45);
+  transform: scale(1.02);
+  box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+}
+
+/* Üveg hatású panelek */
+.glass-box {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid #d4af37;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
