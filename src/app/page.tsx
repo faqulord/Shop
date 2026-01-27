@@ -1,29 +1,54 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import { Star, CheckCircle, Clock, ShieldCheck, Heart, Facebook, Instagram, AlertTriangle, ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Star, CheckCircle, Clock, ShieldCheck, Heart, Facebook, Instagram, AlertTriangle, ArrowRight, ShoppingBag } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Home() {
+  // --- VISSZASZÁMLÁLÓ LOGIKA ---
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+  useEffect(() => {
+    // Cél dátum: Valentin nap (Február 14.)
+    const targetDate = new Date("2026-02-14T00:00:00").getTime();
+
+    const timer = setInterval(() => {
+      const now = new Date().getTime();
+      const difference = targetDate - now;
+
+      if (difference > 0) {
+        setTimeLeft({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+          seconds: Math.floor((difference % (1000 * 60)) / 1000),
+        });
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // --- PAYPAL LINK GENERÁLÁS ---
+  // Ez teszi lehetővé a kártyás fizetést regisztráció nélkül
+  const paypalLink = "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=stylefaqu@gmail.com&currency_code=HUF&amount=12990&item_name=Lipses%20Lip%20Plumper%20-%20Valentin%20Napi%20Akcio&return=https://lipseshungary.railway.app&cancel_return=https://lipseshungary.railway.app";
+
   return (
     <div className="min-h-screen bg-brand-light overflow-x-hidden font-sans">
       
       {/* --- FELSŐ SÁV (HEADER) --- */}
-      <header className="fixed w-full z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-brand-rose/30">
+      <header className="fixed w-full z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-brand-rose/30">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <span className="text-2xl font-bold text-brand-dark tracking-tighter">
               Lipses<span className="text-brand-gold">Hungary</span>
             </span>
           </div>
-          <div className="flex gap-4">
-            {/* Cseréld le a linkeket a sajátjaidra! */}
-            <a href="https://facebook.com" target="_blank" className="text-brand-dark hover:text-brand-accent transition">
-              <Facebook size={24} />
-            </a>
-            <a href="https://instagram.com" target="_blank" className="text-brand-dark hover:text-brand-accent transition">
-              <Instagram size={24} />
+          <div className="flex gap-4 items-center">
+            <a href="https://facebook.com" target="_blank" className="text-brand-dark hover:text-brand-accent transition"><Facebook size={24} /></a>
+            <a href="https://instagram.com" target="_blank" className="text-brand-dark hover:text-brand-accent transition"><Instagram size={24} /></a>
+            <a href={paypalLink} className="bg-brand-accent text-white px-4 py-2 rounded-full font-bold text-sm hidden sm:flex items-center gap-2 hover:bg-red-600 transition">
+              <ShoppingBag size={16} /> Vásárlás
             </a>
           </div>
         </div>
@@ -31,7 +56,6 @@ export default function Home() {
 
       {/* --- HERO SZEKCIÓ --- */}
       <section className="pt-32 pb-16 px-4 md:pt-40 md:pb-24 bg-gradient-to-b from-brand-light to-white relative overflow-hidden">
-        {/* Háttér dekoráció (Márvány hatás imitálás CSS-el) */}
         <div className="absolute top-0 right-0 w-1/2 h-full bg-brand-rose/5 rounded-bl-[100px] -z-10" />
         
         <div className="container mx-auto grid md:grid-cols-2 gap-12 items-center">
@@ -43,18 +67,27 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             className="text-left"
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-rose/20 text-brand-dark text-sm font-semibold mb-6 border border-brand-rose">
-              <Star size={14} className="fill-brand-gold text-brand-gold" /> 
-              Végre Magyarországon!
+            {/* VISSZASZÁMLÁLÓ MEGJELENÍTÉSE */}
+            <div className="mb-8 p-4 bg-brand-dark text-white rounded-xl shadow-lg border-2 border-brand-gold inline-block">
+              <p className="text-xs text-brand-rose text-center uppercase tracking-widest mb-1">Valentin-napi Akcióból hátralévő idő:</p>
+              <div className="flex gap-4 justify-center text-center font-mono">
+                 <div><span className="text-3xl font-bold text-brand-gold">{timeLeft.days}</span><br/><span className="text-xs text-gray-400">NAP</span></div>
+                 <div className="text-2xl font-bold mt-1">:</div>
+                 <div><span className="text-3xl font-bold text-brand-gold">{timeLeft.hours}</span><br/><span className="text-xs text-gray-400">ÓRA</span></div>
+                 <div className="text-2xl font-bold mt-1">:</div>
+                 <div><span className="text-3xl font-bold text-brand-gold">{timeLeft.minutes}</span><br/><span className="text-xs text-gray-400">PERC</span></div>
+                 <div className="text-2xl font-bold mt-1">:</div>
+                 <div><span className="text-3xl font-bold text-brand-gold">{timeLeft.seconds}</span><br/><span className="text-xs text-gray-400">MP</span></div>
+              </div>
             </div>
-            
+
             <h1 className="text-4xl md:text-6xl font-bold text-brand-dark leading-tight mb-6">
               Telt ajkak <span className="text-brand-accent">tű és fájdalom</span> nélkül? <br/>
               <span className="text-brand-gold italic">Igen!</span>
             </h1>
             
             <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-              Felejtsd el a drága töltéseket és a tűszúrást. A Lipses™ technológia azonnali, természetes hatást biztosít, ami akár 12 órán át tart. 
+              Felejtsd el a drága töltéseket és a tűszúrást. A Lipses™ technológia azonnali, természetes hatást biztosít.
               <br/><strong>Garantáltan odaér Valentin-napig! 🎁</strong>
             </p>
 
@@ -73,9 +106,10 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="bg-brand-accent hover:bg-red-600 text-white text-lg font-bold py-4 px-8 rounded-full shadow-lg shadow-brand-accent/30 transition transform hover:scale-105 flex items-center justify-center gap-2">
+              {/* PAYPAL GOMB */}
+              <a href={paypalLink} className="bg-brand-accent hover:bg-red-600 text-white text-lg font-bold py-4 px-8 rounded-full shadow-lg shadow-brand-accent/30 transition transform hover:scale-105 flex items-center justify-center gap-2 cursor-pointer">
                 Kérem az Azonnali Hatást! <ArrowRight size={20} />
-              </button>
+              </a>
             </div>
             
             <div className="mt-6 flex items-center gap-4 text-sm text-gray-500">
@@ -90,37 +124,32 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {/* Kép rész */}
+          {/* Kép rész - A TE KÉPEDDEL */}
           <motion.div 
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative"
           >
-             {/* IDE KERÜL MAJD A TE KÉPED: /product-main.png */}
-             {/* Most egy placeholder képet használok */}
             <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
+              {/* ITT A CSERÉLT KÉP */}
               <img 
-                src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=1887&auto=format&fit=crop" 
-                alt="Lipses Device" 
+                src="https://i.postimg.cc/pLV7dyv8/Gemini-Generated-Image-ifti5sifti5sifti.png" 
+                alt="Lipses Nyereményjáték és Termék" 
                 className="w-full h-auto object-cover transform hover:scale-105 transition duration-700"
               />
               
               {/* Floating Badge */}
-              <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur px-4 py-2 rounded-xl shadow-lg flex items-center gap-3">
+              <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur px-4 py-2 rounded-xl shadow-lg flex items-center gap-3 animate-bounce">
                 <div className="bg-brand-gold/20 p-2 rounded-full text-brand-gold">
                   <ShieldCheck size={24} />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 uppercase">Garancia</p>
-                  <p className="font-bold text-brand-dark">Pénzvisszafizetés</p>
+                  <p className="text-xs text-gray-500 uppercase">Valentin Napi</p>
+                  <p className="font-bold text-brand-dark">Sorsolás: Febr 10.</p>
                 </div>
               </div>
             </div>
-            
-            {/* Dekorációs elemek */}
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-brand-gold/20 rounded-full blur-3xl" />
-            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-brand-accent/20 rounded-full blur-3xl" />
           </motion.div>
         </div>
       </section>
@@ -134,29 +163,18 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Feature 1 */}
             <div className="p-8 rounded-2xl bg-brand-light border border-brand-rose/20 text-center hover:shadow-xl transition duration-300">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm text-brand-accent">
-                <Heart size={32} />
-              </div>
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm text-brand-accent"><Heart size={32} /></div>
               <h3 className="text-xl font-bold mb-3">Tű és Fájdalom Nélkül</h3>
               <p className="text-gray-600">Nem kell félned a szúrástól. A vákuum technológia kíméletesen, de hatékonyan dúsít.</p>
             </div>
-
-            {/* Feature 2 */}
             <div className="p-8 rounded-2xl bg-brand-light border border-brand-rose/20 text-center hover:shadow-xl transition duration-300">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm text-brand-gold">
-                <Clock size={32} />
-              </div>
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm text-brand-gold"><Clock size={32} /></div>
               <h3 className="text-xl font-bold mb-3">12 Órás Tartós Hatás</h3>
               <p className="text-gray-600">Egyetlen használattal egész napos magabiztosság. Tökéletes randira, buliba vagy fotózáshoz.</p>
             </div>
-
-            {/* Feature 3 */}
             <div className="p-8 rounded-2xl bg-brand-light border border-brand-rose/20 text-center hover:shadow-xl transition duration-300">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm text-brand-dark">
-                <CheckCircle size={32} />
-              </div>
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm text-brand-dark"><CheckCircle size={32} /></div>
               <h3 className="text-xl font-bold mb-3">Természetes Eredmény</h3>
               <p className="text-gray-600">Nincs "kacsa száj" effektus. A saját ajkaid teltségét fokozza a vérkeringés serkentésével.</p>
             </div>
@@ -178,7 +196,6 @@ export default function Home() {
                </div>
             </div>
 
-            {/* Komment 1 */}
             <div className="flex gap-3 mb-6">
               <img src="https://i.pravatar.cc/100?img=5" alt="User" className="w-10 h-10 rounded-full" />
               <div className="flex-1">
@@ -194,7 +211,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Komment 2 */}
             <div className="flex gap-3 mb-6">
               <img src="https://i.pravatar.cc/100?img=9" alt="User" className="w-10 h-10 rounded-full" />
               <div className="flex-1">
@@ -210,7 +226,6 @@ export default function Home() {
               </div>
             </div>
 
-             {/* Komment 3 */}
              <div className="flex gap-3 mb-6">
               <img src="https://i.pravatar.cc/100?img=32" alt="User" className="w-10 h-10 rounded-full" />
               <div className="flex-1">
@@ -226,7 +241,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Fake Link */}
             <div className="text-center pt-2">
               <p className="text-brand-dark font-semibold text-sm cursor-pointer hover:underline opacity-80">
                 Korábbi hozzászólások megtekintése (424)
@@ -242,15 +256,13 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-4">Ne maradj le a Valentin-napi ajánlatról!</h2>
           <p className="mb-8 text-brand-rose">A készlet gyorsan fogy. Rendeld meg most.</p>
-          <button className="bg-brand-gold hover:bg-white hover:text-brand-dark text-white text-xl font-bold py-4 px-10 rounded-full transition shadow-lg inline-flex items-center gap-2">
+          <a href={paypalLink} className="bg-brand-gold hover:bg-white hover:text-brand-dark text-white text-xl font-bold py-4 px-10 rounded-full transition shadow-lg inline-flex items-center gap-2 cursor-pointer">
             Megrendelem most! <ArrowRight />
-          </button>
+          </a>
           
-          <div className="mt-8 flex justify-center gap-4 opacity-50">
-             {/* Fizetési ikonok helye (szövegesen most) */}
+          <div className="mt-8 flex justify-center gap-4 opacity-50 text-sm">
              <span>🔒 SSL Titkosított Fizetés</span>
-             <span>💳 Visa/Mastercard</span>
-             <span>🅿️ PayPal</span>
+             <span>💳 Bankkártya / PayPal</span>
           </div>
           
           <p className="mt-8 text-xs text-gray-400">© 2024 LipsesHungary. Minden jog fenntartva.</p>
