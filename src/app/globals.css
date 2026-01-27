@@ -2,92 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
-/* === PRÉMIUM ALAPBEÁLLÍTÁSOK === */
 :root {
-  --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 2, 6, 23; /* Slate 950 */
-  --background-end-rgb: 15, 23, 42; /* Slate 900 */
+  --background: #09090b; /* Sötét prémium alap */
+  --foreground: #fafafa;
+  --gold-primary: #d4af37;
+  --gold-secondary: #aa8c2c;
 }
 
-html {
+html, body {
+  height: 100%;
   scroll-behavior: smooth;
+  background-color: var(--background);
+  color: var(--foreground);
+  overflow-x: hidden; /* Vízszintes csúszkálás tiltása */
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
-
-/* === EGYEDI GÖRDÍTŐSÁV (SCROLLBAR) === */
+/* Scrollbar elrejtése a letisztult hatásért */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #020617; 
+  background: #18181b; 
 }
 ::-webkit-scrollbar-thumb {
-  background: #334155; 
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #475569; 
+  background: #3f3f46; 
+  border-radius: 10px;
 }
 
-/* === HÓESÉS EFFEKT (CSS ONLY) === */
-/* Ez a trükk sok kis árnyékot használ, ami hópelyhet imitál */
-
-.snow, .snow-mid, .snow-far {
-  content: " ";
-  position: absolute;
-  top: -600px; /* Kezdőpont a képernyő felett */
+/* Hóesés animáció (finomabb, nem zavaró) */
+.snow-container {
+  position: fixed;
+  top: 0;
   left: 0;
-  bottom: 0;
-  right: 0;
-  background-image: radial-gradient(4px 4px at 100px 50px, #fff, transparent),
-                    radial-gradient(6px 6px at 200px 150px, #fff, transparent),
-                    radial-gradient(3px 3px at 300px 250px, #fff, transparent),
-                    radial-gradient(4px 4px at 400px 350px, #fff, transparent),
-                    radial-gradient(6px 6px at 500px 100px, #fff, transparent),
-                    radial-gradient(3px 3px at 50px 200px, #fff, transparent),
-                    radial-gradient(4px 4px at 150px 300px, #fff, transparent),
-                    radial-gradient(6px 6px at 250px 400px, #fff, transparent),
-                    radial-gradient(3px 3px at 350px 500px, #fff, transparent);
-  background-size: 550px 550px;
-  animation: snowAnim 10s linear infinite;
-  opacity: 0.6;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
 }
 
-.snow-mid {
-  background-image: radial-gradient(3px 3px at 50px 50px, rgba(255,255,255,0.8), transparent),
-                    radial-gradient(4px 4px at 150px 150px, rgba(255,255,255,0.8), transparent),
-                    radial-gradient(2px 2px at 250px 250px, rgba(255,255,255,0.8), transparent),
-                    radial-gradient(3px 3px at 350px 350px, rgba(255,255,255,0.8), transparent);
-  background-size: 400px 400px;
-  animation: snowAnim 7s linear infinite; /* Gyorsabb */
-  opacity: 0.4;
-  z-index: -1;
+/* Glassmorphism kártyák */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.snow-far {
-  background-image: radial-gradient(2px 2px at 80px 80px, rgba(255,255,255,0.5), transparent),
-                    radial-gradient(2px 2px at 180px 180px, rgba(255,255,255,0.5), transparent),
-                    radial-gradient(2px 2px at 280px 280px, rgba(255,255,255,0.5), transparent);
-  background-size: 300px 300px;
-  animation: snowAnim 15s linear infinite; /* Lassabb, távoli */
-  opacity: 0.3;
-  z-index: -2;
+.glass-strong {
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-@keyframes snowAnim {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(600px); /* Mozgás lefelé */
+/* Arany szöveg gradiens */
+.text-gold {
+  background: linear-gradient(to right, #fcd34d, #d4af37, #fcd34d);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 200% auto;
+  animation: shine 4s linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
   }
 }
