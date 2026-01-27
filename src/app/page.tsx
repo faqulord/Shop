@@ -1,10 +1,11 @@
 "use client";
-// Ez a két sor kényszeríti a frissítést, hogy ne ragadjon be a régi verzió!
+// Kényszerített frissítés
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { useState, useEffect } from 'react';
-import { ArrowRight, Gift, Clock, ShieldCheck, Heart, Star, CheckCircle, Truck, Info } from 'lucide-react';
+// ITT VOLT A HIBA: Hozzáadtam a CreditCard-ot a listához!
+import { ArrowRight, Gift, Clock, ShieldCheck, Heart, Star, CheckCircle, Truck, CreditCard } from 'lucide-react';
 
 export default function Home() {
   const [timeLeft, setTimeLeft] = useState({ h: 11, m: 59, s: 0 });
@@ -26,10 +27,14 @@ export default function Home() {
 
   const scrollToOrder = () => document.getElementById('order-section')?.scrollIntoView({ behavior: 'smooth' });
 
+  // Űrlap kezelése
   const handleSubmit = (e: any) => {
       e.preventDefault();
       setLoading(true);
+      
+      // Adatok mentése (szimulált) és átirányítás PayPalra
       setTimeout(() => {
+        // Itt cseréld majd le a saját PayPal emailedre!
         window.location.href = "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=stylefaqu@gmail.com&item_name=Lipses_Valentin_Csomag&amount=12990&currency_code=HUF";
       }, 1500);
   };
@@ -96,7 +101,7 @@ export default function Home() {
                  </div>
              </div>
 
-             {/* Jobb: TERMÉK KÉP (FIX kozmetikai kép) */}
+             {/* Jobb: TERMÉK KÉP */}
              <div className="relative flex justify-center mt-8 md:mt-0">
                  <div className="relative z-10 w-full max-w-md">
                     <img 
@@ -181,17 +186,17 @@ export default function Home() {
                   <input required type="tel" placeholder="Telefonszám" className="w-full bg-white border border-gray-300 p-4 rounded-xl focus:border-[#c59d5f] focus:ring-[#c59d5f] outline-none" onChange={e => setFormData({...formData, phone: e.target.value})} />
                   
                   <div className="grid grid-cols-3 gap-4">
-                      <input required type="text" placeholder="Ir.szám" className="col-span-1 w-full bg-white border border-gray-300 p-4 rounded-xl focus:border-[#c59d5f] outline-none" onChange={e => setFormData({...formData, zip: e.target.value})} />
-                      <input required type="text" placeholder="Város" className="col-span-2 w-full bg-white border border-gray-300 p-4 rounded-xl focus:border-[#c59d5f] outline-none" onChange={e => setFormData({...formData, city: e.target.value})} />
+                      <input required type="text" placeholder="Ir.szám" className="col-span-1 w-full bg-white border border-gray-300 p-4 rounded-xl focus:border-[#c59d5f] focus:outline-none" onChange={e => setFormData({...formData, zip: e.target.value})} />
+                      <input required type="text" placeholder="Város" className="col-span-2 w-full bg-white border border-gray-300 p-4 rounded-xl focus:border-[#c59d5f] focus:outline-none" onChange={e => setFormData({...formData, city: e.target.value})} />
                   </div>
-                  <input required type="text" placeholder="Utca, házszám" className="w-full bg-white border border-gray-300 p-4 rounded-xl focus:border-[#c59d5f] outline-none" onChange={e => setFormData({...formData, address: e.target.value})} />
+                  <input required type="text" placeholder="Utca, házszám" className="w-full bg-white border border-gray-300 p-4 rounded-xl focus:border-[#c59d5f] focus:outline-none" onChange={e => setFormData({...formData, address: e.target.value})} />
 
                   {/* Fizetési gomb */}
                   <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-[#c59d5f] to-[#a37e45] text-white font-bold text-xl py-5 rounded-xl shadow-lg mt-6 flex items-center justify-center gap-3 hover:scale-[1.02] transition">
                       {loading ? 'Feldolgozás...' : <>Tovább a Fizetéshez <ArrowRight /></>}
                   </button>
                   
-                  {/* Trust Badgek - KÉPEK HELYETT IKONOK, HOGY BIZTOS MEGJELENJEN */}
+                  {/* Trust Badgek - KÉPEK HELYETT IKONOK */}
                   <div className="text-center mt-6">
                       <p className="text-xs text-gray-500 mb-2 font-bold uppercase">Biztonságos Fizetés:</p>
                       <div className="flex justify-center gap-6 opacity-60 hover:opacity-100 transition">
