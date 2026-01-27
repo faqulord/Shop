@@ -1,22 +1,60 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckCircle, Clock, ShieldCheck, Heart, AlertTriangle, ArrowRight, ShoppingBag, X, Loader2, ThumbsUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { CheckCircle, Clock, Heart, AlertTriangle, ArrowRight, X, Loader2, ThumbsUp, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// --- KAMU KOMMENT ADATBÁZIS (9 db) ---
+// --- HÓESÉS KOMPONENS (Beépítve) ---
+const Snowfall = () => {
+  const [flakes, setFlakes] = useState<any[]>([]);
+
+  useEffect(() => {
+    // Generálunk 50 db hópelyhet véletlenszerű adatokkal
+    const newFlakes = Array.from({ length: 50 }).map((_, i) => ({
+      id: i,
+      left: Math.random() * 100 + "%",
+      animationDuration: Math.random() * 5 + 5 + "s", // 5-10 másodperc alatt esik le
+      animationDelay: Math.random() * 5 + "s",
+      opacity: Math.random() * 0.5 + 0.3, // Átlátszóság
+      size: Math.random() * 5 + 3 + "px" // Méret
+    }));
+    setFlakes(newFlakes);
+  }, []);
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+      {flakes.map((flake) => (
+        <div
+          key={flake.id}
+          className="absolute top-[-20px] bg-white rounded-full blur-[1px]"
+          style={{
+            left: flake.left,
+            width: flake.size,
+            height: flake.size,
+            opacity: flake.opacity,
+            animation: `fall ${flake.animationDuration} linear infinite`,
+            animationDelay: flake.animationDelay,
+          }}
+        />
+      ))}
+      <style jsx>{`
+        @keyframes fall {
+          0% { transform: translateY(-10vh) translateX(0px); }
+          100% { transform: translateY(110vh) translateX(20px); }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+// --- KAMU KOMMENT ADATBÁZIS ---
 const ALL_COMMENTS = [
-  // 1. Oldal (Legfrissebbek)
   { id: 1, name: "Kovács Alexandra", img: 5, text: "Lányok, ez valami csoda! 😍 Féltem tőle kicsit, de tényleg nem fáj. A párom rögtön észrevette este. Valentin napra tökéletes lesz!", time: "2 órája" },
   { id: 2, name: "Nagy Beatrix", img: 9, text: "Megrendeltem tegnap, ma már ki is hozták! Nagyon profi a csomagolás, igazi prémium érzés. 💖", time: "5 órája" },
   { id: 3, name: "Varga Eszter", img: 32, text: "Nekem 10 órán át simán tartott. Sokkal jobb mint a töltés, attól mindig féltem. Ez meg természetes. Köszönöm Lipses! 🙏", time: "1 napja" },
-  
-  // 2. Oldal
   { id: 4, name: "Tóth Tímea", img: 44, text: "Először szkeptikus voltam, de a barátnőm ajánlotta. Nem bántam meg! Azonnal látszik a különbség.", time: "2 napja" },
   { id: 5, name: "Horváth Éva", img: 12, text: "Nagyon gyorsan megjött, köszönöm a korrekt ügyintézést. A termék pedig 5 csillagos! ⭐⭐⭐⭐⭐", time: "2 napja" },
   { id: 6, name: "Szabó Zsófi", img: 21, text: "Végre nem kell tű alá feküdnöm. Imádom, hogy bármikor feldobhatom vele a sminkem előtt.", time: "3 napja" },
-
-  // 3. Oldal
   { id: 7, name: "Kiss Ramóna", img: 16, text: "Ajándékba kaptam a páromtól. A legjobb meglepetés volt! 🥰", time: "4 napja" },
   { id: 8, name: "Molnár Kinga", img: 28, text: "Kicsit bizserget, de egyáltalán nem kellemetlen. A hatás pedig magáért beszél.", time: "5 napja" },
   { id: 9, name: "Balogh Adrienn", img: 35, text: "Már a másodikat rendelem a húgomnak is. Csak ajánlani tudom.", time: "1 hete" },
@@ -26,26 +64,15 @@ export default function Home() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  // KOMMENT LAPOZÓ STATE
   const [currentPage, setCurrentPage] = useState(1);
+  
   const commentsPerPage = 3;
   const totalPages = Math.ceil(ALL_COMMENTS.length / commentsPerPage);
+  const currentComments = ALL_COMMENTS.slice((currentPage - 1) * commentsPerPage, currentPage * commentsPerPage);
 
-  // Az aktuális oldalon megjelenő kommentek kiválasztása
-  const currentComments = ALL_COMMENTS.slice(
-    (currentPage - 1) * commentsPerPage,
-    currentPage * commentsPerPage
-  );
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "", address: "" });
 
-  const [formData, setFormData] = useState({
-    name: "", email: "", phone: "", address: "" 
-  });
-
-  // Látogatás rögzítése
-  useEffect(() => {
-    fetch('/api/visit', { method: 'POST' });
-  }, []);
+  useEffect(() => { fetch('/api/visit', { method: 'POST' }); }, []);
 
   useEffect(() => {
     const targetDate = new Date("2026-02-14T00:00:00").getTime();
@@ -88,8 +115,11 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-light overflow-x-hidden font-sans text-brand-dark">
+    <div className="min-h-screen bg-brand-light overflow-x-hidden font-sans text-brand-dark relative">
       
+      {/* ITT A HÓESÉS! */}
+      <Snowfall />
+
       {/* HEADER */}
       <header className="fixed w-full z-40 bg-white/95 backdrop-blur-md shadow-sm border-b border-brand-rose/30">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
@@ -126,7 +156,7 @@ export default function Home() {
 
           {/* VISSZASZÁMLÁLÓ */}
           <div className="flex justify-center mb-8">
-            <div className="flex gap-4 text-center bg-white px-8 py-4 rounded-2xl shadow-xl border border-brand-rose/30">
+            <div className="flex gap-4 text-center bg-white px-8 py-4 rounded-2xl shadow-xl border border-brand-rose/30 relative z-10">
                  <div><span className="text-3xl font-bold text-brand-dark">{timeLeft.days}</span><br/><span className="text-[10px] uppercase text-gray-400">Nap</span></div>
                  <div className="text-3xl font-bold text-brand-gold">:</div>
                  <div><span className="text-3xl font-bold text-brand-dark">{timeLeft.hours}</span><br/><span className="text-[10px] uppercase text-gray-400">Óra</span></div>
@@ -137,14 +167,14 @@ export default function Home() {
             </div>
           </div>
 
-           <div className="bg-red-50 border border-red-100 p-4 mb-8 rounded-xl inline-flex items-center gap-3 text-sm text-red-800 shadow-sm mx-auto max-w-lg text-left">
+           <div className="bg-red-50 border border-red-100 p-4 mb-8 rounded-xl inline-flex items-center gap-3 text-sm text-red-800 shadow-sm mx-auto max-w-lg text-left relative z-10">
              <AlertTriangle className="shrink-0 w-6 h-6 text-red-600"/>
              <div>
                <strong>Utolsó darabok!</strong> A garantált Valentin-napi kiszállítás határideje: <span className="underline">Február 10.</span>
              </div>
            </div>
 
-           <div className="flex justify-center">
+           <div className="flex justify-center relative z-10">
             <button onClick={() => setIsModalOpen(true)} className="bg-brand-accent hover:bg-red-600 text-white text-xl font-bold py-5 px-10 rounded-full shadow-xl shadow-brand-accent/40 transition transform hover:scale-105 flex items-center gap-2">
               Kérem a Telt Ajkakat! <ArrowRight size={24} />
             </button>
@@ -153,7 +183,7 @@ export default function Home() {
       </section>
 
       {/* --- ELŐNYÖK --- */}
-      <section className="py-16 bg-white border-b border-gray-100">
+      <section className="py-16 bg-white border-b border-gray-100 relative z-10">
         <div className="container mx-auto px-4 grid md:grid-cols-3 gap-8 text-center">
             <div className="p-6">
               <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-accent"><Heart size={32}/></div>
@@ -173,30 +203,20 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- LAPOZHATÓ FACEBOOK KOMMENTEK --- */}
-      <section className="py-20 bg-gray-50">
+      {/* --- KOMMENTEK --- */}
+      <section className="py-20 bg-gray-50 relative z-10">
         <div className="container mx-auto px-4 max-w-2xl">
           <h2 className="text-2xl font-bold text-brand-dark mb-8 text-center">Vásárlói Vélemények</h2>
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 min-h-[400px] flex flex-col justify-between">
-            
-            {/* Fejléc */}
             <div className="flex justify-between items-center border-b pb-4 mb-4">
                <span className="font-semibold text-gray-700 flex items-center gap-2"><ThumbsUp size={16} className="bg-blue-500 text-white p-0.5 rounded-full"/> 427</span>
                <div className="flex gap-1 text-gray-500 text-sm">
                  <span>Rendezés:</span> <span className="font-bold cursor-pointer">Legnépszerűbb</span>
                </div>
             </div>
-
-            {/* Kommentek listázása */}
             <div className="flex-grow">
               {currentComments.map((comment) => (
-                <motion.div 
-                  key={comment.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="flex gap-3 mb-6"
-                >
+                <motion.div key={comment.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="flex gap-3 mb-6">
                   <img src={`https://i.pravatar.cc/100?img=${comment.img}`} alt="User" className="w-10 h-10 rounded-full border border-gray-200" />
                   <div className="flex-1">
                     <div className="bg-gray-100 rounded-2xl px-4 py-2 inline-block">
@@ -204,43 +224,23 @@ export default function Home() {
                       <p className="text-sm text-gray-800">{comment.text}</p>
                     </div>
                     <div className="flex gap-4 mt-1 ml-2 text-xs text-gray-500 font-semibold select-none">
-                      <span className="cursor-pointer hover:underline text-brand-dark">Tetszik</span> 
-                      <span>{comment.time}</span>
+                      <span className="cursor-pointer hover:underline text-brand-dark">Tetszik</span> <span>{comment.time}</span>
                     </div>
                   </div>
                 </motion.div>
               ))}
             </div>
-
-            {/* Lapozó Gombok */}
             <div className="flex justify-between items-center pt-4 border-t border-gray-100 mt-2">
-              <button 
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className={`flex items-center gap-1 text-sm font-semibold ${currentPage === 1 ? 'text-gray-300' : 'text-brand-dark hover:text-brand-accent'}`}
-              >
-                <ChevronLeft size={16}/> Előző
-              </button>
-              
-              <span className="text-sm text-gray-500">
-                {currentPage} / {totalPages} oldal
-              </span>
-
-              <button 
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className={`flex items-center gap-1 text-sm font-semibold ${currentPage === totalPages ? 'text-gray-300' : 'text-brand-dark hover:text-brand-accent'}`}
-              >
-                Következő <ChevronRight size={16}/>
-              </button>
+              <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className={`flex items-center gap-1 text-sm font-semibold ${currentPage === 1 ? 'text-gray-300' : 'text-brand-dark hover:text-brand-accent'}`}> <ChevronLeft size={16}/> Előző </button>
+              <span className="text-sm text-gray-500">{currentPage} / {totalPages} oldal</span>
+              <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className={`flex items-center gap-1 text-sm font-semibold ${currentPage === totalPages ? 'text-gray-300' : 'text-brand-dark hover:text-brand-accent'}`}> Következő <ChevronRight size={16}/> </button>
             </div>
-            
           </div>
         </div>
       </section>
 
       {/* --- FOOTER --- */}
-      <section className="py-12 bg-brand-dark text-white text-center">
+      <section className="py-12 bg-brand-dark text-white text-center relative z-10">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-4">Ne maradj le!</h2>
           <button onClick={() => setIsModalOpen(true)} className="bg-brand-gold hover:bg-white hover:text-brand-dark text-white text-xl font-bold py-4 px-10 rounded-full transition shadow-lg inline-flex items-center gap-2">
