@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckCircle, Clock, Heart, AlertTriangle, ArrowRight, X, Loader2, ThumbsUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { CheckCircle, Clock, Heart, AlertTriangle, ArrowRight, X, Loader2, ThumbsUp, ChevronLeft, ChevronRight, Facebook, ShoppingBag } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // --- HÓESÉS KOMPONENS ---
@@ -71,10 +71,8 @@ export default function Home() {
 
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", address: "" });
 
-  // Látogatás rögzítése
   useEffect(() => { fetch('/api/visit', { method: 'POST' }); }, []);
 
-  // Visszaszámláló
   useEffect(() => {
     const targetDate = new Date("2026-02-14T00:00:00").getTime();
     const timer = setInterval(() => {
@@ -92,57 +90,82 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  // --- RENDELÉS KEZELÉSE ÉS ÁTIRÁNYÍTÁS ---
   const handleOrderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      // 1. Adatok mentése az adatbázisba
       const res = await fetch('/api/order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
-      const data = await res.json(); // Itt kapjuk meg a rendelés ID-t!
+      const data = await res.json(); 
 
       if (res.ok) {
-        // 2. PayPal Link összeállítása a visszatérési (return) linkkel
-        // Ha sikeres a fizetés, a /success oldalra dobja vissza az ID-val együtt
         const returnUrl = `https://lipseshungary.railway.app/success?id=${data.orderId}`;
         const cancelUrl = `https://lipseshungary.railway.app`;
-        
         const paypalLink = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=stylefaqu@gmail.com&currency_code=HUF&amount=12990&item_name=Lipses%20Lip%20Plumper&custom=${formData.email}&return=${encodeURIComponent(returnUrl)}&cancel_return=${encodeURIComponent(cancelUrl)}`;
-        
-        // 3. Átirányítás
         window.location.href = paypalLink;
       } else {
-        alert("Hiba történt a feldolgozás során. Kérlek próbáld újra.");
+        alert("Hiba történt a feldolgozás során.");
         setIsSubmitting(false);
       }
     } catch (error) {
-      console.error(error);
       alert("Hálózati hiba.");
       setIsSubmitting(false);
     }
   };
 
   return (
-    // SÖTÉTÍTETT HÁTTÉR: Púderes Mályva Átmenet (hogy látsszon a hó!)
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#dcb4b4] via-[#eedddd] to-[#fdf4f5] overflow-x-hidden font-sans text-brand-dark relative">
       
-      {/* ITT A HÓESÉS! */}
       <Snowfall />
 
-      {/* HEADER */}
+      {/* HEADER - ÚJ SOCIAL GOMBOKKAL (JAVÍTVA) */}
       <header className="fixed w-full z-40 bg-white/90 backdrop-blur-md shadow-sm border-b border-brand-rose/30">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <span className="text-2xl font-bold tracking-tighter">
             Lipses<span className="text-brand-gold">Hungary</span>
           </span>
-          <button onClick={() => setIsModalOpen(true)} className="bg-brand-accent text-white px-4 py-2 rounded-full font-bold text-sm hidden sm:flex items-center gap-2 hover:bg-red-600 transition shadow-lg shadow-brand-accent/20">
-             Vásárlás
-          </button>
+          
+          {/* JOBB OLDALI SZEKCIÓ (IKONOK + GOMB) */}
+          <div className="flex items-center gap-3 sm:gap-4">
+            
+            {/* TIKTOK IKON (lipses_hungary) */}
+            <a 
+              href="https://www.tiktok.com/@lipses_hungary" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="p-2 text-brand-dark hover:text-black hover:bg-gray-100 rounded-full transition"
+              title="Kövess minket TikTok-on!"
+            >
+              <svg 
+                viewBox="0 0 24 24" 
+                fill="currentColor" 
+                height="20" 
+                width="20" 
+              >
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+              </svg>
+            </a>
+
+            {/* FACEBOOK IKON (lipseshungary) */}
+            <a 
+              href="https://www.facebook.com/lipseshungary" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="p-2 text-brand-dark hover:text-blue-600 hover:bg-blue-50 rounded-full transition"
+              title="Csatlakozz a Facebook oldalunkhoz!"
+            >
+              <Facebook size={20} />
+            </a>
+
+            {/* VÁSÁRLÁS GOMB */}
+            <button onClick={() => setIsModalOpen(true)} className="bg-brand-accent text-white px-4 py-2 rounded-full font-bold text-sm flex items-center gap-2 hover:bg-red-600 transition shadow-lg shadow-brand-accent/20">
+              <span className="hidden sm:inline">Vásárlás</span> <ShoppingBag size={16} />
+            </button>
+          </div>
         </div>
       </header>
 
