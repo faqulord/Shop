@@ -34,7 +34,8 @@ async function connectToDatabase() {
       bufferCommands: false,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+    // ITT VOLT A HIBA: Hozzáadtuk az "as string" részt, hogy megnyugtassuk a rendszert
+    cached.promise = mongoose.connect(MONGODB_URI as string, opts).then((mongoose) => {
       return mongoose;
     });
   }
