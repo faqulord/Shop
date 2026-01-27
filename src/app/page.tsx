@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Star, CheckCircle, Clock, ShieldCheck, Heart, Facebook, Instagram, AlertTriangle, ArrowRight, ShoppingBag, X, Loader2 } from "lucide-react";
+import { Star, CheckCircle, Clock, ShieldCheck, Heart, Facebook, Instagram, AlertTriangle, ArrowRight, ShoppingBag, X, Loader2, ThumbsUp, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
@@ -15,7 +15,7 @@ export default function Home() {
     name: "",
     email: "",
     phone: "",
-    address: "" // Irányítószám, Város, Utca, Házszám
+    address: "" 
   });
 
   // --- VISSZASZÁMLÁLÓ LOGIKA ---
@@ -81,11 +81,10 @@ export default function Home() {
         </div>
       </header>
 
-      {/* --- ÚJ HERO SZEKCIÓ (KÉP KÖZÉPEN) --- */}
+      {/* --- HERO SZEKCIÓ (KÉP KÖZÉPEN) --- */}
       <section className="pt-28 pb-12 px-4 md:pt-36 bg-gradient-to-b from-brand-light to-white relative">
         <div className="container mx-auto max-w-4xl text-center">
           
-          {/* CÍMSOR */}
           <motion.h1 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -95,7 +94,7 @@ export default function Home() {
             <span className="text-brand-gold italic">Igen!</span>
           </motion.h1>
 
-          {/* KÉP (KÖZÉPEN, KIEMELVE) */}
+          {/* KÉP */}
           <motion.div 
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -108,13 +107,12 @@ export default function Home() {
               alt="Lipses Termék" 
               className="w-full h-auto rounded-3xl shadow-2xl border-4 border-white transform hover:scale-105 transition duration-500"
             />
-             {/* Badge a képen */}
              <div className="absolute top-4 right-4 bg-brand-accent text-white px-3 py-1 rounded-full text-xs font-bold uppercase shadow-lg animate-pulse">
                 Valentin Napi Akció
               </div>
           </motion.div>
 
-          {/* VISSZASZÁMLÁLÓ (A KÉP ALATT) */}
+          {/* VISSZASZÁMLÁLÓ */}
           <div className="flex justify-center mb-8">
             <div className="flex gap-3 md:gap-6 text-center bg-white px-6 py-3 rounded-2xl shadow-lg border border-brand-rose/30">
                  <div><span className="text-2xl md:text-3xl font-bold text-brand-dark">{timeLeft.days}</span><br/><span className="text-[10px] uppercase text-gray-500">Nap</span></div>
@@ -127,7 +125,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* SZÖVEG ÉS GOMB */}
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
             A Lipses™ technológia azonnali, természetes hatást biztosít. 
             <strong> Garantáltan odaér Valentin-napig! 🎁</strong>
@@ -148,7 +145,7 @@ export default function Home() {
       </section>
 
       {/* --- ELŐNYÖK --- */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-white border-b border-gray-100">
         <div className="container mx-auto px-4 grid md:grid-cols-3 gap-8 text-center">
             <div className="p-6">
               <Heart size={40} className="mx-auto text-brand-accent mb-4"/>
@@ -165,6 +162,96 @@ export default function Home() {
               <h3 className="text-xl font-bold mb-2">Természetes</h3>
               <p className="text-gray-600">Azonnali eredmény otthon.</p>
             </div>
+        </div>
+      </section>
+
+      {/* --- KAMU FACEBOOK KOMMENTEK (VISSZARAKVA!) --- */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4 max-w-2xl">
+          <h2 className="text-2xl font-bold text-brand-dark mb-8 text-center">Mit mondanak mások?</h2>
+          
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <div className="flex justify-between items-center border-b pb-4 mb-4">
+               <span className="font-semibold text-gray-700 flex items-center gap-2"><ThumbsUp size={16} className="bg-blue-500 text-white p-0.5 rounded-full"/> 427</span>
+               <div className="flex gap-1 text-gray-500 text-sm">
+                 <span>Rendezés:</span>
+                 <span className="font-bold cursor-pointer">Legnépszerűbb</span>
+               </div>
+            </div>
+
+            {/* Komment 1 */}
+            <div className="flex gap-3 mb-6">
+              <img src="https://i.pravatar.cc/100?img=5" alt="User" className="w-10 h-10 rounded-full border border-gray-200" />
+              <div className="flex-1">
+                <div className="bg-gray-100 rounded-2xl px-4 py-2 inline-block">
+                  <p className="font-bold text-sm text-gray-900 cursor-pointer hover:underline">Kovács Alexandra</p>
+                  <p className="text-sm text-gray-800">Lányok, ez valami csoda! 😍 Féltem tőle kicsit, de tényleg nem fáj. A párom rögtön észrevette este. Valentin napra tökéletes lesz!</p>
+                </div>
+                <div className="flex gap-4 mt-1 ml-2 text-xs text-gray-500 font-semibold select-none">
+                  <span className="cursor-pointer hover:underline text-brand-dark">Tetszik</span>
+                  <span className="cursor-pointer hover:underline">Válasz</span>
+                  <span>2 órája</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Komment 2 */}
+            <div className="flex gap-3 mb-6">
+              <img src="https://i.pravatar.cc/100?img=9" alt="User" className="w-10 h-10 rounded-full border border-gray-200" />
+              <div className="flex-1">
+                <div className="bg-gray-100 rounded-2xl px-4 py-2 inline-block">
+                  <p className="font-bold text-sm text-gray-900 cursor-pointer hover:underline">Nagy Beatrix</p>
+                  <p className="text-sm text-gray-800">Megrendeltem tegnap, ma már ki is hozták! Nagyon profi a csomagolás, igazi prémium érzés. 💖</p>
+                </div>
+                <div className="flex gap-4 mt-1 ml-2 text-xs text-gray-500 font-semibold select-none">
+                  <span className="cursor-pointer hover:underline text-brand-dark">Tetszik</span>
+                  <span className="cursor-pointer hover:underline">Válasz</span>
+                  <span>5 órája</span>
+                </div>
+              </div>
+            </div>
+
+             {/* Komment 3 */}
+             <div className="flex gap-3 mb-6">
+              <img src="https://i.pravatar.cc/100?img=32" alt="User" className="w-10 h-10 rounded-full border border-gray-200" />
+              <div className="flex-1">
+                <div className="bg-gray-100 rounded-2xl px-4 py-2 inline-block">
+                  <p className="font-bold text-sm text-gray-900 cursor-pointer hover:underline">Varga Eszter</p>
+                  <p className="text-sm text-gray-800">Nekem 10 órán át simán tartott. Sokkal jobb mint a töltés, attól mindig féltem. Ez meg természetes. Köszönöm Lipses! 🙏</p>
+                </div>
+                <div className="flex gap-4 mt-1 ml-2 text-xs text-gray-500 font-semibold select-none">
+                  <span className="cursor-pointer hover:underline text-brand-dark">Tetszik</span>
+                  <span className="cursor-pointer hover:underline">Válasz</span>
+                  <span>1 napja</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center pt-2 border-t border-gray-100 mt-2">
+              <p className="text-gray-600 font-semibold text-sm cursor-pointer hover:underline py-2">
+                További hozzászólások megtekintése (424)
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* --- CTA FOOTER --- */}
+      <section className="py-12 bg-brand-dark text-white text-center">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold mb-4">Ne maradj le a Valentin-napi ajánlatról!</h2>
+          <p className="mb-8 text-brand-rose">A készlet gyorsan fogy. Rendeld meg most.</p>
+          <button onClick={() => setIsModalOpen(true)} className="bg-brand-gold hover:bg-white hover:text-brand-dark text-white text-xl font-bold py-4 px-10 rounded-full transition shadow-lg inline-flex items-center gap-2">
+            Megrendelem most! <ArrowRight />
+          </button>
+          
+          <div className="mt-8 flex justify-center gap-4 opacity-50 text-sm">
+             <span>🔒 SSL Titkosított Fizetés</span>
+             <span>💳 Bankkártya / PayPal</span>
+          </div>
+          
+          <p className="mt-8 text-xs text-gray-400">© 2024 LipsesHungary. Minden jog fenntartva.</p>
         </div>
       </section>
       
@@ -193,67 +280,29 @@ export default function Home() {
                 <form onSubmit={handleOrderSubmit} className="space-y-4">
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Teljes Név</label>
-                    <input 
-                      required 
-                      type="text" 
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-gold focus:outline-none"
-                      placeholder="Pl. Kiss Anna"
-                      value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    />
+                    <input required type="text" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-gold focus:outline-none" placeholder="Pl. Kiss Anna" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Email Cím</label>
-                    <input 
-                      required 
-                      type="email" 
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-gold focus:outline-none"
-                      placeholder="anna@pelda.hu"
-                      value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    />
+                    <input required type="email" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-gold focus:outline-none" placeholder="anna@pelda.hu" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} />
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Telefonszám</label>
-                    <input 
-                      required 
-                      type="tel" 
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-gold focus:outline-none"
-                      placeholder="+36 30 123 4567"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    />
+                    <input required type="tel" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-gold focus:outline-none" placeholder="+36 30 123 4567" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} />
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Pontos Szállítási Cím</label>
-                    <textarea 
-                      required 
-                      rows={3}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-gold focus:outline-none"
-                      placeholder="Irányítószám, Város, Utca, Házszám, Emelet/Ajtó"
-                      value={formData.address}
-                      onChange={(e) => setFormData({...formData, address: e.target.value})}
-                    />
+                    <textarea required rows={3} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-gold focus:outline-none" placeholder="Irányítószám, Város, Utca, Házszám, Emelet/Ajtó" value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} />
                   </div>
 
                   <div className="pt-2">
-                    <button 
-                      type="submit" 
-                      disabled={isSubmitting}
-                      className="w-full bg-brand-accent hover:bg-red-600 text-white font-bold py-4 rounded-xl shadow-lg transition flex justify-center items-center gap-2"
-                    >
-                      {isSubmitting ? (
-                        <> <Loader2 className="animate-spin" /> Feldolgozás... </>
-                      ) : (
-                        <> Tovább a Fizetéshez (12.990 Ft) <ArrowRight /> </>
-                      )}
+                    <button type="submit" disabled={isSubmitting} className="w-full bg-brand-accent hover:bg-red-600 text-white font-bold py-4 rounded-xl shadow-lg transition flex justify-center items-center gap-2">
+                      {isSubmitting ? ( <> <Loader2 className="animate-spin" /> Feldolgozás... </> ) : ( <> Tovább a Fizetéshez (12.990 Ft) <ArrowRight /> </> )}
                     </button>
-                    <p className="text-center text-xs text-gray-400 mt-3">
-                      A gombra kattintva átirányítunk a PayPal biztonságos oldalára.
-                    </p>
+                    <p className="text-center text-xs text-gray-400 mt-3">A gombra kattintva átirányítunk a PayPal biztonságos oldalára.</p>
                   </div>
                 </form>
               </div>
@@ -261,7 +310,6 @@ export default function Home() {
           </div>
         )}
       </AnimatePresence>
-
     </div>
   );
 }
