@@ -3,20 +3,23 @@
 @tailwind utilities;
 
 :root {
-  --bg-dark: #0f172a;
-  --text-light: #f8fafc;
-  --accent-rose: #e11d48;
-  --accent-gold: #fbbf24;
+  /* Új prémium színek a LipsesHungary arculathoz */
+  --bg-marble: url('https://img.freepik.com/free-photo/pink-marble-texture-background_53876-133679.jpg'); /* Rózsaszín márvány textúra */
+  --rose-gold: #d4af37; /* Rose gold árnyalat (a logóhoz hasonló) */
+  --text-dark: #4a4a4a; /* Elegáns sötétszürke szöveg */
+  --text-light: #ffffff;
 }
 
 body {
-  background-color: var(--bg-dark);
-  color: var(--text-light);
-  font-family: 'Inter', sans-serif;
+  background-image: var(--bg-marble);
+  background-size: cover;
+  background-attachment: fixed; /* A háttér nem görög a tartalommal */
+  color: var(--text-dark);
+  font-family: 'Inter', sans-serif; /* Marad az Inter, de elegánsabban használjuk */
   overflow-x: hidden;
 }
 
-/* Finom Hóesés */
+/* Hóesés (Előtérbe hozva) */
 .snow-container {
   position: fixed;
   top: 0;
@@ -24,35 +27,34 @@ body {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 0;
-  background-image: radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+  /* Magas z-index, hogy a tartalom előtt legyen */
+  z-index: 9999;
+  background-image: radial-gradient(2px 2px at 20px 30px, #fff, rgba(0,0,0,0)),
                     radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
                     radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
                     radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
                     radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0));
   background-repeat: repeat;
   background-size: 200px 200px;
-  animation: snow 4s linear infinite;
-  opacity: 0.3;
+  animation: snow 6s linear infinite; /* Kicsit lassabb, elegánsabb mozgás */
+  opacity: 0.6; /* Jobban látszódjon */
 }
 
 @keyframes snow {
   0% { background-position: 0px 0px; }
-  100% { background-position: 100px 200px; }
+  100% { background-position: 100px 300px; }
 }
 
-/* Glassmorphism (Üveg hatás a dobozoknak) */
+/* Glassmorphism (Üveg hatás a dobozoknak - rózsaarany kerettel) */
 .glass-panel {
-  background: rgba(30, 41, 59, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.8); /* Világosabb üveg */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--rose-gold); /* Rózsaarany keret */
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.2); /* Rózsaarany árnyék */
 }
 
-/* Arany szöveg kiemelés */
-.text-gold-gradient {
-  background: linear-gradient(to right, #fcd34d, #f59e0b);
-  -webkit-background-clip: text;
-  color: transparent;
+/* Rózsaarany szöveg kiemelés */
+.text-rose-gold {
+  color: var(--rose-gold);
 }
