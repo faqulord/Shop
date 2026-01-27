@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckCircle, Clock, Heart, AlertTriangle, ArrowRight, X, Loader2, ThumbsUp, ChevronLeft, ChevronRight, Facebook, ShoppingBag } from "lucide-react";
+import { CheckCircle, Clock, Heart, AlertTriangle, ArrowRight, X, Loader2, ThumbsUp, ChevronLeft, ChevronRight, Facebook, ShoppingBag, Truck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // --- HÓESÉS KOMPONENS ---
@@ -122,46 +122,25 @@ export default function Home() {
       
       <Snowfall />
 
-      {/* HEADER - ÚJ SOCIAL GOMBOKKAL (JAVÍTVA) */}
+      {/* HEADER */}
       <header className="fixed w-full z-40 bg-white/90 backdrop-blur-md shadow-sm border-b border-brand-rose/30">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <span className="text-2xl font-bold tracking-tighter">
             Lipses<span className="text-brand-gold">Hungary</span>
           </span>
           
-          {/* JOBB OLDALI SZEKCIÓ (IKONOK + GOMB) */}
           <div className="flex items-center gap-3 sm:gap-4">
-            
-            {/* TIKTOK IKON (lipses_hungary) */}
-            <a 
-              href="https://www.tiktok.com/@lipses_hungary" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="p-2 text-brand-dark hover:text-black hover:bg-gray-100 rounded-full transition"
-              title="Kövess minket TikTok-on!"
-            >
-              <svg 
-                viewBox="0 0 24 24" 
-                fill="currentColor" 
-                height="20" 
-                width="20" 
-              >
+            {/* TIKTOK */}
+            <a href="https://www.tiktok.com/@lipses_hungary" target="_blank" rel="noopener noreferrer" className="p-2 text-brand-dark hover:text-black hover:bg-gray-100 rounded-full transition">
+              <svg viewBox="0 0 24 24" fill="currentColor" height="20" width="20">
                 <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
               </svg>
             </a>
-
-            {/* FACEBOOK IKON (lipseshungary) */}
-            <a 
-              href="https://www.facebook.com/lipseshungary" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="p-2 text-brand-dark hover:text-blue-600 hover:bg-blue-50 rounded-full transition"
-              title="Csatlakozz a Facebook oldalunkhoz!"
-            >
+            {/* FACEBOOK */}
+            <a href="https://www.facebook.com/lipseshungary" target="_blank" rel="noopener noreferrer" className="p-2 text-brand-dark hover:text-blue-600 hover:bg-blue-50 rounded-full transition">
               <Facebook size={20} />
             </a>
-
-            {/* VÁSÁRLÁS GOMB */}
+            {/* VÁSÁRLÁS */}
             <button onClick={() => setIsModalOpen(true)} className="bg-brand-accent text-white px-4 py-2 rounded-full font-bold text-sm flex items-center gap-2 hover:bg-red-600 transition shadow-lg shadow-brand-accent/20">
               <span className="hidden sm:inline">Vásárlás</span> <ShoppingBag size={16} />
             </button>
@@ -292,7 +271,7 @@ export default function Home() {
         </div>
       </section>
       
-      {/* --- MODAL --- */}
+      {/* --- MODAL (ŰRLAP) --- */}
       <AnimatePresence>
         {isModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
@@ -307,12 +286,24 @@ export default function Home() {
                   <div><label className="block text-xs font-bold text-gray-700 uppercase mb-1">Email</label><input required type="email" className="w-full p-3 border border-gray-300 rounded-lg" placeholder="anna@pelda.hu" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} /></div>
                   <div><label className="block text-xs font-bold text-gray-700 uppercase mb-1">Telefon</label><input required type="tel" className="w-full p-3 border border-gray-300 rounded-lg" placeholder="+36 30 123 4567" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} /></div>
                   <div><label className="block text-xs font-bold text-gray-700 uppercase mb-1">Cím</label><textarea required rows={2} className="w-full p-3 border border-gray-300 rounded-lg" placeholder="Irányítószám, Város, Utca, Házszám" value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} /></div>
-                  <div className="pt-2">
+                  
+                  {/* FIZETÉS + SZÁLLÍTÁS INFO (GLS ONE) */}
+                  <div className="pt-4 space-y-3">
                     <button type="submit" disabled={isSubmitting} className="w-full bg-brand-accent hover:bg-red-600 text-white font-bold py-4 rounded-xl shadow-lg transition flex justify-center items-center gap-2">
                       {isSubmitting ? ( <> <Loader2 className="animate-spin" /> Feldolgozás... </> ) : ( <> Tovább a Fizetéshez (12.990 Ft) <ArrowRight /> </> )}
                     </button>
-                    <p className="text-center text-xs text-gray-400 mt-2">PayPal és Bankkártyás fizetés.</p>
+                    
+                    <div className="text-center space-y-1">
+                      <div className="flex items-center justify-center gap-2 text-sm text-brand-dark font-semibold">
+                         <Truck size={16} />
+                         <span>Szállítás: <span className="text-brand-accent">GLS ONE</span></span>
+                      </div>
+                      <p className="text-xs text-gray-400">
+                         Biztonságos PayPal és Bankkártyás fizetés
+                      </p>
+                    </div>
                   </div>
+
                 </form>
               </div>
             </motion.div>
