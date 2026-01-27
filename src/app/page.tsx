@@ -14,8 +14,8 @@ const Snowfall = () => {
       left: Math.random() * 100 + "%",
       animationDuration: Math.random() * 5 + 5 + "s",
       animationDelay: Math.random() * 5 + "s",
-      opacity: Math.random() * 0.7 + 0.3, // Kicsit erősebb átlátszóság, hogy jobban látszódjon
-      size: Math.random() * 6 + 4 + "px" // Kicsit nagyobb pelyhek
+      opacity: Math.random() * 0.7 + 0.3,
+      size: Math.random() * 6 + 4 + "px"
     }));
     setFlakes(newFlakes);
   }, []);
@@ -71,8 +71,10 @@ export default function Home() {
 
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", address: "" });
 
+  // Látogatás rögzítése
   useEffect(() => { fetch('/api/visit', { method: 'POST' }); }, []);
 
+  // Visszaszámláló
   useEffect(() => {
     const targetDate = new Date("2026-02-14T00:00:00").getTime();
     const timer = setInterval(() => {
@@ -90,24 +92,36 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
+  // --- RENDELÉS KEZELÉSE ÉS ÁTIRÁNYÍTÁS ---
   const handleOrderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      // 1. Adatok mentése az adatbázisba
       const res = await fetch('/api/order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
+      const data = await res.json(); // Itt kapjuk meg a rendelés ID-t!
+
       if (res.ok) {
-        const paypalLink = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=stylefaqu@gmail.com&currency_code=HUF&amount=12990&item_name=Lipses%20Lip%20Plumper&custom=${formData.email}&return=https://lipseshungary.railway.app&cancel_return=https://lipseshungary.railway.app`;
+        // 2. PayPal Link összeállítása a visszatérési (return) linkkel
+        // Ha sikeres a fizetés, a /success oldalra dobja vissza az ID-val együtt
+        const returnUrl = `https://lipseshungary.railway.app/success?id=${data.orderId}`;
+        const cancelUrl = `https://lipseshungary.railway.app`;
+        
+        const paypalLink = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=stylefaqu@gmail.com&currency_code=HUF&amount=12990&item_name=Lipses%20Lip%20Plumper&custom=${formData.email}&return=${encodeURIComponent(returnUrl)}&cancel_return=${encodeURIComponent(cancelUrl)}`;
+        
+        // 3. Átirányítás
         window.location.href = paypalLink;
       } else {
-        alert("Hiba történt. Kérlek próbáld újra.");
+        alert("Hiba történt a feldolgozás során. Kérlek próbáld újra.");
         setIsSubmitting(false);
       }
     } catch (error) {
+      console.error(error);
       alert("Hálózati hiba.");
       setIsSubmitting(false);
     }
@@ -132,7 +146,7 @@ export default function Home() {
         </div>
       </header>
 
-      {/* HERO - Kicsit sötétített, átlátszó alappal */}
+      {/* HERO */}
       <section className="pt-28 pb-12 px-4 md:pt-36 relative">
         <div className="container mx-auto max-w-4xl text-center relative z-10">
           
@@ -155,7 +169,7 @@ export default function Home() {
             <img src="https://i.postimg.cc/pLV7dyv8/Gemini-Generated-Image-ifti5sifti5sifti.png" alt="Lipses Termék" className="w-full h-auto rounded-3xl shadow-2xl border-4 border-white" />
           </motion.div>
 
-          {/* VISSZASZÁMLÁLÓ - Átlátszó háttérrel */}
+          {/* VISSZASZÁMLÁLÓ */}
           <div className="flex justify-center mb-8">
             <div className="flex gap-4 text-center bg-white/80 backdrop-blur-md px-8 py-4 rounded-2xl shadow-xl border border-white/50 relative z-10">
                  <div><span className="text-3xl font-bold text-brand-dark">{timeLeft.days}</span><br/><span className="text-[10px] uppercase text-gray-500">Nap</span></div>
@@ -183,7 +197,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- ELŐNYÖK --- Áttetsző háttér */}
+      {/* --- ELŐNYÖK --- */}
       <section className="py-16 bg-white/60 backdrop-blur-md border-b border-white/50 relative z-10">
         <div className="container mx-auto px-4 grid md:grid-cols-3 gap-8 text-center">
             <div className="p-6">
