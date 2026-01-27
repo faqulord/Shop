@@ -1,15 +1,13 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-// Ikonok importálása a telepített csomagból
-import { Facebook, Instagram, Globe } from "lucide-react";
+import { ShoppingBag, Menu, X, Facebook, Instagram, Globe } from "lucide-react";
 
-// Google Font betöltése a modern kinézethez
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], weight: ["300", "400", "600", "900"] });
 
 export const metadata: Metadata = {
-  title: "Lipses Shop - Valentin Napi Akció",
-  description: "A legjobb dropshipping termékek - Prémium ajakdúsítás",
+  title: "LIPSES™ USA - Official Store",
+  description: "Prémium ajakdúsítás amerikai technológiával.",
 };
 
 export default function RootLayout({
@@ -18,66 +16,57 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="hu">
-      <body className={`${inter.className} bg-slate-950 text-slate-100 antialiased relative overflow-x-hidden selection:bg-rose-500 selection:text-white`}>
+    <html lang="hu" className="dark">
+      <body className={`${inter.className} bg-zinc-950 text-white antialiased`}>
         
-        {/* === HÁTTÉR EFFEKTEK === */}
-        {/* Hóesés konténer (A CSS fogja mozgatni) */}
-        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
-            <div className="snow"></div>
-            <div className="snow snow-mid"></div>
-            <div className="snow snow-far"></div>
+        {/* HÁTTÉR EFFEKTEK */}
+        <div className="fixed inset-0 z-0 pointer-events-none">
+            <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-rose-900/20 blur-[120px] rounded-full"></div>
+            <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-blue-900/10 blur-[120px] rounded-full"></div>
         </div>
 
-        {/* Finom kék köd a háttérben a prémium hatáshoz */}
-        <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-900/20 blur-[120px] rounded-full pointer-events-none z-0"></div>
-        <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-rose-900/10 blur-[120px] rounded-full pointer-events-none z-0"></div>
-
-        {/* === FEJLÉC / HEADER === */}
-        <header className="fixed top-0 w-full z-50 bg-slate-950/80 backdrop-blur-md border-b border-white/10 shadow-lg">
-          <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+        {/* FELSŐ MENÜSÁV (NAVBAR) */}
+        <nav className="fixed top-0 w-full z-50 glass-strong h-16 transition-all">
+          <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
              
-             {/* Bal oldal: Social Ikonok */}
+             {/* Logo */}
+             <div className="flex items-center gap-2">
+                <span className="text-xl font-black tracking-widest text-white uppercase flex items-center gap-1">
+                  LIPSES <span className="text-[10px] bg-white text-black px-1 rounded font-bold">USA</span>
+                </span>
+             </div>
+
+             {/* Asztali Menü */}
+             <div className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
+                <a href="#" className="hover:text-white transition hover:scale-105">Kezdőlap</a>
+                <a href="#products" className="hover:text-white transition hover:scale-105 flex items-center gap-1">
+                   Termékek <span className="bg-rose-600 text-[9px] text-white px-1.5 py-0.5 rounded-full">Akció</span>
+                </a>
+                <a href="#about" className="hover:text-white transition hover:scale-105">Rólunk</a>
+                <a href="#contact" className="hover:text-white transition hover:scale-105">Kapcsolat</a>
+             </div>
+
+             {/* Jobb oldal: Ikonok */}
              <div className="flex items-center gap-4">
-                <a 
-                  href="https://facebook.com/groups/tecsoportod" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="p-2 rounded-full bg-white/5 hover:bg-blue-600 hover:text-white transition-all duration-300 text-slate-400"
-                  aria-label="Facebook Csoport"
-                >
-                  <Facebook size={18} />
-                </a>
-                <a 
-                  href="https://instagram.com/tecsoportod" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="p-2 rounded-full bg-white/5 hover:bg-pink-600 hover:text-white transition-all duration-300 text-slate-400"
-                  aria-label="Instagram Oldal"
-                >
-                  <Instagram size={18} />
-                </a>
-             </div>
-
-             {/* Közép (Mobilon eltűnhet, de itt lehetne a Logo) */}
-             <div className="text-xs font-bold tracking-widest text-slate-500 uppercase hidden sm:block">
-                Lipses Winter Edition
-             </div>
-
-             {/* Jobb oldal: Nyelvválasztó */}
-             <div className="flex items-center gap-3 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
-                <Globe size={16} className="text-cyan-400" />
-                <div className="flex items-center text-xs font-bold tracking-wide">
-                  <span className="cursor-pointer text-white hover:text-cyan-300 transition-colors">HU</span>
-                  <span className="mx-2 text-slate-600">|</span>
-                  <span className="cursor-pointer text-slate-500 hover:text-white transition-colors">EN</span>
+                <div className="hidden sm:flex items-center gap-3 border-r border-white/10 pr-4">
+                   <a href="#" className="text-zinc-400 hover:text-blue-500 transition"><Facebook size={18} /></a>
+                   <a href="#" className="text-zinc-400 hover:text-pink-500 transition"><Instagram size={18} /></a>
                 </div>
+                
+                <div className="flex items-center gap-2 cursor-pointer hover:bg-white/5 p-1 rounded transition">
+                   <Globe size={16} className="text-zinc-400" />
+                   <span className="text-xs font-bold">HU</span>
+                </div>
+
+                <a href="#order-section" className="bg-white text-black px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide hover:bg-zinc-200 transition hidden sm:block">
+                   Shop Now
+                </a>
              </div>
           </div>
-        </header>
+        </nav>
 
-        {/* === FŐ TARTALOM === */}
-        <main className="relative z-10 pt-16 flex flex-col min-h-screen">
+        {/* TARTALOM */}
+        <main className="relative z-10 pt-16">
             {children}
         </main>
         
