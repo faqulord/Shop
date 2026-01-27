@@ -1,15 +1,15 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI;
+// Ha nincs .env fájl, akkor a helyi adatbázist használja
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/shop";
 
 async function connectToDb() {
   if (mongoose.connection.readyState === 1) return mongoose.connection;
-  if (!MONGODB_URI) throw new Error('HIÁNYZIK A MONGODB_URI!');
   return await mongoose.connect(MONGODB_URI);
 }
 
-// Bővítettük a sémát a követőkóddal (trackingNumber)
+// Bővítettük a sémát: paymentMethod + trackingNumber
 const OrderSchema = new mongoose.Schema({
   customerName: String,
   email: String,
@@ -19,47 +19,61 @@ const OrderSchema = new mongoose.Schema({
   zip: String,
   products: Array,
   totalAmount: Number,
-  status: { type: String, default: 'Feldolgozás alatt' },
-  trackingNumber: { type: String, default: '' } // EZ AZ ÚJ!
+  paymentMethod: String, // EZT HOZZÁADTAM (hogy lássuk mivel fizetett)
+  status: { type: String, default: 'Fizetésre vár' },
+  trackingNumber: { type: String, default: '' }
 }, { timestamps: true });
 
+// Figyelünk, hogy ne legyen modell ütközés újratöltéskor
 const Order = mongoose.models.ShopOrder || mongoose.model('ShopOrder', OrderSchema);
 
+// --- 1. GET: Adatok lekérése az Adminnak ---
 export async function GET() {
   try {
     await connectToDb();
+    // A legújabb rendelés legyen legfelül (sort -1)
     const orders = await Order.find().sort({ createdAt: -1 });
     return NextResponse.json(orders);
   } catch (error: any) {
-    return NextResponse.json({ error: "Hiba" }, { status: 500 });
+    return NextResponse.json({ error: "Hiba az adatok lekérésekor" }, { status: 500 });
   }
 }
 
+// --- 2. POST: Új rendelés mentése (Vásárláskor) ---
 export async function POST(req: Request) {
   try {
     await connectToDb();
     const body = await req.json();
-    const newOrder = await Order.create(body);
+    
+    // Alapértelmezett státusz beállítása
+    const newOrderData = {
+        ...body,
+        status: 'Fizetésre vár (PayPal)',
+    };
+
+    const newOrder = await Order.create(newOrderData);
     return NextResponse.json(newOrder, { status: 201 });
   } catch (error: any) {
-    return NextResponse.json({ error: "Hiba" }, { status: 500 });
+    console.error("Mentési hiba:", error);
+    return NextResponse.json({ error: "Hiba a rendelés mentésekor" }, { status: 500 });
   }
 }
 
-// EZ AZ ÚJ RÉSZ: A Státusz Frissítése!
+// --- 3. PUT: Státusz és Követőkód frissítése (Adminból) ---
 export async function PUT(req: Request) {
   try {
     await connectToDb();
     const body = await req.json();
-    const { id, status, trackingNumber } = body; // Ezeket várjuk az Admintól
+    const { id, status, trackingNumber } = body; 
 
-    // Megkeressük ID alapján és frissítjük
+    if (!id) return NextResponse.json({ error: "Nincs ID megadva" }, { status: 400 });
+
     const updatedOrder = await Order.findByIdAndUpdate(
       id, 
       { status, trackingNumber }, 
-      { new: true }
+      { new: true } // Visszaküldi a frissített adatot
     );
-    
+
     return NextResponse.json(updatedOrder);
   } catch (error: any) {
     return NextResponse.json({ error: "Hiba a frissítéskor" }, { status: 500 });
