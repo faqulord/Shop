@@ -1,19 +1,48 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckCircle, Clock, ShieldCheck, Heart, AlertTriangle, ArrowRight, ShoppingBag, X, Loader2, ThumbsUp, Star } from "lucide-react";
+import { CheckCircle, Clock, ShieldCheck, Heart, AlertTriangle, ArrowRight, ShoppingBag, X, Loader2, ThumbsUp, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+
+// --- KAMU KOMMENT ADATBÁZIS (9 db) ---
+const ALL_COMMENTS = [
+  // 1. Oldal (Legfrissebbek)
+  { id: 1, name: "Kovács Alexandra", img: 5, text: "Lányok, ez valami csoda! 😍 Féltem tőle kicsit, de tényleg nem fáj. A párom rögtön észrevette este. Valentin napra tökéletes lesz!", time: "2 órája" },
+  { id: 2, name: "Nagy Beatrix", img: 9, text: "Megrendeltem tegnap, ma már ki is hozták! Nagyon profi a csomagolás, igazi prémium érzés. 💖", time: "5 órája" },
+  { id: 3, name: "Varga Eszter", img: 32, text: "Nekem 10 órán át simán tartott. Sokkal jobb mint a töltés, attól mindig féltem. Ez meg természetes. Köszönöm Lipses! 🙏", time: "1 napja" },
+  
+  // 2. Oldal
+  { id: 4, name: "Tóth Tímea", img: 44, text: "Először szkeptikus voltam, de a barátnőm ajánlotta. Nem bántam meg! Azonnal látszik a különbség.", time: "2 napja" },
+  { id: 5, name: "Horváth Éva", img: 12, text: "Nagyon gyorsan megjött, köszönöm a korrekt ügyintézést. A termék pedig 5 csillagos! ⭐⭐⭐⭐⭐", time: "2 napja" },
+  { id: 6, name: "Szabó Zsófi", img: 21, text: "Végre nem kell tű alá feküdnöm. Imádom, hogy bármikor feldobhatom vele a sminkem előtt.", time: "3 napja" },
+
+  // 3. Oldal
+  { id: 7, name: "Kiss Ramóna", img: 16, text: "Ajándékba kaptam a páromtól. A legjobb meglepetés volt! 🥰", time: "4 napja" },
+  { id: 8, name: "Molnár Kinga", img: 28, text: "Kicsit bizserget, de egyáltalán nem kellemetlen. A hatás pedig magáért beszél.", time: "5 napja" },
+  { id: 9, name: "Balogh Adrienn", img: 35, text: "Már a másodikat rendelem a húgomnak is. Csak ajánlani tudom.", time: "1 hete" },
+];
 
 export default function Home() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  // KOMMENT LAPOZÓ STATE
+  const [currentPage, setCurrentPage] = useState(1);
+  const commentsPerPage = 3;
+  const totalPages = Math.ceil(ALL_COMMENTS.length / commentsPerPage);
+
+  // Az aktuális oldalon megjelenő kommentek kiválasztása
+  const currentComments = ALL_COMMENTS.slice(
+    (currentPage - 1) * commentsPerPage,
+    currentPage * commentsPerPage
+  );
+
   const [formData, setFormData] = useState({
     name: "", email: "", phone: "", address: "" 
   });
 
-  // Látogatás rögzítése betöltéskor
+  // Látogatás rögzítése
   useEffect(() => {
     fetch('/api/visit', { method: 'POST' });
   }, []);
@@ -73,10 +102,9 @@ export default function Home() {
         </div>
       </header>
 
-      {/* HERO - ÚJ MARKETING SZÖVEGGEL */}
+      {/* HERO */}
       <section className="pt-28 pb-12 px-4 md:pt-36 bg-gradient-to-b from-brand-light to-white relative">
         <div className="container mx-auto max-w-4xl text-center">
-          
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-4 inline-block px-4 py-1 rounded-full bg-red-100 text-red-600 text-sm font-bold uppercase tracking-wider border border-red-200">
              🔥 Valentin-napi Készletkisöprés
           </motion.div>
@@ -87,11 +115,10 @@ export default function Home() {
           </h1>
 
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Miért fizetnél <strong>80.000 Ft-ot</strong> egyetlen töltésért, ha rettegsz a tűtől és a természetellenes "kacsa-száj" hatástól? 
+            Miért fizetnél <strong>80.000 Ft-ot</strong> egyetlen töltésért, ha rettegsz a tűtől? 
             A Lipses™ technológia azonnal, biztonságosan varázsol telt, csábító ajkakat – <span className="underline decoration-brand-gold decoration-2">otthonod kényelméből.</span>
           </p>
 
-          {/* KÉP */}
           <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.5 }} className="relative w-full max-w-lg mx-auto mb-8">
             <div className="absolute inset-0 bg-brand-gold/30 blur-3xl rounded-full transform scale-90 -z-10"></div>
             <img src="https://i.postimg.cc/pLV7dyv8/Gemini-Generated-Image-ifti5sifti5sifti.png" alt="Lipses Termék" className="w-full h-auto rounded-3xl shadow-2xl border-4 border-white" />
@@ -122,7 +149,6 @@ export default function Home() {
               Kérem a Telt Ajkakat! <ArrowRight size={24} />
             </button>
            </div>
-           <p className="mt-4 text-sm text-gray-400">Több mint 1,200 elégedett hölgy választása.</p>
         </div>
       </section>
 
@@ -147,46 +173,68 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- KAMU FACEBOOK KOMMENTEK --- */}
+      {/* --- LAPOZHATÓ FACEBOOK KOMMENTEK --- */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4 max-w-2xl">
           <h2 className="text-2xl font-bold text-brand-dark mb-8 text-center">Vásárlói Vélemények</h2>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 min-h-[400px] flex flex-col justify-between">
+            
+            {/* Fejléc */}
             <div className="flex justify-between items-center border-b pb-4 mb-4">
                <span className="font-semibold text-gray-700 flex items-center gap-2"><ThumbsUp size={16} className="bg-blue-500 text-white p-0.5 rounded-full"/> 427</span>
                <div className="flex gap-1 text-gray-500 text-sm">
                  <span>Rendezés:</span> <span className="font-bold cursor-pointer">Legnépszerűbb</span>
                </div>
             </div>
-            {/* Komment 1 */}
-            <div className="flex gap-3 mb-6">
-              <img src="https://i.pravatar.cc/100?img=5" alt="User" className="w-10 h-10 rounded-full border border-gray-200" />
-              <div className="flex-1">
-                <div className="bg-gray-100 rounded-2xl px-4 py-2 inline-block">
-                  <p className="font-bold text-sm text-gray-900">Kovács Alexandra</p>
-                  <p className="text-sm text-gray-800">Lányok, ez valami csoda! 😍 Féltem tőle kicsit, de tényleg nem fáj. A párom rögtön észrevette este. Valentin napra tökéletes lesz!</p>
-                </div>
-                <div className="flex gap-4 mt-1 ml-2 text-xs text-gray-500 font-semibold select-none">
-                  <span className="cursor-pointer hover:underline text-brand-dark">Tetszik</span> <span>2 órája</span>
-                </div>
-              </div>
+
+            {/* Kommentek listázása */}
+            <div className="flex-grow">
+              {currentComments.map((comment) => (
+                <motion.div 
+                  key={comment.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex gap-3 mb-6"
+                >
+                  <img src={`https://i.pravatar.cc/100?img=${comment.img}`} alt="User" className="w-10 h-10 rounded-full border border-gray-200" />
+                  <div className="flex-1">
+                    <div className="bg-gray-100 rounded-2xl px-4 py-2 inline-block">
+                      <p className="font-bold text-sm text-gray-900">{comment.name}</p>
+                      <p className="text-sm text-gray-800">{comment.text}</p>
+                    </div>
+                    <div className="flex gap-4 mt-1 ml-2 text-xs text-gray-500 font-semibold select-none">
+                      <span className="cursor-pointer hover:underline text-brand-dark">Tetszik</span> 
+                      <span>{comment.time}</span>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
             </div>
-             {/* Komment 2 */}
-             <div className="flex gap-3 mb-6">
-              <img src="https://i.pravatar.cc/100?img=9" alt="User" className="w-10 h-10 rounded-full border border-gray-200" />
-              <div className="flex-1">
-                <div className="bg-gray-100 rounded-2xl px-4 py-2 inline-block">
-                  <p className="font-bold text-sm text-gray-900">Nagy Beatrix</p>
-                  <p className="text-sm text-gray-800">Megrendeltem tegnap, ma már ki is hozták! Nagyon profi a csomagolás, igazi prémium érzés. 💖</p>
-                </div>
-                <div className="flex gap-4 mt-1 ml-2 text-xs text-gray-500 font-semibold select-none">
-                  <span className="cursor-pointer hover:underline text-brand-dark">Tetszik</span> <span>5 órája</span>
-                </div>
-              </div>
+
+            {/* Lapozó Gombok */}
+            <div className="flex justify-between items-center pt-4 border-t border-gray-100 mt-2">
+              <button 
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className={`flex items-center gap-1 text-sm font-semibold ${currentPage === 1 ? 'text-gray-300' : 'text-brand-dark hover:text-brand-accent'}`}
+              >
+                <ChevronLeft size={16}/> Előző
+              </button>
+              
+              <span className="text-sm text-gray-500">
+                {currentPage} / {totalPages} oldal
+              </span>
+
+              <button 
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className={`flex items-center gap-1 text-sm font-semibold ${currentPage === totalPages ? 'text-gray-300' : 'text-brand-dark hover:text-brand-accent'}`}
+              >
+                Következő <ChevronRight size={16}/>
+              </button>
             </div>
-            <div className="text-center pt-2 border-t border-gray-100 mt-2">
-              <p className="text-gray-600 font-semibold text-sm cursor-pointer hover:underline py-2">További hozzászólások (424)</p>
-            </div>
+            
           </div>
         </div>
       </section>
