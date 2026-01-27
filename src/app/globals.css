@@ -3,37 +3,32 @@
 @tailwind utilities;
 
 :root {
-  --rose-gold: #c59d5f; /* A logód arany színe */
-  --rose-gold-dark: #a37e45;
-  --text-main: #4a4a4a;
+  /* PRÉMIUM SZÍNPALETTA (Lipses Hungary) */
+  --rose-gold: #c59d5f;        /* Elegáns arany */
+  --rose-gold-light: #eecf97;  /* Világos arany */
+  --rose-accent: #d48c8c;      /* Fáradt rózsaszín */
+  --text-dark: #2d2d2d;        /* Sötétszürke (fekete helyett) */
+  --glass-bg: rgba(255, 255, 255, 0.90);
 }
 
-/* 1. MÁRVÁNY HÁTTÉR BEÁLLÍTÁSA */
+/* --- MÁRVÁNY HÁTTÉR --- */
 body {
   background-color: #fff0f5;
-  /* Rózsaszín márvány textúra */
-  background-image: url('https://img.freepik.com/free-photo/pink-marble-texture-background-abstract-nature_1258-52599.jpg'); 
+  background-image: url('https://img.freepik.com/free-photo/pink-marble-texture-background-abstract-nature_1258-52599.jpg');
   background-size: cover;
   background-attachment: fixed;
   background-position: center;
-  color: var(--text-main);
+  color: var(--text-dark);
+  font-family: 'Montserrat', sans-serif; /* Alap betűtípus */
   overflow-x: hidden;
 }
 
-/* 2. BETŰTÍPUSOK (Importáljuk a Google-ből) */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap');
-
-/* Címsorok: Luxus Serif (Playfair) */
+/* Címsorok (Luxus hatás) */
 h1, h2, h3, .font-serif {
   font-family: 'Playfair Display', serif;
 }
 
-/* Szöveg: Modern Sans (Montserrat) */
-body, p, button, input, div, span {
-  font-family: 'Montserrat', sans-serif;
-}
-
-/* 3. TÉLI HÓESÉS (ELŐTÉRBEN) */
+/* --- HÓESÉS EFFEKT --- */
 .snow-container {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100vh;
@@ -42,36 +37,47 @@ body, p, button, input, div, span {
 }
 .snow {
   position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-  background-image: radial-gradient(3px 3px at 20% 30%, white, transparent),
-                    radial-gradient(4px 4px at 50% 80%, white, transparent),
-                    radial-gradient(3px 3px at 80% 40%, white, transparent);
+  background-image: radial-gradient(3px 3px at 20% 30%, rgba(255,255,255,0.9), transparent),
+                    radial-gradient(4px 4px at 50% 80%, rgba(255,255,255,0.8), transparent);
   background-size: 300px 300px;
-  animation: snowfall 5s linear infinite;
-  opacity: 0.8;
+  animation: snowfall 6s linear infinite;
 }
 @keyframes snowfall {
   from { transform: translateY(-300px); }
   to { transform: translateY(0); }
 }
 
-/* 4. PRÉMIUM DOBOZOK (Glassmorphism) */
-.glass-card {
-  background: rgba(255, 255, 255, 0.85);
+/* --- ÜVEG DOBOZOK (Glassmorphism) --- */
+.glass-panel {
+  background: var(--glass-bg);
   backdrop-filter: blur(12px);
-  border: 1px solid #c59d5f; /* Arany keret */
-  box-shadow: 0 10px 30px rgba(197, 157, 95, 0.2); /* Aranyos árnyék */
+  border: 1px solid rgba(197, 157, 95, 0.3); /* Halvány arany keret */
+  box-shadow: 0 10px 40px rgba(197, 157, 95, 0.15);
 }
 
-/* 5. ARANY GOMBOK */
-.btn-gold {
-  background: linear-gradient(to right, #c59d5f, #e3c48b);
+/* --- ARANY GOMB --- */
+.btn-primary {
+  background: linear-gradient(135deg, #c59d5f 0%, #a37e45 100%);
   color: white;
   text-transform: uppercase;
-  font-weight: bold;
+  font-weight: 700;
   letter-spacing: 1px;
-  transition: transform 0.2s;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
-.btn-gold:hover {
-  transform: scale(1.02);
-  box-shadow: 0 5px 15px rgba(197, 157, 95, 0.4);
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(197, 157, 95, 0.4);
+}
+/* Csillogás effekt a gombon */
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transition: 0.5s;
+}
+.btn-primary:hover::after {
+  left: 100%;
 }
