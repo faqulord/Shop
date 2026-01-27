@@ -1,11 +1,11 @@
 "use client";
 import { useState, useEffect } from 'react';
-// Ikonok
-import { Star, Check, Shield, ArrowRight, Heart, CreditCard, Banknote, ThumbsUp, AlertTriangle, Zap, Clock, CheckCircle, Snowflake } from 'lucide-react';
+// Ikonok (Lucide-react csomagból, ami már telepítve van nálad)
+import { Star, Check, Shield, ArrowRight, CreditCard, Banknote, ThumbsUp, AlertTriangle, Clock, CheckCircle, Snowflake } from 'lucide-react';
 
 export default function Home() {
 
-  // --- 1. VÁLTOZÓK (FUNKCIÓK VÁLTOZATLANOK) ---
+  // --- 1. VÁLTOZÓK (EZ AZ AGY, EZT NEM BÁNTJUK) ---
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState({ h: 3, m: 12, s: 45 });
@@ -14,7 +14,7 @@ export default function Home() {
 
   const PAYPAL_EMAIL = "stylefaqu@gmail.com"; 
 
-  // --- 2. IDŐZÍTŐ ---
+  // --- 2. IDŐZÍTŐ LOGIKA ---
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft(prev => {
@@ -27,10 +27,11 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  // --- 3. TERMÉK BETÖLTÉSE ---
+  // --- 3. TERMÉK ADATOK LEKÉRÉSE (API HÍVÁS) ---
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Itt hívjuk meg a te backend API-dat, ami a mappáidban van
         const prodRes = await fetch('/api/products');
         const prodData = await prodRes.json();
         setProduct(prodData);
@@ -40,7 +41,7 @@ export default function Home() {
     fetchData();
   }, []);
 
-  // --- HÓESÉS EFFEKT GENERÁLÁS ---
+  // --- HÓESÉS EFFEKT LOGIKA ---
   useEffect(() => {
     const createSnowflake = () => {
       const snowflake = document.createElement('div');
@@ -58,11 +59,12 @@ export default function Home() {
         }, 5000);
       }
     };
-    const interval = setInterval(createSnowflake, 100);
+    // Kicsit ritkítottam a hóesést, hogy ne terhelje a telefont
+    const interval = setInterval(createSnowflake, 300);
     return () => clearInterval(interval);
   }, []);
 
-  // --- 4. KOMMENTEK ---
+  // --- 4. STATIKUS KOMMENTEK (EZEK CSAK SZÖVEGEK) ---
   const staticReviews = [
     {
       author: "Varga Niki",
@@ -102,7 +104,7 @@ export default function Home() {
       }
   ];
 
-  // --- 5. NAVIGÁCIÓ ---
+  // --- 5. GÖRGETÉS FUNKCIÓ ---
   const scrollToOrder = () => {
     document.getElementById('order-section')?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -112,7 +114,7 @@ export default function Home() {
     return product.price;
   };
 
-  // --- 6. RENDELÉS LEADÁSA (LOGIKA VÁLTOZATLAN) ---
+  // --- 6. RENDELÉS LEADÁSA (EZ A KRITIKUS RÉSZ - ÉRINTETLEN) ---
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setOrderStatus('loading');
@@ -133,6 +135,7 @@ export default function Home() {
             status: 'Fizetésre vár (PayPal)'
         };
 
+        // Itt küldi el az adatokat a te meglévő backend API-dnak
         const response = await fetch('/api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -140,10 +143,11 @@ export default function Home() {
         });
 
         if (response.ok) {
+            // Átirányítás a PayPalra
             const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${PAYPAL_EMAIL}&item_name=${encodeURIComponent(product.name)}&amount=${totalAmount}&currency_code=HUF&return=${encodeURIComponent(window.location.href)}`;
             window.location.href = paypalUrl;
         } else {
-            alert("Hiba történt. Próbáld újra!");
+            alert("Hiba történt a rendelés feldolgozásakor. Kérlek próbáld újra!");
             setOrderStatus('');
         }
     } catch (error) {
@@ -152,7 +156,7 @@ export default function Home() {
     }
   };
 
-  // --- 7. BIZTONSÁGI LOADING ---
+  // --- 7. BETÖLTŐ KÉPERNYŐ (LOADING) ---
   if (loading || !product) {
     return (
         <div className="min-h-screen flex items-center justify-center bg-[#0a0a2a] text-[#ffd700] font-medium">
@@ -161,46 +165,41 @@ export default function Home() {
     );
   }
 
-  // --- 8. DESIGN ÉS MEGJELENÍTÉS (WINTER LUXURY) ---
+  // --- 8. A DESIGN (HTML SZERKEZET) ---
   return (
     <div className="min-h-screen bg-[#0a0a2a] text-white font-sans relative overflow-x-hidden selection:bg-[#ffd700] selection:text-black">
       
-      {/* HÓESÉS CONTAINER */}
-      <div id="snow-container" className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 opacity-50"></div>
-      
-      {/* GLOBAL STYLES FOR SNOW & FONT */}
-      <style jsx global>{`
+      {/* GLOBAL STYLES (Szabványos React formátum) */}
+      <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap');
-        
         body { font-family: 'Outfit', sans-serif; }
-        
         .snowflake {
           position: absolute;
-          top: -10px;
+          top: -20px;
           color: white;
-          font-size: 10px;
+          font-size: 14px;
           user-select: none;
           z-index: 1;
+          pointer-events: none;
           animation-name: fall;
           animation-timing-function: linear;
         }
-        
         @keyframes fall {
           to { transform: translateY(100vh); }
         }
-
-        /* Glassmorphism Classes */
         .glass-panel {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 215, 0, 0.2);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         }
-        
         .gold-glow {
             text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
         }
-      `}</style>
+      `}} />
+
+      {/* HÓESÉS HELYE */}
+      <div id="snow-container" className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 opacity-50"></div>
 
       {/* FEJLÉC */}
       <nav className="fixed w-full top-0 z-50 bg-[#0a0a2a]/80 backdrop-blur-md border-b border-[#ffd700]/30 py-4 transition-all">
@@ -215,20 +214,19 @@ export default function Home() {
       </nav>
 
       <main className="relative z-10 pt-20">
-        {/* HERO SZEKCIÓ */}
+        
+        {/* HERO SZEKCIÓ (Fő rész) */}
         <section className="max-w-5xl mx-auto px-4 py-12 lg:py-20">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
 
-            {/* KÉP + DOBOZ */}
+            {/* KÉP + TÉLI AKCIÓ CÍMKE */}
             <div className="relative group">
-               {/* TÉLI AKCIÓ BADGE */}
                <div className="absolute -top-6 -left-4 bg-[#ffd700] text-[#0a0a2a] px-4 py-2 rounded-lg shadow-xl z-20 border-2 border-white transform -rotate-3 animate-pulse">
                  <p className="text-lg font-black uppercase">Téli Akció!</p>
                </div>
 
                <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-[0_0_40px_rgba(255,215,0,0.15)] border-4 border-[#ffd700]/20 relative">
                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover transform group-hover:scale-105 transition duration-700" onError={(e) => { (e.target as any).src = "https://images.unsplash.com/photo-1629198688000-71f23e745b6e?w=800"; }} />
-                 {/* Fény effekt a képen */}
                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a2a] via-transparent to-transparent opacity-60"></div>
                </div>
             </div>
@@ -242,16 +240,16 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* CÍM */}
+                {/* TERMÉK NEVE */}
                 <h1 className="text-4xl md:text-6xl font-black text-white leading-none mb-4 gold-glow">{product.name}</h1>
 
-                {/* LEÍRÁS */}
+                {/* TERMÉK LEÍRÁSA (HTML renderelve) */}
                 <div className="text-lg text-gray-300 leading-relaxed font-light" 
                      dangerouslySetInnerHTML={{ __html: product.description ? product.description.replace(/\n/g, '<br/>') : '' }}>
                 </div>
               </div>
 
-              {/* TÉLI LUXUS AJÁNLAT - KIEMELT ÁRAZÁS */}
+              {/* TÉLI LUXUS AJÁNLAT DOBOZ */}
               <div className="glass-panel p-6 rounded-2xl relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-4 opacity-10"><Snowflake size={100} /></div>
                   
@@ -270,7 +268,7 @@ export default function Home() {
                             <span className="bg-red-600 text-white px-2 py-1 text-xs font-bold rounded">HOT DEAL</span>
                           </div>
                           <p className="text-gray-400 line-through text-sm">24.000 Ft helyett</p>
-                          {/* A kért speciális ár kijelzése */}
+                          {/* !!! ITT VAN A 2000 FT ÁR KIÍRVA !!! */}
                           <p className="text-3xl font-black text-[#ffd700]">2.000 Ft <span className="text-sm text-white font-normal">/ 2 db*</span></p>
                       </div>
                   </div>
@@ -283,7 +281,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* --- KOMMENTEK (GLASS STYLE) --- */}
+        {/* --- KOMMENTEK --- */}
         <section className="py-16 relative">
           <div className="absolute inset-0 bg-[#ffd700]/5 skew-y-3 transform origin-top-left -z-10"></div>
           
@@ -296,7 +294,6 @@ export default function Home() {
               {staticReviews.map((review, i) => (
                 <div key={i} className="glass-panel p-4 rounded-xl flex gap-4 items-start">
                   <div className="flex-shrink-0">
-                     {/* Avatar */}
                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[#0a0a2a] font-bold text-sm shadow-lg border border-[#ffd700] ${i===1 ? 'bg-[#ffd700]' : 'bg-white'}`}>
                         {review.author?.charAt(0) || "V"}
                      </div>
@@ -332,11 +329,11 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ŰRLAP + ARANY FIGYELMEZTETÉS */}
+        {/* --- ŰRLAP RÉSZ --- */}
         <div id="order-section" className="py-16 relative">
           <div className="max-w-xl mx-auto px-4">
 
-            {/* FIGYELMEZTETÉS - DESIGN MÓDOSÍTVA */}
+            {/* FIGYELMEZTETÉS */}
             <div className="glass-panel p-5 rounded-xl mb-8 flex items-start gap-4 border-l-4 border-l-[#ffd700]">
                 <div className="bg-[#ffd700]/20 p-2 rounded-full">
                     <AlertTriangle className="text-[#ffd700]" size={24} />
@@ -351,9 +348,7 @@ export default function Home() {
             </div>
 
             <div className="bg-[#0f0f1a] border border-[#ffd700]/30 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden relative">
-              {/* Fejléc */}
               <div className="bg-gradient-to-r from-[#ffd700] to-[#b39700] p-6 text-[#0a0a2a] text-center relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/snow.png')]"></div>
                 <h3 className="text-2xl font-black mb-1 uppercase">Rendelés Leadása</h3>
                 <p className="text-[#0a0a2a]/80 text-xs font-bold uppercase tracking-widest">Biztonságos SSL Kapcsolat</p>
               </div>
@@ -369,7 +364,6 @@ export default function Home() {
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5">
 
-                    {/* FIZETÉSI MÓDOK */}
                     <div className="grid grid-cols-2 gap-4">
                         <div className="cursor-pointer p-4 rounded-xl border-2 border-[#ffd700] bg-[#ffd700]/10 relative transition hover:bg-[#ffd700]/20">
                             <div className="absolute top-2 right-2 text-[#ffd700]"><CheckCircle size={18} /></div>
@@ -394,7 +388,6 @@ export default function Home() {
                         </div>
                     </div>
 
-                    {/* BEVITELI MEZŐK - Dark Theme */}
                     <div className="space-y-4">
                        <div>
                            <label className="text-[11px] font-bold text-[#ffd700] uppercase ml-1 tracking-wider">Név</label>
@@ -404,4 +397,4 @@ export default function Home() {
                        <div className="grid grid-cols-2 gap-4">
                            <div>
                                <label className="text-[11px] font-bold text-[#ffd700] uppercase ml-1 tracking-wider">Email</label>
-                               <input required type="email" className="w-full p-4 bg-[#0a0a2a] border border-gray-700 rounded-xl text-white text-sm focus:border-[#ffd700] focus:ring-1 focus:ring-[#ffd700] outline-none tran
+                               <input required type="email" className="w-full p-4 bg-[#0a0a2a] border border-gray-700 rounded-xl text-white text-sm focus:border-[#ffd700] focus:ring-1 focus:ring-[#ffd700] outline-none transition placeholder-gra
