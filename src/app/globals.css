@@ -3,33 +3,20 @@
 @tailwind utilities;
 
 :root {
-  --background: #09090b; /* Sötét prémium alap */
-  --foreground: #fafafa;
-  --gold-primary: #d4af37;
-  --gold-secondary: #aa8c2c;
+  --bg-dark: #0f172a;
+  --text-light: #f8fafc;
+  --accent-rose: #e11d48;
+  --accent-gold: #fbbf24;
 }
 
-html, body {
-  height: 100%;
-  scroll-behavior: smooth;
-  background-color: var(--background);
-  color: var(--foreground);
-  overflow-x: hidden; /* Vízszintes csúszkálás tiltása */
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
 }
 
-/* Scrollbar elrejtése a letisztult hatásért */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #18181b; 
-}
-::-webkit-scrollbar-thumb {
-  background: #3f3f46; 
-  border-radius: 10px;
-}
-
-/* Hóesés animáció (finomabb, nem zavaró) */
+/* Finom Hóesés */
 .snow-container {
   position: fixed;
   top: 0;
@@ -38,34 +25,34 @@ html, body {
   height: 100%;
   pointer-events: none;
   z-index: 0;
+  background-image: radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+                    radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                    radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
+                    radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
+                    radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  animation: snow 4s linear infinite;
+  opacity: 0.3;
 }
 
-/* Glassmorphism kártyák */
-.glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+@keyframes snow {
+  0% { background-position: 0px 0px; }
+  100% { background-position: 100px 200px; }
 }
 
-.glass-strong {
-  background: rgba(10, 10, 10, 0.8);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+/* Glassmorphism (Üveg hatás a dobozoknak) */
+.glass-panel {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
 }
 
-/* Arany szöveg gradiens */
-.text-gold {
-  background: linear-gradient(to right, #fcd34d, #d4af37, #fcd34d);
+/* Arany szöveg kiemelés */
+.text-gold-gradient {
+  background: linear-gradient(to right, #fcd34d, #f59e0b);
   -webkit-background-clip: text;
-  background-clip: text;
   color: transparent;
-  background-size: 200% auto;
-  animation: shine 4s linear infinite;
-}
-
-@keyframes shine {
-  to {
-    background-position: 200% center;
-  }
 }
