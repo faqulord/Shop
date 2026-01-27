@@ -3,34 +3,31 @@
 @tailwind utilities;
 
 :root {
-  /* Fix színek a képeid alapján */
-  --rose-gold: #c59d5f; 
-  --rose-gold-dark: #a37e45;
-  --bg-pink: #fdf2f8; 
-  --text-dark: #4a4a4a;
+  /* A Te márkaszíneid a képek alapján */
+  --rose-gold: #c69c6d;
+  --rose-gold-light: #eacda3;
+  --rose-pink-bg: #fff0f5; 
+  --text-dark: #444444;
 }
 
-/* KÉNYSZERÍTETT HÁTTÉR - Rózsaszín márvány */
+/* Kényszerített Márvány Háttér */
 body {
-  background-color: #fff0f5; 
-  /* Egy szép, világos rózsaszín márvány textúra */
-  background-image: url('https://img.freepik.com/free-photo/pink-marble-texture-background-abstract-nature_1258-52599.jpg');
+  background-color: var(--rose-pink-bg);
+  /* Finom márvány textúra */
+  background-image: url('https://img.freepik.com/free-photo/white-marble-texture-with-natural-pattern-for-background_1258-54364.jpg');
   background-size: cover;
   background-attachment: fixed;
-  background-position: center;
   color: var(--text-dark);
+  font-family: 'Montserrat', sans-serif;
+  overflow-x: hidden;
 }
 
-/* Betűtípusok */
-h1, h2, h3, h4, .font-serif {
+/* Elegáns Címsorok (Serif) */
+h1, h2, h3, .font-serif {
   font-family: 'Playfair Display', serif;
 }
 
-body, p, button, input {
-  font-family: 'Montserrat', sans-serif;
-}
-
-/* HÓESÉS (NAGY és LÁTHATÓ) */
+/* HÓESÉS (ELŐTÉRBEN - Z-index: 50) */
 .snow-container {
   position: fixed;
   top: 0;
@@ -38,35 +35,49 @@ body, p, button, input {
   width: 100%;
   height: 100vh;
   pointer-events: none;
-  z-index: 9999;
+  z-index: 50; /* A tartalom felett, de a gombokra kattintani lehessen */
 }
 
-.snow {
+.snowflake {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-image: radial-gradient(4px 4px at 10% 10%, white, transparent),
-                    radial-gradient(6px 6px at 20% 30%, white, transparent);
-  background-size: 400px 400px;
-  animation: snowfall 10s linear infinite;
+  top: -10px;
+  color: white;
+  text-shadow: 0 0 5px rgba(0,0,0,0.1);
+  animation: fall linear infinite;
 }
 
-@keyframes snowfall {
-  from { transform: translateY(-400px); }
-  to { transform: translateY(0); }
+@keyframes fall {
+  to { transform: translateY(105vh); }
 }
 
-/* Arany szöveg gradiens */
-.text-gold-gradient {
-  background: linear-gradient(to right, #d4af37, #f3d078, #d4af37);
+/* Rózsaarany Gradiens Szöveg */
+.text-gradient-gold {
+  background: linear-gradient(to right, #b88746, #fdf5a6, #b88746);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  font-weight: 800;
 }
 
-/* Fehér dobozok arany kerettel */
-.glass-light {
+/* Üveg hatású kártyák arany kerettel */
+.glass-card {
   background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  border: 2px solid #d4af37; /* Rózsaarany keret */
-  box-shadow: 0 10px 40px rgba(212, 175, 55, 0.2);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--rose-gold);
+  box-shadow: 0 10px 30px rgba(198, 156, 109, 0.15);
+}
+
+/* Nagy Gombok dropshippinghez */
+.btn-primary {
+  background: linear-gradient(135deg, #c69c6d 0%, #d4af37 100%);
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(198, 156, 109, 0.4);
+  transition: all 0.3s ease;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(198, 156, 109, 0.6);
 }
