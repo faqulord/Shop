@@ -1,7 +1,6 @@
-
 "use client";
 import { useState, useEffect } from 'react';
-import { ArrowRight, Star, ShieldCheck, Heart, Gift, Clock, CheckCircle } from 'lucide-react';
+import { ArrowRight, Gift, Clock, ShieldCheck, Heart } from 'lucide-react';
 
 export default function Home() {
   const [timeLeft, setTimeLeft] = useState({ h: 12, m: 0, s: 0 });
@@ -24,34 +23,34 @@ export default function Home() {
   return (
     <div className="pb-20">
       
-      {/* --- FEJLÉC (LOGÓ) --- */}
-      <nav className="fixed w-full z-50 top-0 bg-white/80 backdrop-blur-md border-b border-[#d4af37]/30 h-20 flex items-center shadow-sm">
+      {/* --- FEJLÉC --- */}
+      <nav className="fixed w-full z-50 top-0 bg-white/90 backdrop-blur-md border-b border-[#d4af37]/30 h-20 flex items-center shadow-sm">
         <div className="max-w-6xl mx-auto px-4 w-full flex justify-between items-center">
-             {/* LOGÓ: A te képed alapján */}
-             <div className="flex flex-col items-center leading-none">
-                 <span className="font-serif text-3xl font-bold text-[#d4af37] tracking-wide">LipsesHungary</span>
-                 <span className="text-[10px] uppercase tracking-[0.3em] text-gray-500 mt-1">Prémium Ajakápolás</span>
+             {/* LOGÓ Szövegként (hogy biztosan jó legyen) */}
+             <div className="flex flex-col leading-none">
+                 <span className="font-serif text-3xl font-bold text-[#d4af37]">LipsesHungary</span>
+                 <span className="text-[10px] uppercase tracking-[0.2em] text-gray-500 text-center">Prémium Ajakápolás</span>
              </div>
              
-             <button onClick={scrollToOrder} className="hidden md:block bg-gradient-to-r from-[#d4af37] to-[#bfa05d] text-white px-6 py-2 rounded-full font-bold shadow-md hover:scale-105 transition">
+             <button onClick={scrollToOrder} className="hidden md:block bg-[#d4af37] text-white px-6 py-2 rounded-full font-bold shadow-md hover:bg-[#bfa05d] transition">
                  Megrendelem
              </button>
         </div>
       </nav>
 
-      {/* --- HERO SZEKCIÓ (Főoldal) --- */}
+      {/* --- HERO SZEKCIÓ --- */}
       <section className="pt-32 pb-16 px-4">
-         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
              
-             {/* Szöveg */}
+             {/* Bal oldal: Szöveg */}
              <div className="text-center md:text-left space-y-6">
                  
-                 <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-md border border-[#d4af37]/20">
+                 <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow border border-[#d4af37]">
                      <Gift size={18} className="text-[#d4af37]" />
                      <span className="text-[#d4af37] font-bold text-sm uppercase">Valentin Napi Akció</span>
                  </div>
 
-                 <h1 className="text-5xl md:text-6xl font-serif font-bold text-gray-800 leading-tight">
+                 <h1 className="text-4xl md:text-6xl font-serif font-bold text-gray-800 leading-tight">
                      VALENTIN NAPI <br/>
                      <span className="text-gold-gradient">NYEREMÉNYJÁTÉK!</span>
                  </h1>
@@ -61,8 +60,8 @@ export default function Home() {
                      <span className="font-bold text-[#d4af37]">Garantáltan odaér Valentin-napig! 🚀</span>
                  </p>
 
-                 {/* Visszaszámláló doboz */}
-                 <div className="bg-white/60 p-4 rounded-2xl border border-[#d4af37] inline-block shadow-lg">
+                 {/* Visszaszámláló */}
+                 <div className="bg-white/80 p-4 rounded-xl border-2 border-[#d4af37] inline-block shadow-lg">
                       <div className="flex items-center justify-center gap-2 mb-2">
                           <Clock size={16} className="text-gray-500"/>
                           <span className="text-xs font-bold text-gray-500 uppercase">Sorsolásig hátralévő idő:</span>
@@ -75,28 +74,28 @@ export default function Home() {
                  </div>
 
                  <div className="pt-4">
-                     <button onClick={scrollToOrder} className="w-full md:w-auto bg-gradient-to-r from-[#d4af37] to-[#bfa05d] text-white text-xl font-bold px-10 py-4 rounded-full shadow-xl hover:shadow-2xl transition transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                     <button onClick={scrollToOrder} className="w-full md:w-auto bg-gradient-to-r from-[#d4af37] to-[#bfa05d] text-white text-xl font-bold px-10 py-4 rounded-full shadow-xl hover:scale-105 transition flex items-center justify-center gap-2">
                          Kérem a Csomagot <ArrowRight />
                      </button>
                  </div>
              </div>
 
-             {/* Kép (Doboz + Gép) */}
-             <div className="relative">
-                 {/* Ez a kép fog megjelenni, ami hasonló a küldötthöz */}
+             {/* Jobb oldal: KÉP (FIX KÉP, NEM VÉLETLENSZERŰ) */}
+             <div className="relative flex justify-center">
+                 {/* Ez egy konkrét kép egy fehér/arany ajakápolóról, nem random ember */}
                  <img 
-                    src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796?q=80&w=1000&auto=format&fit=crop" 
-                    className="w-full rounded-[3rem] shadow-[0_20px_50px_rgba(212,175,55,0.3)] border-4 border-white"
+                    src="https://images.unsplash.com/photo-1629198688000-71f23e745b6e?q=80&w=800&auto=format&fit=crop" 
+                    className="w-full max-w-md rounded-[2rem] shadow-[0_20px_50px_rgba(212,175,55,0.4)] border-4 border-white object-cover"
                     alt="Lipses Valentin Csomag"
                  />
                  
-                 {/* Lebegő címkék (mint a képen amit küldtél) */}
-                 <div className="absolute top-10 -left-4 bg-white px-4 py-2 rounded-full shadow-lg border border-[#d4af37] flex items-center gap-2 animate-bounce">
+                 {/* Címkék a képen */}
+                 <div className="absolute top-6 -left-2 bg-white px-4 py-2 rounded-full shadow-lg border border-[#d4af37] flex items-center gap-2 animate-bounce">
                      <span className="text-[#d4af37]">⏳</span> 
                      <span className="font-bold text-gray-700 text-xs">12 ÓRÁN ÁT TARTÓ HATÁS</span>
                  </div>
                  
-                 <div className="absolute bottom-10 -right-4 bg-white px-4 py-2 rounded-full shadow-lg border border-[#d4af37] flex items-center gap-2">
+                 <div className="absolute bottom-10 -right-2 bg-white px-4 py-2 rounded-full shadow-lg border border-[#d4af37] flex items-center gap-2">
                      <span className="text-red-500">🚫</span> 
                      <span className="font-bold text-gray-700 text-xs">TŰ NÉLKÜL</span>
                  </div>
@@ -107,24 +106,24 @@ export default function Home() {
 
       {/* --- RENDELÉS ŰRLAP --- */}
       <div id="order-section" className="px-4 py-10">
-          <div className="max-w-3xl mx-auto glass-light p-8 md:p-12 rounded-[3rem]">
-              <div className="text-center mb-10">
+          <div className="max-w-3xl mx-auto glass-light p-8 md:p-12 rounded-[2rem]">
+              <div className="text-center mb-8">
                   <h2 className="text-3xl font-serif font-bold text-gray-800">Rendelés Leadása</h2>
                   <p className="text-gray-500 mt-2">Töltsd ki az adatokat a sorsoláshoz és vásárláshoz.</p>
               </div>
 
               <form className="space-y-4">
-                  <input type="text" placeholder="Teljes Név" className="w-full bg-white border border-[#d4af37]/30 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
-                  <input type="email" placeholder="Email Cím" className="w-full bg-white border border-[#d4af37]/30 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
-                  <input type="tel" placeholder="Telefonszám" className="w-full bg-white border border-[#d4af37]/30 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                  <input type="text" placeholder="Teljes Név" className="w-full bg-white border border-[#d4af37]/50 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-gray-800 placeholder-gray-400" />
+                  <input type="email" placeholder="Email Cím" className="w-full bg-white border border-[#d4af37]/50 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-gray-800 placeholder-gray-400" />
+                  <input type="tel" placeholder="Telefonszám" className="w-full bg-white border border-[#d4af37]/50 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-gray-800 placeholder-gray-400" />
                   
                   <div className="grid grid-cols-2 gap-4">
-                      <input type="text" placeholder="Irányítószám" className="w-full bg-white border border-[#d4af37]/30 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
-                      <input type="text" placeholder="Város" className="w-full bg-white border border-[#d4af37]/30 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                      <input type="text" placeholder="Irányítószám" className="w-full bg-white border border-[#d4af37]/50 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-gray-800 placeholder-gray-400" />
+                      <input type="text" placeholder="Város" className="w-full bg-white border border-[#d4af37]/50 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-gray-800 placeholder-gray-400" />
                   </div>
-                  <input type="text" placeholder="Utca, házszám" className="w-full bg-white border border-[#d4af37]/30 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                  <input type="text" placeholder="Utca, házszám" className="w-full bg-white border border-[#d4af37]/50 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-gray-800 placeholder-gray-400" />
 
-                  <button className="w-full bg-[#d4af37] text-white font-bold text-xl py-5 rounded-xl shadow-lg mt-6 hover:bg-[#bfa05d] transition">
+                  <button className="w-full bg-[#d4af37] text-white font-bold text-xl py-4 rounded-xl shadow-lg mt-6 hover:bg-[#bfa05d] transition">
                       Megrendelés Leadása
                   </button>
                   
