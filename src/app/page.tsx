@@ -1,11 +1,11 @@
 "use client";
 import { useState, useEffect } from 'react';
-// Minden ikont innen importálunk
-import { Star, Check, Shield, ArrowRight, Heart, CreditCard, Banknote, ThumbsUp, AlertTriangle, Zap, Clock, CheckCircle } from 'lucide-react';
+// Ikonok
+import { Star, Check, Shield, ArrowRight, Heart, CreditCard, Banknote, ThumbsUp, AlertTriangle, Zap, Clock, CheckCircle, Snowflake } from 'lucide-react';
 
 export default function Home() {
 
-  // --- 1. VÁLTOZÓK ---
+  // --- 1. VÁLTOZÓK (FUNKCIÓK VÁLTOZATLANOK) ---
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState({ h: 3, m: 12, s: 45 });
@@ -40,7 +40,29 @@ export default function Home() {
     fetchData();
   }, []);
 
-  // --- 4. KOMMENTEK (JAVÍTVA: Fix like számok hozzáadva) ---
+  // --- HÓESÉS EFFEKT GENERÁLÁS ---
+  useEffect(() => {
+    const createSnowflake = () => {
+      const snowflake = document.createElement('div');
+      snowflake.classList.add('snowflake');
+      snowflake.style.left = Math.random() * 100 + 'vw';
+      snowflake.style.animationDuration = Math.random() * 3 + 2 + 's';
+      snowflake.style.opacity = Math.random().toString();
+      snowflake.innerText = '❄';
+      
+      const container = document.getElementById('snow-container');
+      if (container) {
+        container.appendChild(snowflake);
+        setTimeout(() => {
+          snowflake.remove();
+        }, 5000);
+      }
+    };
+    const interval = setInterval(createSnowflake, 100);
+    return () => clearInterval(interval);
+  }, []);
+
+  // --- 4. KOMMENTEK ---
   const staticReviews = [
     {
       author: "Varga Niki",
@@ -49,7 +71,7 @@ export default function Home() {
       date: "2 órája",
       verified: true,
       hasPhoto: false,
-      likes: 24 // Fix like szám
+      likes: 24 
     },
     {
       author: "Kovács Petra",
@@ -58,7 +80,7 @@ export default function Home() {
       date: "5 órája",
       verified: true,
       hasPhoto: false,
-      likes: 12 // Fix like szám
+      likes: 12
     },
     {
       author: "Tóth Eszter",
@@ -67,8 +89,17 @@ export default function Home() {
       date: "Tegnap",
       verified: true,
       hasPhoto: false,
-      likes: 58 // Fix like szám
-    }
+      likes: 58
+    },
+    {
+        author: "Nagy Anna",
+        text: "A Téli akcióban vettem 2 darabot, a legjobb döntés volt! Ajándékba is tökéletes.",
+        rating: 5,
+        date: "Ma",
+        verified: true,
+        hasPhoto: false,
+        likes: 102
+      }
   ];
 
   // --- 5. NAVIGÁCIÓ ---
@@ -81,7 +112,7 @@ export default function Home() {
     return product.price;
   };
 
-  // --- 6. RENDELÉS LEADÁSA ---
+  // --- 6. RENDELÉS LEADÁSA (LOGIKA VÁLTOZATLAN) ---
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setOrderStatus('loading');
@@ -123,243 +154,254 @@ export default function Home() {
 
   // --- 7. BIZTONSÁGI LOADING ---
   if (loading || !product) {
-    return <div className="min-h-screen flex items-center justify-center text-gray-500 font-medium">Betöltés...</div>;
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-[#0a0a2a] text-[#ffd700] font-medium">
+            <div className="animate-spin mr-3">❄</div> Betöltés...
+        </div>
+    );
   }
 
-  // --- 8. A FŐOLDAL MEGJELENÍTÉSE ---
+  // --- 8. DESIGN ÉS MEGJELENÍTÉS (WINTER LUXURY) ---
   return (
-    <div className="min-h-screen bg-white font-sans text-gray-900">
+    <div className="min-h-screen bg-[#0a0a2a] text-white font-sans relative overflow-x-hidden selection:bg-[#ffd700] selection:text-black">
+      
+      {/* HÓESÉS CONTAINER */}
+      <div id="snow-container" className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 opacity-50"></div>
+      
+      {/* GLOBAL STYLES FOR SNOW & FONT */}
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap');
+        
+        body { font-family: 'Outfit', sans-serif; }
+        
+        .snowflake {
+          position: absolute;
+          top: -10px;
+          color: white;
+          font-size: 10px;
+          user-select: none;
+          z-index: 1;
+          animation-name: fall;
+          animation-timing-function: linear;
+        }
+        
+        @keyframes fall {
+          to { transform: translateY(100vh); }
+        }
+
+        /* Glassmorphism Classes */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .gold-glow {
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+      `}</style>
 
       {/* FEJLÉC */}
-      <nav className="bg-white/95 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 shadow-sm py-3">
+      <nav className="fixed w-full top-0 z-50 bg-[#0a0a2a]/80 backdrop-blur-md border-b border-[#ffd700]/30 py-4 transition-all">
         <div className="max-w-5xl mx-auto px-4 flex justify-between items-center">
-          <span className="text-2xl font-black text-pink-600 tracking-tighter">LIPSES.</span>
-          <button onClick={scrollToOrder} className="bg-black text-white px-5 py-2 rounded-full font-bold text-xs hover:scale-105 transition shadow-lg flex items-center gap-2">
-            Megrendelem <ArrowRight size={14} />
+          <span className="text-2xl font-black text-[#ffd700] tracking-widest uppercase flex items-center gap-2">
+             LIPSES <span className="text-xs border border-[#ffd700] px-2 rounded-full font-normal text-white">Winter Edition</span>
+          </span>
+          <button onClick={scrollToOrder} className="bg-[#ffd700] text-[#0a0a2a] px-6 py-2 rounded-full font-bold text-sm hover:scale-105 transition shadow-[0_0_15px_rgba(255,215,0,0.5)] flex items-center gap-2">
+            Megrendelem <ArrowRight size={16} />
           </button>
         </div>
       </nav>
 
-      <main>
+      <main className="relative z-10 pt-20">
         {/* HERO SZEKCIÓ */}
-        <section className="max-w-5xl mx-auto px-4 py-8 lg:py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <section className="max-w-5xl mx-auto px-4 py-12 lg:py-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
 
-            {/* KÉP + -50% DOBOZ */}
-            <div className="relative">
-               <div className="absolute top-4 right-4 bg-red-600 text-white w-16 h-16 flex items-center justify-center rounded-full shadow-xl z-10 border-2 border-white animate-pulse">
-                 <p className="text-xl font-black">-50%</p>
+            {/* KÉP + DOBOZ */}
+            <div className="relative group">
+               {/* TÉLI AKCIÓ BADGE */}
+               <div className="absolute -top-6 -left-4 bg-[#ffd700] text-[#0a0a2a] px-4 py-2 rounded-lg shadow-xl z-20 border-2 border-white transform -rotate-3 animate-pulse">
+                 <p className="text-lg font-black uppercase">Téli Akció!</p>
                </div>
 
-               <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-gray-100 border-4 border-white">
-                 <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" onError={(e) => { (e.target as any).src = "https://images.unsplash.com/photo-1629198688000-71f23e745b6e?w=800"; }} />
+               <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-[0_0_40px_rgba(255,215,0,0.15)] border-4 border-[#ffd700]/20 relative">
+                 <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover transform group-hover:scale-105 transition duration-700" onError={(e) => { (e.target as any).src = "https://images.unsplash.com/photo-1629198688000-71f23e745b6e?w=800"; }} />
+                 {/* Fény effekt a képen */}
+                 <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a2a] via-transparent to-transparent opacity-60"></div>
                </div>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-8 text-center md:text-left">
               <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="bg-pink-100 text-pink-700 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase">TŰMENTES TECHNOLÓGIA</span>
-                  <div className="flex text-yellow-400">
+                <div className="flex items-center justify-center md:justify-start gap-2 mb-4">
+                  <span className="bg-[#ffd700]/20 text-[#ffd700] px-3 py-1 rounded-full text-[10px] font-bold uppercase border border-[#ffd700]/30">Téli limitált széria</span>
+                  <div className="flex text-[#ffd700]">
                     {[1,2,3,4,5].map(i => <Star key={i} fill="currentColor" size={14}/>)}
                   </div>
-                  <span className="text-gray-400 text-xs">(395 vélemény)</span>
                 </div>
 
                 {/* CÍM */}
-                <h1 className="text-3xl md:text-5xl font-black text-gray-900 leading-tight mb-4">{product.name}</h1>
+                <h1 className="text-4xl md:text-6xl font-black text-white leading-none mb-4 gold-glow">{product.name}</h1>
 
                 {/* LEÍRÁS */}
-                <div className="text-lg font-medium text-black leading-relaxed" 
+                <div className="text-lg text-gray-300 leading-relaxed font-light" 
                      dangerouslySetInnerHTML={{ __html: product.description ? product.description.replace(/\n/g, '<br/>') : '' }}>
                 </div>
               </div>
 
-              {/* VISSZASZÁMLÁLÓ + ÁR */}
-              <div className="bg-red-50 border border-red-100 p-4 rounded-xl flex items-center justify-between">
-                  <div>
-                      <p className="text-xs text-red-500 font-bold uppercase flex items-center gap-1">
-                          <Clock size={12}/> Az akció lejár:
-                      </p>
-                      <p className="text-xl font-mono font-black text-red-600">
-                          0{timeLeft.h}:{timeLeft.m < 10 ? `0${timeLeft.m}` : timeLeft.m}:{timeLeft.s < 10 ? `0${timeLeft.s}` : timeLeft.s}
-                      </p>
-                  </div>
-                  <div className="text-right">
-                      <p className="text-gray-400 line-through text-sm">{product.originalPrice?.toLocaleString()} Ft</p>
-                      <p className="text-2xl font-black text-gray-900">{product.price.toLocaleString()} Ft</p>
+              {/* TÉLI LUXUS AJÁNLAT - KIEMELT ÁRAZÁS */}
+              <div className="glass-panel p-6 rounded-2xl relative overflow-hidden">
+                  <div className="absolute top-0 right-0 p-4 opacity-10"><Snowflake size={100} /></div>
+                  
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
+                      <div>
+                          <p className="text-xs text-[#ffd700] font-bold uppercase flex items-center gap-1 mb-1">
+                              <Clock size={12}/> Az akció lejár:
+                          </p>
+                          <p className="text-2xl font-mono font-black text-white">
+                              0{timeLeft.h}:{timeLeft.m < 10 ? `0${timeLeft.m}` : timeLeft.m}:{timeLeft.s < 10 ? `0${timeLeft.s}` : timeLeft.s}
+                          </p>
+                          <p className="text-xs text-gray-400 mt-2 uppercase tracking-wide">Február 10-ig érvényes</p>
+                      </div>
+                      <div className="text-center md:text-right border-t md:border-t-0 md:border-l border-white/10 pt-4 md:pt-0 md:pl-6">
+                          <div className="mb-2">
+                            <span className="bg-red-600 text-white px-2 py-1 text-xs font-bold rounded">HOT DEAL</span>
+                          </div>
+                          <p className="text-gray-400 line-through text-sm">24.000 Ft helyett</p>
+                          {/* A kért speciális ár kijelzése */}
+                          <p className="text-3xl font-black text-[#ffd700]">2.000 Ft <span className="text-sm text-white font-normal">/ 2 db*</span></p>
+                      </div>
                   </div>
               </div>
 
-              {/* --- ELŐNYÖK --- */}
-              <div className="bg-gray-50 p-5 rounded-xl border border-gray-200 shadow-sm">
-                <h3 className="font-bold text-gray-900 flex items-center gap-2 text-sm mb-3"><Zap className="text-pink-500 fill-pink-500" size={18} /> Miért imádják a nők?</h3>
-                <ul className="space-y-2 text-base">
-                  <li className="flex items-center gap-2 text-black font-bold"><Check size={18} className="text-green-600"/> Tűmentes "Russian Lips" hatás</li>
-                  <li className="flex items-center gap-2 text-black font-bold"><Check size={18} className="text-green-600"/> Természetes kollagén-aktiválás (Vegyszermentes)</li>
-                  <li className="flex items-center gap-2 text-black font-bold"><Check size={18} className="text-green-600"/> Hialuronnal & növényi olajokkal is használható!</li>
-                </ul>
-              </div>
-
-              <button onClick={scrollToOrder} className="w-full bg-gray-900 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-black transition shadow-xl flex items-center justify-center gap-2">
-                Kérem a készüléket <ArrowRight size={20} />
+              <button onClick={scrollToOrder} className="w-full bg-gradient-to-r from-[#ffd700] to-[#e6c200] text-[#0a0a2a] px-8 py-5 rounded-xl font-black text-xl hover:scale-[1.02] transition shadow-[0_0_25px_rgba(255,215,0,0.4)] flex items-center justify-center gap-3">
+                Kérem a Téli Csomagot <ArrowRight size={22} />
               </button>
             </div>
           </div>
         </section>
 
-        {/* --- KOMMENTEK --- */}
-        <section className="bg-white py-10 border-t border-gray-100">
-          <div className="max-w-xl mx-auto px-4">
-            <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                Vásárlói vélemények <span className="text-gray-500 font-normal text-sm">(395)</span>
+        {/* --- KOMMENTEK (GLASS STYLE) --- */}
+        <section className="py-16 relative">
+          <div className="absolute inset-0 bg-[#ffd700]/5 skew-y-3 transform origin-top-left -z-10"></div>
+          
+          <div className="max-w-2xl mx-auto px-4">
+            <h2 className="text-2xl font-bold text-[#ffd700] mb-8 flex items-center justify-center gap-2 uppercase tracking-widest text-center">
+               Vásárlói vélemények <span className="text-white font-normal text-sm opacity-50">(395)</span>
             </h2>
 
             <div className="space-y-4">
               {staticReviews.map((review, i) => (
-                <div key={i} className="flex gap-2 items-start animate-fade-in-up">
+                <div key={i} className="glass-panel p-4 rounded-xl flex gap-4 items-start">
                   <div className="flex-shrink-0">
-                     {review.imageUrl && !review.hasPhoto ? (
-                        <img src={review.imageUrl} className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border border-gray-200" alt="Avatar"/>
-                     ) : (
-                        <div className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-sm ${i===1 ? 'bg-purple-600' : 'bg-blue-600'}`}>
-                           {review.author?.charAt(0) || "V"}
-                        </div>
-                     )}
+                     {/* Avatar */}
+                     <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[#0a0a2a] font-bold text-sm shadow-lg border border-[#ffd700] ${i===1 ? 'bg-[#ffd700]' : 'bg-white'}`}>
+                        {review.author?.charAt(0) || "V"}
+                     </div>
                   </div>
 
                   <div className="flex-1">
-                    <div className="bg-[#f0f2f5] px-3 py-2 rounded-[18px] inline-block relative min-w-[180px]">
-                        <div className="flex items-center gap-1">
-                            <h4 className="font-bold text-[13px] text-gray-900 cursor-pointer hover:underline">
-                                {review.author}
-                            </h4>
-                            {review.verified && <CheckCircle size={12} className="text-blue-500 fill-blue-500 text-white" />}
-                        </div>
-
-                        <div className="flex text-yellow-500 text-[10px] mb-1">
-                            {[...Array(review.rating)].map((_, i) => <Star key={i} fill="currentColor" size={8}/>)}
-                        </div>
-
-                        <p className="text-[14px] text-gray-800 leading-snug mt-0.5">{review.text}</p>
-
-                        {review.imageUrl && review.hasPhoto && (
-                            <div className="mt-2 rounded-lg overflow-hidden max-w-[200px] border border-gray-200">
-                                <img src={review.imageUrl} alt="Review attachment" className="w-full object-cover"/>
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <h4 className="font-bold text-sm text-white">{review.author}</h4>
+                            <div className="flex text-[#ffd700] text-[10px] my-1">
+                                {[...Array(review.rating)].map((_, i) => <Star key={i} fill="currentColor" size={10}/>)}
                             </div>
-                        )}
-                         {/* JAVÍTVA: Itt már a fix 'review.likes'-t olvassuk ki, nem a Math.random()-ot */}
-                         <div className="absolute -bottom-2 -right-1 bg-white rounded-full shadow-md border border-gray-100 flex items-center gap-1 px-1 py-0.5 cursor-pointer">
-                            <div className="bg-blue-500 rounded-full p-[2px]"><ThumbsUp size={8} fill="white" className="text-white"/></div>
-                            <span className="text-[10px] text-gray-500 font-bold">{review.likes}</span>
                         </div>
+                        <span className="text-[10px] text-gray-400">{review.date}</span>
                     </div>
 
-                    <div className="flex gap-3 mt-1 ml-3 text-[11px] font-bold text-gray-500">
-                        <span className="cursor-pointer hover:underline text-gray-600">Tetszik</span>
-                        <span className="cursor-pointer hover:underline text-gray-600">Válasz</span>
-                        <span className="font-normal text-gray-400">{review.date}</span>
+                    <p className="text-sm text-gray-300 leading-snug mt-1">{review.text}</p>
+
+                    <div className="flex items-center gap-4 mt-3">
+                        {review.verified && (
+                            <span className="flex items-center gap-1 text-[10px] text-green-400 border border-green-400/30 px-1.5 py-0.5 rounded">
+                                <CheckCircle size={10} /> Ellenőrzött vásárló
+                            </span>
+                        )}
+                        <div className="flex items-center gap-1 text-[10px] text-[#ffd700]">
+                            <ThumbsUp size={10} /> {review.likes}
+                        </div>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-
-            <div className="mt-8 text-center pt-4">
-                <p className="text-gray-400 text-xs font-bold cursor-pointer hover:text-gray-600 transition">
-                    Előző 392 hozzászólás betöltése...
-                </p>
-            </div>
-
           </div>
         </section>
 
-        {/* ŰRLAP + PIROS FIGYELMEZTETÉS */}
-        <div id="order-section" className="py-12 bg-gray-50">
+        {/* ŰRLAP + ARANY FIGYELMEZTETÉS */}
+        <div id="order-section" className="py-16 relative">
           <div className="max-w-xl mx-auto px-4">
 
-            <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 flex items-start gap-3 shadow-sm animate-pulse">
-                <AlertTriangle className="text-red-600 shrink-0" size={24} />
+            {/* FIGYELMEZTETÉS - DESIGN MÓDOSÍTVA */}
+            <div className="glass-panel p-5 rounded-xl mb-8 flex items-start gap-4 border-l-4 border-l-[#ffd700]">
+                <div className="bg-[#ffd700]/20 p-2 rounded-full">
+                    <AlertTriangle className="text-[#ffd700]" size={24} />
+                </div>
                 <div>
-                    <h4 className="text-red-800 font-bold text-sm uppercase">Fontos Információ:</h4>
-                    <p className="text-red-700 text-sm mt-1 leading-snug">
-                        Jelenleg csak <strong>Bankkártyás fizetés</strong> (PayPal) lehetséges! <br/>
-                        Az utánvétes fizetés <strong>Február 10-én</strong> nyílik meg.
+                    <h4 className="text-[#ffd700] font-bold text-sm uppercase mb-1">Téli Fizetési Információ:</h4>
+                    <p className="text-gray-300 text-sm leading-relaxed">
+                        A nagy érdeklődés miatt jelenleg csak <strong>Bankkártyás fizetés</strong> (PayPal) lehetséges! <br/>
+                        Az utánvétes fizetés <strong>Február 10-én</strong> nyílik meg újra.
                     </p>
                 </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-              <div className="bg-gray-900 p-6 text-white text-center">
-                <h3 className="text-2xl font-bold mb-1">Rendelés Leadása 📦</h3>
-                <p className="text-gray-400 text-xs uppercase tracking-wide">Biztonságos SSL Kapcsolat</p>
+            <div className="bg-[#0f0f1a] border border-[#ffd700]/30 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden relative">
+              {/* Fejléc */}
+              <div className="bg-gradient-to-r from-[#ffd700] to-[#b39700] p-6 text-[#0a0a2a] text-center relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/snow.png')]"></div>
+                <h3 className="text-2xl font-black mb-1 uppercase">Rendelés Leadása</h3>
+                <p className="text-[#0a0a2a]/80 text-xs font-bold uppercase tracking-widest">Biztonságos SSL Kapcsolat</p>
               </div>
 
               <div className="p-6 md:p-8">
                 {orderStatus === 'success' ? (
                   <div className="text-center py-10">
-                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"><Check size={32} className="text-green-600" /></div>
-                    <h3 className="text-xl font-bold text-gray-900">Köszönjük! 🎉</h3>
-                    <p className="text-gray-500 text-sm mb-4">A fizetést sikeresen rögzítettük.</p>
-                    <button onClick={() => setOrderStatus('')} className="text-blue-600 font-bold text-sm hover:underline">Új rendelés</button>
+                    <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-green-500"><Check size={40} className="text-green-500" /></div>
+                    <h3 className="text-2xl font-bold text-white mb-2">Köszönjük! 🎉</h3>
+                    <p className="text-gray-400 text-sm mb-6">A fizetést sikeresen rögzítettük.</p>
+                    <button onClick={() => setOrderStatus('')} className="text-[#ffd700] font-bold text-sm hover:underline">Új rendelés</button>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="space-y-4">
+                  <form onSubmit={handleSubmit} className="space-y-5">
 
-                    <div className="grid grid-cols-2 gap-3">
-                        <div className="cursor-pointer p-3 rounded-lg border-2 border-green-500 bg-green-50 relative">
-                            <div className="absolute top-1 right-1 text-green-600"><CheckCircle size={16} className="text-green-600"/></div>
+                    {/* FIZETÉSI MÓDOK */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="cursor-pointer p-4 rounded-xl border-2 border-[#ffd700] bg-[#ffd700]/10 relative transition hover:bg-[#ffd700]/20">
+                            <div className="absolute top-2 right-2 text-[#ffd700]"><CheckCircle size={18} /></div>
                             <div className="flex flex-col items-center text-center">
-                                <CreditCard className="text-green-600 mb-1" size={24} />
-                                <span className="font-bold text-gray-900 text-sm">Bankkártya</span>
-                                <span className="text-[10px] text-green-700 font-bold mt-1 bg-green-200 px-2 py-0.5 rounded">INGYEN SZÁLLÍTÁS</span>
+                                <CreditCard className="text-[#ffd700] mb-2" size={28} />
+                                <span className="font-bold text-white text-sm">Bankkártya</span>
+                                <span className="text-[10px] text-[#0a0a2a] font-bold mt-2 bg-[#ffd700] px-2 py-0.5 rounded">INGYEN SZÁLLÍTÁS</span>
                             </div>
                         </div>
 
-                        <div className="relative p-3 rounded-lg border-2 border-gray-200 bg-gray-100 opacity-60 cursor-not-allowed grayscale">
-                             <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-lg z-10 text-center px-1">
-                                <div className="bg-white px-2 py-1 rounded border border-gray-300 shadow-sm transform -rotate-2">
-                                    <span className="block text-[10px] text-gray-500 font-bold uppercase">Nyitás:</span>
-                                    <span className="block text-xs font-black text-gray-800">FEBRUÁR 10.</span>
+                        <div className="relative p-4 rounded-xl border border-gray-700 bg-gray-800/50 opacity-50 cursor-not-allowed grayscale">
+                             <div className="absolute inset-0 flex items-center justify-center z-10 text-center px-1">
+                                <div className="bg-[#0a0a2a] px-3 py-1 rounded border border-gray-600 shadow-xl transform -rotate-3">
+                                    <span className="block text-[10px] text-gray-400 font-bold uppercase">Nyitás:</span>
+                                    <span className="block text-xs font-black text-[#ffd700]">FEBRUÁR 10.</span>
                                 </div>
                              </div>
-                            <div className="flex flex-col items-center text-center blur-[1px]">
-                                <Banknote className="text-gray-500 mb-1" size={24} />
-                                <span className="font-bold text-gray-500 text-sm">Utánvét</span>
-                                <span className="text-[10px] text-gray-400 font-bold mt-1 bg-gray-200 px-2 py-0.5 rounded">+2500 FT</span>
+                            <div className="flex flex-col items-center text-center blur-[2px]">
+                                <Banknote className="text-gray-500 mb-2" size={28} />
+                                <span className="font-bold text-gray-400 text-sm">Utánvét</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="space-y-3">
-                       <div><label className="text-[10px] font-bold text-gray-500 uppercase ml-1">Név</label><input required type="text" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 outline-none" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Pl. Minta Éva" /></div>
-                       <div className="grid grid-cols-2 gap-3">
-                           <div><label className="text-[10px] font-bold text-gray-500 uppercase ml-1">Email</label><input required type="email" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 outline-none" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="email@cim.hu" /></div>
-                           <div><label className="text-[10px] font-bold text-gray-500 uppercase ml-1">Telefon</label><input required type="tel" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 outline-none" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="06 30..." /></div>
+                    {/* BEVITELI MEZŐK - Dark Theme */}
+                    <div className="space-y-4">
+                       <div>
+                           <label className="text-[11px] font-bold text-[#ffd700] uppercase ml-1 tracking-wider">Név</label>
+                           <input required type="text" className="w-full p-4 bg-[#0a0a2a] border border-gray-700 rounded-xl text-white text-sm focus:border-[#ffd700] focus:ring-1 focus:ring-[#ffd700] outline-none transition placeholder-gray-600" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Pl. Minta Éva" />
                        </div>
-                       <div><label className="text-[10px] font-bold text-gray-500 uppercase ml-1">Cím</label><input required type="text" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 outline-none" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} placeholder="Város, Utca, Házszám" /></div>
-                    </div>
-
-                    <div className="pt-4 border-t border-gray-200">
-                      <div className="flex justify-between items-center mb-4">
-                          <span className="text-sm text-gray-500 font-medium">Fizetendő:</span>
-                          <span className="text-2xl font-black text-pink-600">{calculateTotal().toLocaleString()} Ft</span>
-                      </div>
-                      <button disabled={orderStatus === 'loading'} className="w-full bg-black text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-gray-800 transition transform active:scale-95">
-                        {orderStatus === 'loading' ? 'Feldolgozás...' : 'Tovább a Fizetéshez (PayPal)'}
-                      </button>
-                      <p className="text-center text-[10px] text-gray-400 mt-3 flex justify-center items-center gap-1">
-                        <Shield size={10}/> SSL Titkosított Fizetés
-                      </p>
-                    </div>
-                  </form>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-      <footer className="bg-white border-t border-gray-200 py-8 mt-8 text-center"><p className="text-gray-400 text-xs">© 2024 Lipses Shop.</p></footer>
-    </div>
-  );
-}
+                       
+                       <div className="grid grid-cols-2 gap-4">
+                           <div>
+                               <label className="text-[11px] font-bold text-[#ffd700] uppercase ml-1 tracking-wider">Email</label>
+                               <input required type="email" className="w-full p-4 bg-[#0a0a2a] border border-gray-700 rounded-xl text-white text-sm focus:border-[#ffd700] focus:ring-1 focus:ring-[#ffd700] outline-none tran
