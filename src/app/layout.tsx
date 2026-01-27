@@ -1,14 +1,14 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Playfair_Display, Montserrat } from "next/font/google"; // Prémium betűtípusok
+// Google Fonts - ezek adják a prémium kinézetet
+import { Playfair_Display, Montserrat } from "next/font/google"; 
 
-// Google Fonts betöltése
-const playfair = Playfair_Display({ subsets: ["latin"], variable: '--font-serif' });
-const montserrat = Montserrat({ subsets: ["latin"], variable: '--font-sans' });
+const playfair = Playfair_Display({ subsets: ["latin"], weight: ["400", "700"], variable: '--font-serif' });
+const montserrat = Montserrat({ subsets: ["latin"], weight: ["300", "400", "700"], variable: '--font-sans' });
 
 export const metadata: Metadata = {
   title: "LipsesHungary - Prémium Ajakápolás",
-  description: "Valentin napi nyereményjáték és akció.",
+  description: "Valentin napi nyereményjáték.",
 };
 
 export default function RootLayout({
@@ -20,13 +20,12 @@ export default function RootLayout({
     <html lang="hu">
       <body className={`${playfair.variable} ${montserrat.variable} font-sans antialiased overflow-x-hidden`}>
         
-        {/* --- TÉLI HÓESÉS EFFEKT (ELŐTÉRBEN) --- */}
+        {/* Hóesés */}
         <div className="snow-container">
             <div className="snow"></div>
-            <div className="snow-layer2"></div>
         </div>
 
-        {/* --- TARTALOM --- */}
+        {/* Tartalom */}
         <main className="relative z-10 min-h-screen">
             {children}
         </main>
