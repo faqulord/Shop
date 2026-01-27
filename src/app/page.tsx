@@ -4,19 +4,18 @@ import { useState, useEffect } from "react";
 import { CheckCircle, Clock, Heart, AlertTriangle, ArrowRight, X, Loader2, ThumbsUp, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// --- HÓESÉS KOMPONENS (Beépítve) ---
+// --- HÓESÉS KOMPONENS ---
 const Snowfall = () => {
   const [flakes, setFlakes] = useState<any[]>([]);
 
   useEffect(() => {
-    // Generálunk 50 db hópelyhet véletlenszerű adatokkal
     const newFlakes = Array.from({ length: 50 }).map((_, i) => ({
       id: i,
       left: Math.random() * 100 + "%",
-      animationDuration: Math.random() * 5 + 5 + "s", // 5-10 másodperc alatt esik le
+      animationDuration: Math.random() * 5 + 5 + "s",
       animationDelay: Math.random() * 5 + "s",
-      opacity: Math.random() * 0.5 + 0.3, // Átlátszóság
-      size: Math.random() * 5 + 3 + "px" // Méret
+      opacity: Math.random() * 0.7 + 0.3, // Kicsit erősebb átlátszóság, hogy jobban látszódjon
+      size: Math.random() * 6 + 4 + "px" // Kicsit nagyobb pelyhek
     }));
     setFlakes(newFlakes);
   }, []);
@@ -26,7 +25,7 @@ const Snowfall = () => {
       {flakes.map((flake) => (
         <div
           key={flake.id}
-          className="absolute top-[-20px] bg-white rounded-full blur-[1px]"
+          className="absolute top-[-20px] bg-white rounded-full blur-[0.5px] shadow-sm shadow-white"
           style={{
             left: flake.left,
             width: flake.size,
@@ -115,13 +114,14 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-light overflow-x-hidden font-sans text-brand-dark relative">
+    // SÖTÉTÍTETT HÁTTÉR: Púderes Mályva Átmenet (hogy látsszon a hó!)
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#dcb4b4] via-[#eedddd] to-[#fdf4f5] overflow-x-hidden font-sans text-brand-dark relative">
       
       {/* ITT A HÓESÉS! */}
       <Snowfall />
 
       {/* HEADER */}
-      <header className="fixed w-full z-40 bg-white/95 backdrop-blur-md shadow-sm border-b border-brand-rose/30">
+      <header className="fixed w-full z-40 bg-white/90 backdrop-blur-md shadow-sm border-b border-brand-rose/30">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <span className="text-2xl font-bold tracking-tighter">
             Lipses<span className="text-brand-gold">Hungary</span>
@@ -132,42 +132,43 @@ export default function Home() {
         </div>
       </header>
 
-      {/* HERO */}
-      <section className="pt-28 pb-12 px-4 md:pt-36 bg-gradient-to-b from-brand-light to-white relative">
-        <div className="container mx-auto max-w-4xl text-center">
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-4 inline-block px-4 py-1 rounded-full bg-red-100 text-red-600 text-sm font-bold uppercase tracking-wider border border-red-200">
+      {/* HERO - Kicsit sötétített, átlátszó alappal */}
+      <section className="pt-28 pb-12 px-4 md:pt-36 relative">
+        <div className="container mx-auto max-w-4xl text-center relative z-10">
+          
+          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-4 inline-block px-4 py-1 rounded-full bg-white/80 text-red-600 text-sm font-bold uppercase tracking-wider border border-red-200 backdrop-blur-sm shadow-sm">
              🔥 Valentin-napi Készletkisöprés
           </motion.div>
 
-          <h1 className="text-4xl md:text-6xl font-extrabold text-brand-dark leading-tight mb-6">
+          <h1 className="text-4xl md:text-6xl font-extrabold text-brand-dark leading-tight mb-6 drop-shadow-sm">
             Felejtsd el a tűszúrást! <br/>
             <span className="text-brand-accent">100% Fájdalommentes</span> Ajakdúsítás.
           </h1>
 
-          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto leading-relaxed font-medium">
             Miért fizetnél <strong>80.000 Ft-ot</strong> egyetlen töltésért, ha rettegsz a tűtől? 
             A Lipses™ technológia azonnal, biztonságosan varázsol telt, csábító ajkakat – <span className="underline decoration-brand-gold decoration-2">otthonod kényelméből.</span>
           </p>
 
           <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.5 }} className="relative w-full max-w-lg mx-auto mb-8">
-            <div className="absolute inset-0 bg-brand-gold/30 blur-3xl rounded-full transform scale-90 -z-10"></div>
+            <div className="absolute inset-0 bg-brand-gold/40 blur-3xl rounded-full transform scale-90 -z-10"></div>
             <img src="https://i.postimg.cc/pLV7dyv8/Gemini-Generated-Image-ifti5sifti5sifti.png" alt="Lipses Termék" className="w-full h-auto rounded-3xl shadow-2xl border-4 border-white" />
           </motion.div>
 
-          {/* VISSZASZÁMLÁLÓ */}
+          {/* VISSZASZÁMLÁLÓ - Átlátszó háttérrel */}
           <div className="flex justify-center mb-8">
-            <div className="flex gap-4 text-center bg-white px-8 py-4 rounded-2xl shadow-xl border border-brand-rose/30 relative z-10">
-                 <div><span className="text-3xl font-bold text-brand-dark">{timeLeft.days}</span><br/><span className="text-[10px] uppercase text-gray-400">Nap</span></div>
+            <div className="flex gap-4 text-center bg-white/80 backdrop-blur-md px-8 py-4 rounded-2xl shadow-xl border border-white/50 relative z-10">
+                 <div><span className="text-3xl font-bold text-brand-dark">{timeLeft.days}</span><br/><span className="text-[10px] uppercase text-gray-500">Nap</span></div>
                  <div className="text-3xl font-bold text-brand-gold">:</div>
-                 <div><span className="text-3xl font-bold text-brand-dark">{timeLeft.hours}</span><br/><span className="text-[10px] uppercase text-gray-400">Óra</span></div>
+                 <div><span className="text-3xl font-bold text-brand-dark">{timeLeft.hours}</span><br/><span className="text-[10px] uppercase text-gray-500">Óra</span></div>
                  <div className="text-3xl font-bold text-brand-gold">:</div>
-                 <div><span className="text-3xl font-bold text-brand-dark">{timeLeft.minutes}</span><br/><span className="text-[10px] uppercase text-gray-400">Perc</span></div>
+                 <div><span className="text-3xl font-bold text-brand-dark">{timeLeft.minutes}</span><br/><span className="text-[10px] uppercase text-gray-500">Perc</span></div>
                  <div className="text-3xl font-bold text-brand-gold">:</div>
-                 <div><span className="text-3xl font-bold text-brand-dark">{timeLeft.seconds}</span><br/><span className="text-[10px] uppercase text-gray-400">mp</span></div>
+                 <div><span className="text-3xl font-bold text-brand-dark">{timeLeft.seconds}</span><br/><span className="text-[10px] uppercase text-gray-500">mp</span></div>
             </div>
           </div>
 
-           <div className="bg-red-50 border border-red-100 p-4 mb-8 rounded-xl inline-flex items-center gap-3 text-sm text-red-800 shadow-sm mx-auto max-w-lg text-left relative z-10">
+           <div className="bg-red-50/90 backdrop-blur-sm border border-red-100 p-4 mb-8 rounded-xl inline-flex items-center gap-3 text-sm text-red-800 shadow-sm mx-auto max-w-lg text-left relative z-10">
              <AlertTriangle className="shrink-0 w-6 h-6 text-red-600"/>
              <div>
                <strong>Utolsó darabok!</strong> A garantált Valentin-napi kiszállítás határideje: <span className="underline">Február 10.</span>
@@ -182,8 +183,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- ELŐNYÖK --- */}
-      <section className="py-16 bg-white border-b border-gray-100 relative z-10">
+      {/* --- ELŐNYÖK --- Áttetsző háttér */}
+      <section className="py-16 bg-white/60 backdrop-blur-md border-b border-white/50 relative z-10">
         <div className="container mx-auto px-4 grid md:grid-cols-3 gap-8 text-center">
             <div className="p-6">
               <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-accent"><Heart size={32}/></div>
@@ -204,10 +205,10 @@ export default function Home() {
       </section>
 
       {/* --- KOMMENTEK --- */}
-      <section className="py-20 bg-gray-50 relative z-10">
+      <section className="py-20 bg-transparent relative z-10">
         <div className="container mx-auto px-4 max-w-2xl">
-          <h2 className="text-2xl font-bold text-brand-dark mb-8 text-center">Vásárlói Vélemények</h2>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 min-h-[400px] flex flex-col justify-between">
+          <h2 className="text-2xl font-bold text-brand-dark mb-8 text-center drop-shadow-sm">Vásárlói Vélemények</h2>
+          <div className="bg-white/90 backdrop-blur-md rounded-xl shadow-lg border border-white/50 p-4 min-h-[400px] flex flex-col justify-between">
             <div className="flex justify-between items-center border-b pb-4 mb-4">
                <span className="font-semibold text-gray-700 flex items-center gap-2"><ThumbsUp size={16} className="bg-blue-500 text-white p-0.5 rounded-full"/> 427</span>
                <div className="flex gap-1 text-gray-500 text-sm">
